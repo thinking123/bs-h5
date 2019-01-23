@@ -4,7 +4,7 @@
             欢迎来到摆设-我的音乐人格
         </div>
         <img src="../assets/img/home-img.png" class="img"/>
-        <a class="link">
+        <a class="link" href="javascript:;" @click="handleShowPlay">
             玩法说明
         </a>
         <a href="javascript:;" class="weui-btn weui-btn_primary route_btn" @click="handlePushPage"> 开始我的音乐之旅</a>
@@ -17,7 +17,10 @@
         name: "Home",
         methods: {
             handlePushPage() {
-
+                this.$router.push({name:'interact'})
+            },
+            handleShowPlay(){
+                console.log("show how to play")
             }
         }
     }
@@ -49,6 +52,7 @@
     .link {
         margin-top: 26px;
         align-self: flex-end;
+        text-decoration-line: underline;
     }
 
     .route_btn {
@@ -59,7 +63,14 @@
         transform: translateX(-50%);
         width: 154px;
         height: 32px;
-        @include font-dpr($base-btn-font-size)
+        @include font-dpr($base-btn-font-size);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration-line: none;
+
+
     }
 
 </style>

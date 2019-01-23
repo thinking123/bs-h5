@@ -10,8 +10,8 @@ export default [
         children: [
             {path: '/', redirect: {name: 'home'}},
             {path: '/home', name: 'home', component: Home,  meta: { title: '首页' }},
-            {path: '/arrangements-interact', name: 'home', component: ArrangementsInteract,  meta: { title: '编曲互动页' }},
-            {path: '/music-individuality', name: 'home', component: MusicIndividuality,  meta: { title: '音乐人格页' }},
+            {path: '/arrangements-interact', name: 'interact', component: ArrangementsInteract,  meta: { title: '编曲互动页' }},
+            {path: '/music-individuality', name: 'individuality', component: MusicIndividuality,  meta: { title: '音乐人格页' }},
         ]
     },
 ]
