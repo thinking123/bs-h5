@@ -312,6 +312,7 @@
         height: 100%;
         display: flex;
         flex-direction: column;
+        background-color: transparent;
     }
     .nav-bar {
         display: flex;

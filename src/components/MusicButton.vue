@@ -23,18 +23,22 @@
                     this.$emit('touchedButton')
                 } , 500)
 
-                // console.log('start press')
+                console.log('开始按钮')
             },
             handleEnd(){
                 this.pressing = false
                 clearInterval(this.time)
                 this.time = null
-                // console.log('end press')
+                console.log('结束按钮')
             }
+        },
+        mounted(){
+            document.body.addEventListener('touchend' , this.handleEnd)
         },
         beforeDestroy(){
             clearInterval(this.time)
             this.time = null
+            document.body.removeEventListener('touchend' , this.handleEnd)
             // console.log('beforeDestroy press')
         }
     }
@@ -47,6 +51,7 @@
         height: $btn-size;
         border-radius: $btn-size;
         font-size: $music-btn-font-size;
+        border: none;
         &.pressing{
 
         }

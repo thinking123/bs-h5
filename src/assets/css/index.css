@@ -117,3 +117,6 @@ ins, a {
     -ms-user-select:none;
     user-select:none;
 }
+html ,body{
+    background-color: transparent;
+}
