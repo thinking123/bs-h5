@@ -25,6 +25,7 @@ router.beforeEach((pageTo, pageFrom, next) => {
 })
 
 router.afterEach((route) => {
+    document.title = route.meta.title;
 });
 
 new Vue({

@@ -1,5 +1,10 @@
 /*
 
 使用比例缩放 高度，px to rem 只能按比例缩放 width，不能缩放 height
+
+此处的高度都是iphone 6 下的高度 ， 单位px
 */
-$appHeight:667
+$appHeight:667;
+$wxTitleBar:58;
+$base-font-size: 12px;
+$base-btn-font-size:14px;
