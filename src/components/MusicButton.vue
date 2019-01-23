@@ -1,5 +1,5 @@
 <template>
-    <button class="btn" @touchstart="handleStart"
+    <button class="btn disable-select" @touchstart.self="handleStart"
     @touchend="handleEnd" :class="{'pressing':pressing}"
     >
         <slot/>
@@ -11,17 +11,32 @@
         name: "MusicButton",
         data() {
             return {
-                pressing: false
+                pressing: false,
+                time:null
             }
         },
         methods: {
             handleStart() {
                 this.pressing = true
+                this.$emit('touchedButton')
+                this.time = setInterval(()=>{
+                    this.$emit('touchedButton')
+                } , 500)
+
+                // console.log('start press')
             },
             handleEnd(){
                 this.pressing = false
+                clearInterval(this.time)
+                this.time = null
+                // console.log('end press')
             }
         },
+        beforeDestroy(){
+            clearInterval(this.time)
+            this.time = null
+            // console.log('beforeDestroy press')
+        }
     }
 </script>
 

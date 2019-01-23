@@ -2,5 +2,10 @@
 
 export default {
     openid: null,
-    loading:false
+    loading:false,
+    recordId:null,
+    isPlaying:false,
+    isPlayingRecord:false,
+    isStartRecording:false,
+
 }

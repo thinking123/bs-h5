@@ -1,5 +1,27 @@
 <template>
     <div class="page">
+        <audio  ref="gq_do" @ended="audioend('do')">
+            <source src="../assets/musics/paino1.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio  ref="gq_ri" @ended="audioend('ri')">
+            <source src="../assets/musics/paino2.mp3" type="audio/mpeg"/>
+        </audio>
+
+        <audio  ref="gq_mo" @ended="audioend('mo')">
+            <source src="../assets/musics/paino3.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio  ref="gq_fa" @ended="audioend('fa')">
+            <source src="../assets/musics/paino4.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio  ref="gq_so" @ended="audioend('so')">
+            <source src="../assets/musics/paino5.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio  ref="gq_la" @ended="audioend('la')">
+            <source src="../assets/musics/paino6.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio  ref="gq_xi" @ended="audioend('xi')">
+            <source src="../assets/musics/paino7.mp3" type="audio/mpeg"/>
+        </audio>
         <div class="nav-bar">
             <div v-for="(item , index) in navs" :key="item.key" class="nav-bar-item"
                  :class="{'selected':item.key === selected}"
@@ -13,9 +35,8 @@
             <div class="music-wrap">
                 <div class="row row1 ">
                     <div class="row-col-4 center " v-for="item in row1"
-                         :key="item.key"
-                         @handleClick="handleMusicClick">
-                        <music-button>
+                         :key="item.key">
+                        <music-button @touchedButton="handleMusicClick(item)">
                             {{item.text}}
                         </music-button>
                     </div>
@@ -23,27 +44,28 @@
                 </div>
                 <div class="row row2">
                     <div class="row-col-4 center " v-for="item in row2"
-                         :key="item.key"
-                         @handleClick="handleMusicClick">
-                        <music-button>
+                         :key="item.key">
+                        <music-button  @touchedButton="handleMusicClick(item)">
                             {{item.text}}
                         </music-button>
                     </div>
                 </div>
             </div>
-            <h-button class="record_btn btn-size" @click.native="handleStartRecord">
-                开始录制
-            </h-button>
+            <record-button class="record_btn btn-size" @click.native="handleStartRecord"
+                :text="isStartRecording ? '停止录制' : '开始录制'"
+                           :start="isStartRecording"
+                           :remain="remain"
+            />
             <img src="../assets/img/music-bar.png" class="img"/>
             <div class="btn-group">
-                <h-button class="btn btn-size" :disabled="!recorded" @click.native="handlePlay">
-                    播放
+                <h-button class="btn btn-size" :disabled="disableBtn" @click.native="handlePlayRecord">
+                    {{isPlayingRecord ? '停止': '播放' }}
                 </h-button>
-                <h-button class="btn btn-size" :disabled="!recorded" @click.native="handleSave">
+                <h-button class="btn btn-size" :disabled="disableBtn" @click.native="handleSaveRecord">
                     保存本地
                 </h-button>
             </div>
-            <h-button class="link_btn btn-size" :disabled="!recorded" @click.native="handleGotoMusicPage">
+            <h-button class="link_btn btn-size" :disabled="disableBtn" @click.native="handleGotoMusicPage">
                 测试我的音乐人格
             </h-button>
             <!--<div class="footer">-->
@@ -58,10 +80,20 @@
 <script>
     import MusicButton from "../components/MusicButton";
     import HButton from "../components/HButton";
+    import {debounce} from "../utils/common";
+    import {mapMutations , mapGetters} from 'vuex'
+    import {wxRecordConfig , startRecord, stopRecord , playRecord , stopPlayRecord} from "../utils/mock-wx-config";
+    import RecordButton from "../components/RecordButton";
 
     export default {
         name: "ArrangementsInteract",
-        components: {HButton, MusicButton},
+        components: {RecordButton, HButton, MusicButton},
+        computed: {
+            ...mapGetters(['recordId']),
+            disableBtn(){
+                return !this.recordId
+            }
+        },
         data() {
             return {
                 navs: [
@@ -69,7 +101,7 @@
                     {key: 'jt', text: '吉他'},
                     {key: 'gz', text: '古筝'},
                 ],
-                selected: 'jt',
+                selected: 'gq',
                 row1: [
                     {key: 'do', text: 'Do'},
                     {key: 'ri', text: 'Ro'},
@@ -81,35 +113,193 @@
                     {key: 'la', text: 'La'},
                     {key: 'xi', text: 'Xi'}
                 ],
-                recorded:false
+                recorded:false,
+                pre:null,
+                //是否点击了按钮
+                hadPressedMusicButton:false,
+
+                isPlaying:false,
+                isPlayingRecord:false,
+                isStartRecording:false,
+
+                remain:10,
+                time:null
             }
         },
         methods: {
+            ...mapMutations(['setRecordId']),
+            setIsPlaying(isPlaying){
+                this.isPlaying = isPlaying
+            },
+            setIsPlayingRecord(isPlayingRecord){
+                this.isPlayingRecord = isPlayingRecord
+            },
+            setIsStartRecording(isStartRecording){
+                this.isStartRecording = isStartRecording
+            },
+
             handleSwitchTabItem(item) {
                 if (item.key !== this.selected) {
                     this.selected = item.key
                 }
             },
-            handleMusicClick() {
+            handleMusicClick(item) {
+                // console.log('you press' , item.key)
+                this.hadPressedMusicButton = true
+                if(!this.isPlaying){
+                    const audio = this.$refs[`${this.selected}_${item.key}`]
+                    if(audio){
+                        this.setIsPlaying(audio)
+                        console.log('music playing')
+                        audio.play()
+                    }else{
+                        console.error('music doesnot exist')
+                    }
 
+                }else{
+                    // console.log('正在播放音乐')
+                }
             },
             handleStartRecord(){
-                this.recorded = true
+                if(this.isStartRecording){
+                    //已经开始录音
+                    this.stopRecord()
+                }else{
+                    //开始录音
+                    if(this.isPlaying){
+                        this.stopaudio(this.isPlaying)
+                        this.startRecord()
+                    }else{
+                        this.startRecord()
+                    }
+
+                }
                 console.log('start recode')
             },
-            handlePlay(){
+            timeCount(){
+                this.remain--
+                if(this.remain <= 0){
+                    this.stopRecord()
+                }
+            },
+            startRecord(){
+                //reset time
+                startRecord().then(()=>{
+                    this.remain = 10
+                    //delete pre record id
+                    this.setRecordId(null)
+                    this.setIsStartRecording(true)
+                    this.hadPressedMusicButton = false
+                    startRecord()
+                    this.time = setInterval(this.timeCount , 1000)
+                }).catch(err=>{
+                    console.error('start record error' , err)
+                })
 
             },
-            handleSave(){
+            stopRecord(){
+                clearInterval(this.time)
+                this.time = null
+                this.setIsStartRecording(false)
+                stopRecord().then(recordId => {
+                    if(this.hadPressedMusicButton){
+                        this.setRecordId(recordId)
+                        this.hadPressedMusicButton = false
+                        console.log('save recrod id , completed record')
+                    }else{
+                        console.log('had no tap music button')
+                    }
 
+                }).catch(err =>{
+                    console.error('record fail' ,err)
+                })
+            },
+            handlePlayRecord(){
+                if(this.isPlayingRecord){
+                    stopPlayRecord(this.recordId)
+                    this.setIsPlayingRecord(false)
+                    console.log('stop play recode')
+                }else{
+                    if(this.isPlaying){
+
+                        this.stopaudio(this.isPlaying)
+                        playRecord(this.recordId)
+                        this.setIsPlayingRecord(true)
+                        console.log('start play recode')
+                        // this.isPlaying.stop().then(()=>{
+                        //     playRecord(this.recordId)
+                        //     this.setIsPlayingRecord(true)
+                        //     console.log('start play recode')
+                        // }).catch(err=>console.error('stop error' , err))
+                    }else{
+                        playRecord(this.recordId)
+                        this.setIsPlayingRecord(true)
+                        console.log('start play recode')
+                    }
+                }
+
+            },
+            handleSaveRecord(){
+                console.log('save recode')
             },
             handleGotoMusicPage(){
-                if(this.recorded){
+                if(!!this.recordId){
                     this.$router.push({name:'individuality'})
                 }
 
+            },
+            audioend(item){
+                console.log('end music' , item)
+                this.setIsPlaying(null)
+            },
+            stopaudio(audio){
+                audio.pause();
+                audio.currentTime = 0;
+                this.setIsPlaying(null)
             }
         },
+        mounted(){
+            const data = {}
+            wxRecordConfig(data)
+        },
+        beforeRouteEnter (to, from, next) {
+            // called before the route that renders this component is confirmed.
+            // does NOT have access to `this` component instance,
+            // because it has not been created yet when this guard is called!
+            next()
+        },
+        beforeRouteUpdate (to, from, next) {
+            // called when the route that renders this component has changed,
+            // but this component is reused in the new route.
+            // For example, for a route with dynamic params `/foo/:id`, when we
+            // navigate between `/foo/1` and `/foo/2`, the same `Foo` component instance
+            // will be reused, and this hook will be called when that happens.
+            // has access to `this` component instance.
+            next()
+        },
+        beforeRouteLeave (to, from, next) {
+            // called when the route that renders this component is about to
+            // be navigated away from.
+            // has access to `this` component instance.
+            if(this.isStartRecording){
+                console.log("beforeRouteLeave close record")
+                stopRecord().then(recordId => {
+                    if(this.isPlaying){
+                        console.log("beforeRouteLeave close music")
+                        this.isPlaying = null
+                        return this.stopaudio(this.isPlaying)
+                    }
+                }).finally(()=>{
+                    clearInterval(this.time)
+                    this.time = null
+                    next()
+                })
+            }else{
+                clearInterval(this.time)
+                this.time = null
+                next()
+            }
+        }
     }
 </script>
 

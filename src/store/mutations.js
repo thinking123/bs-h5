@@ -9,5 +9,17 @@ export default {
         }
 
         state.loading =  loadQueue.length > 0
+    },
+    setRecordId(state ,id){
+        state.recordId = id
+    },
+    setIsPlaying(state ,isPlaying){
+        state.isPlaying = isPlaying
+    },
+    setIsPlayingRecord(state ,isPlayingRecord){
+        state.isPlayingRecord = isPlayingRecord
+    },
+    setIsStartRecording(state ,isStartRecording){
+        state.isStartRecording = isStartRecording
     }
 }
