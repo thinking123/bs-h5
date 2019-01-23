@@ -7,14 +7,18 @@
         <a class="link" href="javascript:;" @click="handleShowPlay">
             玩法说明
         </a>
-        <a href="javascript:;" class="weui-btn weui-btn_primary route_btn" @click="handlePushPage"> 开始我的音乐之旅</a>
+        <h-button class=" route_btn" @click.native="handlePushPage">
+            开始我的音乐之旅
+        </h-button>
     </div>
 
 </template>
 
 <script>
+    import HButton from "../components/HButton";
     export default {
         name: "Home",
+        components: {HButton},
         methods: {
             handlePushPage() {
                 this.$router.push({name:'interact'})
@@ -58,19 +62,12 @@
     .route_btn {
         position: absolute;
         bottom: 31px;
-        align-self: center;
+
         left: 50%;
         transform: translateX(-50%);
         width: 154px;
         height: 32px;
         @include font-dpr($base-btn-font-size);
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-decoration-line: none;
-
-
     }
 
 </style>

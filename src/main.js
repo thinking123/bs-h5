@@ -9,6 +9,8 @@ import routes from './router'
 import store from './store'
 import './assets/css/index.css'
 import 'weui'
+// import Mint from 'mint-ui';
+// Vue.use(Mint);
 
 Vue.config.productionTip = false
 Vue.use(VueRouter)
