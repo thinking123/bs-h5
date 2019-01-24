@@ -82,7 +82,7 @@
     import HButton from "../components/HButton";
     import {debounce} from "../utils/common";
     import {mapMutations , mapGetters} from 'vuex'
-    import {wxRecordConfig , startRecord, stopRecord , playRecord , stopPlayRecord} from "../utils/mock-wx-config";
+    import {wxRecordConfig , startRecord, stopRecord , playRecord , stopPlayRecord , registerOnVoicePlayEnd} from "../utils/wx-config";
     import RecordButton from "../components/RecordButton";
 
     export default {
@@ -123,7 +123,9 @@
                 isStartRecording:false,
 
                 remain:10,
-                time:null
+                time:null,
+
+                regcb:false
             }
         },
         methods: {
@@ -161,20 +163,25 @@
                 }
             },
             handleStartRecord(){
-                if(this.isStartRecording){
-                    //已经开始录音
-                    this.stopRecord()
-                }else{
-                    //开始录音
-                    if(this.isPlaying){
-                        this.stopaudio(this.isPlaying)
-                        this.startRecord()
+                try{
+                    if(this.isStartRecording){
+                        //已经开始录音
+                        this.stopRecord()
                     }else{
-                        this.startRecord()
-                    }
+                        //开始录音
+                        if(this.isPlaying){
+                            this.stopaudio(this.isPlaying)
+                            this.startRecord()
+                        }else{
+                            this.startRecord()
+                        }
 
+                    }
+                    console.log('start recode')
+                }catch (e) {
+                    console.error('start record' , e)
                 }
-                console.log('start recode')
+
             },
             timeCount(){
                 this.remain--
@@ -215,6 +222,15 @@
                 })
             },
             handlePlayRecord(){
+
+                if(!this.regcb){
+                    //是否 register 了，录音播放完毕event
+                    this.regcb = true
+                    registerOnVoicePlayEnd(recordId=>{
+                        //录音播放完毕
+                        this.setIsPlayingRecord(false)
+                    })
+                }
                 if(this.isPlayingRecord){
                     stopPlayRecord(this.recordId)
                     this.setIsPlayingRecord(false)

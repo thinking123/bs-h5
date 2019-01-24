@@ -105,6 +105,18 @@ export const playEnd = (localId) => {
 }
 
 
+export const registerOnVoicePlayEnd = (cb) => {
+    // 监听语音播放完毕接口
+    wx.onVoicePlayEnd({
+        success: function (res) {
+            var localId = res.localId; // 返回音频的本地ID
+            cb(localId)
+        }
+    });
+}
+
+
+
 export const uploadRecord = (localId) => {
     return new Promise((resolve, reject) => {
         wx.uploadVoice({
