@@ -4,6 +4,8 @@ COPY package.json .
 RUN npm install
 COPY . .
 RUN npm run build
+COPY MP_verify_nuvV6WcNBsLnfYqd.txt /app/dist
+RUN ls -a
 
 FROM nginx:1.15.8-alpine
 WORKDIR /html
