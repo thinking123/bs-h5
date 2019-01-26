@@ -1,5 +1,6 @@
 import "@babel/polyfill"
 import './compatibility/flexible'
+import './compatibility/faskclick'
 import './debug'
 import Vue from 'vue'
 import VueRouter from 'vue-router'

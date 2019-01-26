@@ -1,29 +1,33 @@
 <template>
     <div class="page">
-        <div class="title">
-            欢迎来到摆设-我的音乐人格
-        </div>
-        <img src="../assets/img/home-img.png" class="img"/>
-        <a class="link" href="javascript:;" @click="handleShowPlay">
-            玩法说明
-        </a>
-        <h-button class=" route_btn" @click.native="handlePushPage">
-            开始我的音乐之旅
-        </h-button>
+        <!--<div class="title">-->
+            <!--欢迎来到摆设-我的音乐人格-->
+        <!--</div>-->
+        <img src="../assets/img/home-bg.png" class="img"/>
+        <div class="how-to-play"  @click="handleShowPlay"/>
+        <img src="../assets/img/home-start-music-tour-btn.png" class="route_btn"  @click="handlePushPage">
+        <how-to-play-dialog :visible.sync="showHowtoplay"/>
     </div>
 
 </template>
 
 <script>
     import HButton from "../components/HButton";
+    import HowToPlayDialog from "../components/Dialog/HowToPlayDialog";
     export default {
         name: "Home",
-        components: {HButton},
+        components: {HowToPlayDialog, HButton},
+        data() {
+            return {
+                showHowtoplay: false
+            }
+        },
         methods: {
             handlePushPage() {
                 this.$router.push({name:'interact'})
             },
             handleShowPlay(){
+                this.showHowtoplay = true
                 console.log("show how to play")
             }
         }
@@ -38,7 +42,7 @@
         height: 100%;
         align-items: center;
         flex-direction: column;
-        margin: 0 46px;
+        width: 100%;
         position: relative;
     }
 
@@ -48,26 +52,33 @@
     }
 
     .img {
-        margin-top: 39px;
-        height: 211px;
-        width: 283px;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        left:0;
+        right: 0;
+        top:0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
     }
 
-    .link {
-        margin-top: 26px;
-        align-self: flex-end;
-        text-decoration-line: underline;
+    .how-to-play{
+        position: absolute;
+        top: 23px;
+        right: 9px;
+        width: 21px;
+        height: 76px;
+        /*background-color: seagreen;*/
     }
-
     .route_btn {
         position: absolute;
-        bottom: 31px;
-
+        bottom: 59px;
         left: 50%;
         transform: translateX(-50%);
-        width: 154px;
-        height: 32px;
-        @include font-dpr($base-btn-font-size);
+
+        width: 252px;
+        height: 68px;
     }
 
 </style>
