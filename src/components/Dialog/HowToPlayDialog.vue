@@ -1,5 +1,5 @@
 <template>
-    <div class="dialog"  v-if="showDialog" @click.stop="handleStop">
+    <div class="dialog"  v-if="showDialog" @click.stop="handleStop" @touchstart="stoptouch">
         <div class="mask" id="mask"/>
         <div class="body" @click.self="handleDialogClick">
             <img src="../../assets/img/how-to-play-bg.png" class="content" />
@@ -29,6 +29,9 @@
             },
             handleReturn(){
                 this.showDialog = false
+            },
+            stoptouch(e){
+                e.preventDefault()
             }
         },
         computed:{
@@ -67,7 +70,8 @@
         bottom: 0;
         width: 100%;
         height: 100%;
-
+        background-color: #333333;
+        opacity: 0.9;
     }
 
     .body{

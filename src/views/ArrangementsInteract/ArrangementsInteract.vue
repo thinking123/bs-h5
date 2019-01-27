@@ -25,58 +25,67 @@
         </audio>
 
         <div class="dev-selected-bar" :style="barSty"/>
+        <div v-for="(item , index) in navs" :key="item.key" class="dev-nav-bar-item"
+             :class="[`item${index + 1}`]"
+             @click="handleSwitchTabItem(item)"
+        />
 
+        <music-button-ex v-for="(item , index) in musicBtns" :text="item.text" :index="index" :key="item.key" @click.native="handleMusicClick(item)"/>
         <img src="./music.png" class="music"/>
         <img src="./start-record.png" @click="handleStartRecord" class="start-record"/>
         <img src="./play.png" @click="handlePlayRecord" class="play-record"/>
         <img src="./save.png" @click="handleSaveRecord" class="save-record"/>
         <img src="./test-music.png" @click="handleGotoMusicPage" class="go-to-music-page"/>
 
+        <!--<div style="border: 2px solid yellow;z-index: 1000;margin: 100px">-->
+            <!--<loading-bar-music/>-->
+        <!--</div>-->
+        <loading-bar-music class="loading-bar"/>
 
-        <img src="./chat-wrap.png" class="btn1 btn-img"/>
-        <div class="btn-text text1">
-            Do
-        </div>
+        <!--<img src="./chat-wrap.png" class="btn1 btn-img"/>-->
+        <!--<div class="btn-text text1">-->
+            <!--Do-->
+        <!--</div>-->
 
-        <img src="./chat-wrap.png" class="btn2 btn-img"/>
-        <div class="btn-text text2">
-           Re
-        </div>
-        <img src="./chat-wrap.png" class="btn3 btn-img"/>
-        <div class="btn-text text3">
-            Mi
-        </div>
-        <img src="./chat-wrap.png" class="btn4 btn-img"/>
-        <div class="btn-text text4">
-            Fa
-        </div>
-        <img src="./chat-wrap.png" class="btn5 btn-img"/>
-        <div class="btn-text text5">
-            Sol
-        </div>
-        <img src="./chat-wrap.png" class="btn6 btn-img"/>
-        <div class="btn-text text6">
-            La
-        </div>
-        <img src="./chat-wrap.png" class="btn7 btn-img"/>
-        <div class="btn-text text7">
-            Xi
-        </div>
-        <img src="./chat-wrap.png" class="btn8 btn-img"/>
-        <div class="btn-text text8">
-            Do
-        </div>
+        <!--<img src="./chat-wrap.png" class="btn2 btn-img"/>-->
+        <!--<div class="btn-text text2">-->
+           <!--Re-->
+        <!--</div>-->
+        <!--<img src="./chat-wrap.png" class="btn3 btn-img"/>-->
+        <!--<div class="btn-text text3">-->
+            <!--Mi-->
+        <!--</div>-->
+        <!--<img src="./chat-wrap.png" class="btn4 btn-img"/>-->
+        <!--<div class="btn-text text4">-->
+            <!--Fa-->
+        <!--</div>-->
+        <!--<img src="./chat-wrap.png" class="btn5 btn-img"/>-->
+        <!--<div class="btn-text text5">-->
+            <!--Sol-->
+        <!--</div>-->
+        <!--<img src="./chat-wrap.png" class="btn6 btn-img"/>-->
+        <!--<div class="btn-text text6">-->
+            <!--La-->
+        <!--</div>-->
+        <!--<img src="./chat-wrap.png" class="btn7 btn-img"/>-->
+        <!--<div class="btn-text text7">-->
+            <!--Xi-->
+        <!--</div>-->
+        <!--<img src="./chat-wrap.png" class="btn8 btn-img"/>-->
+        <!--<div class="btn-text text8">-->
+            <!--Do-->
+        <!--</div>-->
 
 
 
-        <div class="nav-bar" v-if="false">
-            <div v-for="(item , index) in navs" :key="item.key" class="nav-bar-item"
-                 :class="{'selected':item.key === selected}"
-                 @click="handleSwitchTabItem(item)"
-            >
-                {{item.text}}
-            </div>
-        </div>
+        <!--<div class="nav-bar" v-if="false">-->
+            <!--<div v-for="(item , index) in navs" :key="item.key" class="nav-bar-item"-->
+                 <!--:class="{'selected':item.key === selected}"-->
+                 <!--@click="handleSwitchTabItem(item)"-->
+            <!--&gt;-->
+                <!--{{item.text}}-->
+            <!--</div>-->
+        <!--</div>-->
 
         <div class="body" v-if="false">
             <div class="music-wrap">
@@ -138,10 +147,12 @@
         registerOnVoicePlayEnd
     } from "../../utils/wx-config";
     import RecordButton from "../../components/RecordButton";
+    import MusicButtonEx from "../../components/MusicButtonEx/MusicButtonEx";
+    import LoadingBarMusic from "../../components/LoadingBarMusic";
 
     export default {
         name: "ArrangementsInteract",
-        components: {RecordButton, HButton, MusicButton},
+        components: {LoadingBarMusic, MusicButtonEx, RecordButton, HButton, MusicButton},
         computed: {
             ...mapGetters(['recordId']),
             disableBtn() {
@@ -152,15 +163,26 @@
 
                 switch (this.selected) {
                     case 'gz':
-                        left = '67px'
+                        left = '1.80rem'
                         break
                     case 'jt':
-                        left = '1471px'
+                        left = '4rem'
                         break
                     case 'gq':
-                        left = '230px'
+                        left = '6.15rem'
                         break
                 }
+                // switch (this.selected) {
+                //     case 'gz':
+                //         left = '1.78rem'
+                //         break
+                //     case 'jt':
+                //         left = '3.97rem'
+                //         break
+                //     case 'gq':
+                //         left = '6.13rem'
+                //         break
+                // }
                 return {
                     left
                 }
@@ -169,9 +191,22 @@
         data() {
             return {
                 navs: [
-                    {key: 'gq', text: '钢琴'},
-                    {key: 'jt', text: '吉他'},
                     {key: 'gz', text: '古筝'},
+                    {key: 'jt', text: '吉他'},
+                    {key: 'gq', text: '钢琴'},
+
+
+                ],
+
+                musicBtns:[
+                    {key: 'do', text: 'Do'},
+                    {key: 'ri', text: 'Ro'},
+                    {key: 'mo', text: 'Mo'},
+                    {key: 'fa', text: 'Fo'},
+                    {key: 'so', text: 'So'},
+                    {key: 'la', text: 'La'},
+                    {key: 'xi', text: 'Xi'},
+                    {key: 'du', text: 'Do'},
                 ],
                 selected: 'gq',
                 row1: [
@@ -213,6 +248,7 @@
             },
 
             handleSwitchTabItem(item) {
+                console.log('item cli k')
                 if (item.key !== this.selected) {
                     this.selected = item.key
                 }
@@ -553,7 +589,7 @@
 
 
     .dev-selected-bar {
-        width: 75px;
+        width: 72px;
         height: 3px;
         background-color: white;
         top: 38.47%;
@@ -621,7 +657,7 @@
     .btn-text {
         z-index: 1;
         width: 43px;
-        height: 5.38%;
+        height: 5.24%;
         background-color: white;
         color: lightseagreen;
         font-family: Music-font;
@@ -637,17 +673,17 @@
     .btn-img {
         position: absolute;
         width: 50px;
-        height: 7.03%;
+        height: 7.63%;
     }
 
     .btn1 {
         top: 44.46%;
-        left: 81px;
+        left: 80px;
     }
 
     .btn2 {
         top: 44.46%;
-        left: 136px;
+        left: 135px;
     }
 
     .btn3 {
@@ -662,12 +698,12 @@
 
     .btn5 {
         top: 52.99%;
-        left: 81px;
+        left: 80px;
     }
 
     .btn6 {
         top: 52.99%;
-        left: 136px;
+        left: 135px;
     }
 
     .btn7 {
@@ -683,33 +719,33 @@
 
 
     .text1 {
-        top: 45.05%;
-        left: 83px;
+        top: 45.36%;
+        left: 84px;
     }
 
     .text2 {
-        top: 45.05%;
-        left: 138px;
+        top: 45.36%;
+        left: 139px;
     }
 
     .text3 {
-        top: 45.05%;
+        top: 45.36%;
         left: 194px;
     }
 
     .text4 {
-        top: 45.05%;
+        top: 45.36%;
         left: 249px;
     }
 
     .text5 {
         top: 53.74%;
-        left: 83px;
+        left: 84px;
     }
 
     .text6 {
         top: 53.74%;
-        left: 138px;
+        left: 139px;
     }
 
     .text7 {
@@ -720,5 +756,27 @@
     .text8 {
         top: 53.74%;
         left: 249px;
+    }
+    .dev-nav-bar-item{
+        width: 72px;
+        height: 3.59%;
+        top:39.22%;
+        position: absolute;
+    }
+    .item1{
+        left:70px;
+    }
+    .item2{
+        left:151px;
+    }
+    .item3{
+        left:233px;
+    }
+
+    .loading-bar{
+        position: absolute;
+        left: 160px;
+        /*left: 154px;*/
+        top:62.4%;
     }
 </style>

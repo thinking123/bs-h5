@@ -1,10 +1,11 @@
 <template>
     <div class="page">
         <img src="./bg.png" class="bg-img"/>
-        <img src="./play.png" class="play-music"/>
+        <img src="./playing.png" class="play-music" v-if="isPlaying" @click="handlePlay"/>
+        <img src="./play.png" class="play-music" v-else @click="handlePlay"/>
         <div   class="share"/>
         <div   class="register"/>
-
+        <share-music-playing-bar class="share-bar" v-if="isPlaying"/>
         <!--<h-button @click="handleShare" class="btn">-->
             <!--分享-->
         <!--</h-button>-->
@@ -13,14 +14,24 @@
 
 <script>
     import HButton from "../../components/HButton";
+    import ShareMusicPlayingBar from "../../components/ShareMusicPlayingBar";
     export default {
         name: "MusicIndividuality",
-        components: {HButton},
+        components: {ShareMusicPlayingBar, HButton},
         methods: {
             handleShare() {
                 console.log('share')
+            },
+            handlePlay(){
+                this.isPlaying = !this.isPlaying
             }
         },
+        data() {
+            return {
+                isPlaying: false
+            }
+        },
+
     }
 </script>
 
@@ -91,5 +102,12 @@
 
             @include font-dpr($base-btn-font-size);
         }
+    }
+    .share-bar{
+        /*left:335px;*/
+        right: 0;
+        top:145px;
+        position: absolute;
+        margin-right: 2px;
     }
 </style>
