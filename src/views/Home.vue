@@ -1,12 +1,6 @@
 <template>
     <div class="page">
-        <!--<div class="title">-->
-            <!--欢迎来到摆设-我的音乐人格-->
-        <!--</div>-->
-        <img src="../assets/img/home-bg.png" class="img"/>
-        <div class="how-to-play"  @click="handleShowPlay"/>
-        <img src="../assets/img/home-start-music-tour-btn.png" class="route_btn"  @click="handlePushPage">
-        <how-to-play-dialog :visible.sync="showHowtoplay"/>
+        <input ref="file" type="file" @change="handleChange" />
     </div>
 
 </template>
@@ -29,6 +23,9 @@
             handleShowPlay(){
                 this.showHowtoplay = true
                 console.log("show how to play")
+            },
+            handleChange(){
+                console.log('handleChange')
             }
         }
     }
