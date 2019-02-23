@@ -1,6 +1,6 @@
 export const shareInWx = (data, params) => {
     wx.config({
-        debug: true,
+        debug: false,
         appId: data.appid, // 必填，公众号的唯一标识
         timestamp: data.timestamp, // 必填，生成签名的时间戳
         nonceStr: data.nonceStr, // 必填，生成签名的随机串
@@ -20,8 +20,8 @@ export const shareInWx = (data, params) => {
         imgUrl: params.imageUrl, // 分享图标
         type: null, // 分享类型,music、video或link，不填默认为link
         dataUrl: null, // 如果type是music或video，则要提供数据链接，默认为空
-        success: function () {
-            console.log('show success')
+        success: function (e) {
+            console.log('show success' , e)
         }
     }
     wx.error(function(res){

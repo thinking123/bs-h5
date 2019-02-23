@@ -4,8 +4,12 @@
         <div class="how-to-play" @click="handleShowPlay"/>
         <div class="start-my-music-journey" @click="handlePushPage"/>
         <how-to-play-dialog :visible.sync="showHowtoplay"/>
-        <video src="http://pn3yoa4tm.bkt.clouddn.com/asserts/image/pages/video/video.mp4" preload class="video-cs" id="video"  v-if="showVideo"
-               @ended="videoEnded"/>
+        <video  class="video-cs" id="video"  v-if="showVideo" ref="video" autoplay="autoplay"
+                width="400" height="400"
+               @ended="videoEnded">
+            <!--<source src="http://pn3yoa4tm.bkt.clouddn.com/asserts/image/pages/video/video.mp4" type="video/mp4">-->
+            <source src="./video2.mp4" type="video/mp4">
+        </video>
         <button @click="handleSkip" class="skip-button">
             跳过
         </button>
@@ -40,22 +44,34 @@
 
         mounted() {
             if(this.showVideo){
-                const video = document.getElementById("video");
-                video.play()
-                console.log('play video')
+
+
             }
             this.init()
         },
         methods: {
-            ...mapGetters(['setShowVideo']),
+            ...mapMutations(['setShowVideo']),
             videoEnded(){
-                this.setShowVideo(false)
+                // this.setShowVideo(false)
                 console.log('videoEnded')
             },
             handleSkip(){
-                const video = document.getElementById("video");
-                video.stop()
-                this.setShowVideo(false)
+
+                try {
+                    const video = document.getElementById("video");
+                    if(video){
+                        console.log(video)
+                    }
+                    video.play().catch(e=>console.log('err' , e))
+                    console.log('play video')
+                }catch (e) {
+                    console.log(e)
+                }
+
+                // return
+                // const video = document.getElementById("video");
+                // video.pause()
+                // this.setShowVideo(false)
             },
             async init() {
                 try {
@@ -135,15 +151,15 @@
     .skip-button{
         z-index: 10000;
         position: fixed;
-        top:32rpx;
-        right:32rpx;
+        top:32px;
+        right:32px;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 28rpx;
-        width: 64rpx;
-        height: 64rpx;
-        border-radius: 64rpx;
+        font-size: 28px;
+        width: 64px;
+        height: 64px;
+        border-radius: 64px;
         border: 0;
         margin: 0;
     }
