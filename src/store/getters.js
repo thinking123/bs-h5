@@ -5,4 +5,5 @@ export default {
     isPlayingRecord: state => state.isPlayingRecord,
     isStartRecording: state => state.isStartRecording,
     base: state => state.base,
+    showVideo: state => state.showVideo,
 }

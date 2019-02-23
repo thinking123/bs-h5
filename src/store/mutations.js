@@ -21,5 +21,8 @@ export default {
     },
     setIsStartRecording(state ,isStartRecording){
         state.isStartRecording = isStartRecording
+    },
+    setShowVideo(state ,showVideo){
+        state.showVideo = showVideo
     }
 }

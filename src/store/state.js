@@ -13,5 +13,6 @@ export default {
     noncestr:'',
     signature:'',
     timestamp:'',
+    showVideo:true,
 
 }
