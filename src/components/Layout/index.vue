@@ -1,12 +1,15 @@
 <template>
     <div class="layout">
         <router-view></router-view>
+        <loading-bar/>
     </div>
 </template>
 
 <script>
+    import LoadingBar from "../LoadingBar";
     export default {
-        name: "Layout"
+        name: "Layout",
+        components: {LoadingBar}
     }
 </script>
 

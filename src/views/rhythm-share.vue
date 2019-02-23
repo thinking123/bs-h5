@@ -14,7 +14,7 @@
                bindtap="handlePlay"/>
 
         <!--<div class="btn-share btn-middle" bindtap="handleShare"/>-->
-        <button class="btn-share btn-middle" open-type="share"/>
+        <button class="btn-share btn-middle" @click="handleShare"/>
         <div class="btn-register btn-middle" @click="handleRegister"/>
 
         <share-music-playing-bar class="share-music-playing-bar" v-if="isPlaying"/>
@@ -28,6 +28,8 @@
     import {showMsg , getRandomInt} from "../utils/common";
     import {mapGetters} from 'vuex'
     import ShareMusicPlayingBar from "../components/ShareMusicPlayingBar";
+    import {getSignInfo} from "../utils/http";
+    import {shareInWx} from "../utils/wx-config";
     const page = 'rhythm-share-'
     export default {
         name: "rhythm-share",
@@ -53,12 +55,16 @@
                 isPlaying:false,
                 shareBg:'',
                 bg:'',
-                rand:1
+                rand:1,
+                appid:'',
+                nonceStr:'',
+                signature:'',
+                timestamp:''
             }
         },
         mounted(option){
 
-
+            this.init()
             const rand = option && option.rand ? option.rand : getRandomInt(1 , 5)
             // console.log('rand ' , rand)
             // showMsg(option && option.rand ? `have rand${rand}` : 'no rand')
@@ -82,6 +88,25 @@
             }
         },
         methods:{
+            async init() {
+                try {
+                    const {
+                        appid,
+                        noncestr,
+                        signature,
+                        timestamp
+                    } = await getSignInfo(window.location.href)
+
+
+                    this.appid = appid
+                    this.nonceStr = noncestr
+                    this.signature = signature
+                    this.timestamp = timestamp
+                    console.log(res)
+                } catch (e) {
+                    console.log('error ', e)
+                }
+            },
             handlePlay(e) {
                 console.log('handlePlay' , this.data.isPlaying)
                 if(this.tempFilePath){
@@ -91,7 +116,16 @@
                 }
             },
             handleShare(e) {
-                console.log('handleShare')
+                 shareInWx({
+                    appid:this.appid,
+                    timestamp:this.timestamp,
+                    nonceStr:this.nonceStr,
+                    signature:this.signature,
+                } , {
+                    title:'微信分享也ts',
+                    content:'微信分享content',
+                    imageUrl:'http://pn3yoa4tm.bkt.clouddn.com/home-bg.png',
+                })
             },
             handleRegister(e) {
                 console.log('handleRegister')

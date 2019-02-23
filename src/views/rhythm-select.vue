@@ -62,6 +62,8 @@
 
     import MusicBtn from "../components/MusicBtn";
     import StartRecordingBar from "../components/StartRecordingBar";
+    import {getSignInfo} from "../utils/http";
+    import {shareInWx} from "../utils/wx-config";
 
     const page = 'rhythm-select-'
 
@@ -109,6 +111,7 @@
             }
         },
         mounted() {
+            this.init()
             // this.recorderManager = wx.getRecorderManager()
             const self = this
             this.recorderManager = {
@@ -223,6 +226,21 @@
             }
         },
         methods: {
+            async init() {
+                try {
+                    const {
+                        appid,
+                        noncestr,
+                        signature,
+                        timestamp
+                    } = await getSignInfo(window.location.href)
+
+
+                    console.log(res)
+                } catch (e) {
+                    console.log('error ', e)
+                }
+            },
             handleDev(e) {
                 const data = e.target.dataset.dev
                 let left = 0

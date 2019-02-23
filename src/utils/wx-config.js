@@ -1,6 +1,6 @@
 export const shareInWx = (data, params) => {
     wx.config({
-        debug: false,
+        debug: true,
         appId: data.appid, // 必填，公众号的唯一标识
         timestamp: data.timestamp, // 必填，生成签名的时间戳
         nonceStr: data.nonceStr, // 必填，生成签名的随机串
@@ -24,7 +24,10 @@ export const shareInWx = (data, params) => {
             console.log('show success')
         }
     }
-
+    wx.error(function(res){
+        alert('config error' )
+        alert(res )
+    });
     wx.ready(function () {
         // “分享给朋友”及“分享到QQ”
         wx.updateAppMessageShareData(_conf)

@@ -45,7 +45,7 @@ export async function getUser(params) {
 
 export async function uploadFile(formData) {
     const url = `/interface/uploadImg`
-    console.log('form data' , formData)
+    console.log('form data', formData)
     return http.post(url, formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
@@ -54,9 +54,24 @@ export async function uploadFile(formData) {
     }).then(parseRespond)
 }
 
+export async function getSignInfo(signUrl) {
+    const url = `/api/misic/signature?url=${signUrl}`
+    const data = {
+        url: signUrl
+    }
+    return http.post(url, {}, {
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }).then(res=>res.rows)
+}
+
+
 export default {
     checkInvitationCode,
     register,
     getLink,
-    getUser
+    getUser,
+    getSignInfo
+
 }
