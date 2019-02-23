@@ -17,9 +17,10 @@
         methods: {
             touchstart(e) {
 
-                this.setData({
-                    pressing: true
-                })
+                // this.setData({
+                //     pressing: true
+                // })
+                this.pressing = true
                 this.$emit('touching', this.musicKey)
                 this.time = setInterval(() => {
                     // console.log('开始按钮')
@@ -33,9 +34,10 @@
             touchend(e) {
 
 
-                this.setData({
-                    pressing: false
-                })
+                // this.setData({
+                //     pressing: false
+                // })
+                this.pressing = false
                 clearInterval(this.time)
                 this.time = null
                 // console.log('结束按钮')
@@ -50,6 +52,7 @@
 
 <style scoped>
     .music-btn {
+        /*user-select: none;*/
         /*z-index: 100;*/
         position: absolute;
         /*height: 7.8%;*/

@@ -181,6 +181,11 @@ export function debounce(func, wait, immediate) {
 
 
 export function showMsg(title, showIcon = false) {
+
+
+    alert(title)
+    return
+
     if (!title) {
         return
     }
