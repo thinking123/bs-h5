@@ -178,3 +178,41 @@ export function debounce(func, wait, immediate) {
         return result;
     };
 }
+
+
+export function showMsg(title, showIcon = false) {
+    if (!title) {
+        return
+    }
+
+    let icon = 'success'
+    let isError = title instanceof Error ||
+        typeof title !== 'string' ||
+        //小程序 系统error
+        (title.errMsg && title.errMsg.length > 0)
+
+    if (isError) {
+        //本地图标
+        icon = 'fail'
+        title = title.message ? title.message : title.errMsg
+        title = title ? title : 'error'
+    }
+
+    let options = {
+        title: title,
+        mask: true
+    }
+
+    options = Object.assign(options, {icon: showIcon ? icon : 'none'})
+    wx.showToast(options)
+
+    console.log(title, icon, isError)
+}
+
+export function getRandomInt(min, max) {
+    min = Math.ceil(min)
+    max = Math.floor(max)
+    const rand = Math.floor(Math.random() * (max - min + 1)) + min
+    console.log('rand', rand)
+    return rand
+}
