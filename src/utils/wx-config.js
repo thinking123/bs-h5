@@ -34,8 +34,9 @@ export const shareInWx = (data, params) => {
 }
 
 export const wxRecordConfig = (data) => {
+    const debug = process.env.NODE_ENV !== 'production'
     wx.config({
-        debug: false,
+        debug,
         appId: data.appid, // 必填，公众号的唯一标识
         timestamp: data.timestamp, // 必填，生成签名的时间戳
         nonceStr: data.nonceStr, // 必填，生成签名的随机串

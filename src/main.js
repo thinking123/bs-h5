@@ -1,4 +1,5 @@
 import "@babel/polyfill"
+// import "./lib/jweixin"
 import './compatibility/flexible'
 import './compatibility/faskclick'
 import './debug'

@@ -19,6 +19,7 @@
 
         <share-music-playing-bar class="share-music-playing-bar" v-if="isPlaying"/>
 
+        <img src="./qr-code1.jpg" class="qr-code"/>
     </div>
 </template>
 
@@ -181,6 +182,14 @@
         margin:0;
         padding:0;
 
+    }
+    .qr-code{
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 200px;
+        height: 200px;
+        z-index: 1000000;
     }
 
     .img{
