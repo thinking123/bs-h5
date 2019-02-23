@@ -219,7 +219,7 @@
     }
     .qr-code{
         position: absolute;
-        right: 0;
+        left: 0;
         bottom: 0;
         width: 200px;
         height: 200px;

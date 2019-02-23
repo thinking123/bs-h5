@@ -1,0 +1,1 @@
+git pull origin && docker stop bs-h5-container && docker rm bs-h5-container && docker rmi bs-h5-image && docker run --name bs-h5-container -d -p 80:8082 bs-h5-image
