@@ -3,5 +3,6 @@ export default {
     recordId: state => state.recordId,
     isPlaying: state => state.isPlaying,
     isPlayingRecord: state => state.isPlayingRecord,
-    isStartRecording: state => state.isStartRecording
+    isStartRecording: state => state.isStartRecording,
+    base: state => state.base,
 }

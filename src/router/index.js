@@ -1,7 +1,8 @@
 import Layout from '../components/Layout'
 
 const Home = () => import(/* webpackChunkName: "Home" */ '../views/Home')
-const ArrangementsInteract = () => import(/* webpackChunkName: "Home" */ '../views/ArrangementsInteract/ArrangementsInteract')
+// const ArrangementsInteract = () => import(/* webpackChunkName: "Home" */ '../views/ArrangementsInteract/ArrangementsInteract')
+const ArrangementsInteract = () => import(/* webpackChunkName: "Home" */ '../views/rhythm-select')
 const MusicIndividuality = () => import(/* webpackChunkName: "Home" */ '../views/MusicIndividuality/MusicIndividuality')
 
 export default [
