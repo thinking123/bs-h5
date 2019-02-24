@@ -65,6 +65,17 @@ export async function getSignInfo(signUrl) {
         }
     }).then(res=>res.rows)
 }
+export async function login() {
+    const url = `/api/login/htmllogin`
+    return http.post(url, {}, {
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }).then(res=>res)
+}
+
+
+
 
 
 export default {
@@ -72,6 +83,6 @@ export default {
     register,
     getLink,
     getUser,
-    getSignInfo
+    getSignInfo,
 
 }

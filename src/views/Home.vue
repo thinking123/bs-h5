@@ -20,7 +20,7 @@
 <script>
     import HButton from "../components/HButton";
     import HowToPlayDialog from "../components/Dialog/HowToPlayDialog";
-    import {getSignInfo} from "../utils/http";
+    import {getSignInfo , login} from "../utils/http";
     import {mapGetters , mapMutations} from 'vuex'
     const baseAudioUrl = `asserts/audio/video/video.mp4`
     const page = 'music-journey-'
@@ -43,10 +43,6 @@
         },
 
         mounted() {
-            if(this.showVideo){
-
-
-            }
             this.init()
         },
         methods: {
@@ -75,14 +71,8 @@
             },
             async init() {
                 try {
-                    const {
-                        appid,
-                        noncestr,
-                        signature,
-                        timestamp
-                    } = await getSignInfo(window.location.href)
-
-                    // console.log(res)
+                    const res = await login()
+                    console.log('login' , res)
                 } catch (e) {
                     console.log('error ', e)
                 }
