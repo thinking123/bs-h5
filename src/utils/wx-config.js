@@ -1,4 +1,4 @@
-export function wx_config(appid , timestamp , nonceStr , signature , jsApiList) {
+export function wx_config(appId , timestamp , nonceStr , signature , jsApiList) {
     return new Promise((resolve, reject) => {
         wx.config({
             debug: false,
