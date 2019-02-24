@@ -1,5 +1,28 @@
 <template>
     <div class="container">
+        <audio ref="do" @ended="audioend('do')">
+            <source src="../assets/musics/rhythm-select-do.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="re" @ended="audioend('re')">
+            <source src="../assets/musics/rhythm-select-re.mp3" type="audio/mpeg"/>
+        </audio>
+
+        <audio ref="mi" @ended="audioend('mi')">
+            <source src="../assets/musics/rhythm-select-mi.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="fa" @ended="audioend('fa')">
+            <source src="../assets/musics/rhythm-select-fa.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="sol" @ended="audioend('sol')">
+            <source src="../assets/musics/rhythm-select-sol.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="la" @ended="audioend('la')">
+            <source src="../assets/musics/rhythm-select-la.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="xi" @ended="audioend('xi')">
+            <source src="../assets/musics/rhythm-select-xi.mp3" type="audio/mpeg"/>
+        </audio>
+
         <img :src="bg" class="img"/>
         <img :src="startBtn"
              class="record-btn btn-middle"
@@ -11,7 +34,7 @@
              @click="handlePlay"/>
         <img :src="stopBtn"
              class="stop-btn btn-middle"
-             wx:else
+             v-else
              @click="handlePlay"/>
 
         <img :src="yp"
@@ -53,17 +76,31 @@
         <music-btn class="music-btn row2 music-btn6" text="La" @touching="handleTouching" musicKey="la"/>
         <music-btn class="music-btn row2 music-btn7" text="Xi" @touching="handleTouching" musicKey="xi"/>
 
+
+        <button @click="handleTst" class="to-share">
+            test to share
+        </button>
+
     </div>
 
 </template>
 
 <script>
-    import {mapGetters} from 'vuex'
+    import {mapGetters, mapMutations} from 'vuex'
 
     import MusicBtn from "../components/MusicBtn";
     import StartRecordingBar from "../components/StartRecordingBar";
     import {getSignInfo} from "../utils/http";
-    import {shareInWx} from "../utils/wx-config";
+    import {showMsg} from "../utils/common";
+    import {
+        wx_config,
+        wx_startRecord,
+        wx_stopRecord,
+        wx_playRecord,
+        wx_stopPlayRecord,
+        wx_registerOnVoicePlayEnd
+    } from "../utils/wx-config";
+    import {CHANGE_LOADING_BAR} from "../store/mutations";
 
     const page = 'rhythm-select-'
 
@@ -112,101 +149,13 @@
         },
         mounted() {
             this.init()
-            // this.recorderManager = wx.getRecorderManager()
-            const self = this
-            this.recorderManager = {
-                play() {
-                    console.log('play')
-                },
-                start() {
-                    console.log('start');
-                    self.startRecord()
-                },
-                stop() {
-                    console.log('stop');
-                    self.stopRecord('filepath')
-                },
-                pause() {
-                    console.log('pause')
-                },
-            }
-
-            // this.recorderManager.onStart(() => {
-            //     this.startRecord()
-            // })
-            // this.recorderManager.onPause(() => {
-            //     console.log('recorder pause')
-            // })
-            // this.recorderManager.onStop((res) => {
-            //     const {tempFilePath} = res
-            //     this.stopRecord(res.tempFilePath)
-            // })
-            // this.recorderManager.onFrameRecorded((res) => {
-            //     const {frameBuffer} = res
-            //     console.log('frameBuffer.byteLength', frameBuffer.byteLength)
-            // })
-            // this.recorderManager.onError((err) => {
-            //     console.log('onError', err.errMsg)
-            //     this.stopRecord(null)
-            // })
-            //
-            // this.recorderManager.onInterruptionBegin((err) => {
-            //     console.log('onInterruptionBegin', err)
-            // })
-            //
-            // this.recorderManager.onInterruptionEnd((err) => {
-            //     console.log('onInterruptionEnd', err)
-            // })
-
-
-            // this.ctx = wx.createInnerAudioContext()
-            this.ctx = {
-                play() {
-                    console.log('play');
-                    self.startPlayRecord()
-                },
-                stop() {
-                    console.log('stop')
-                },
-                pause() {
-                    console.log('pause')
-                },
-            }
-
-            // this.ctx.autoplay = true
-            /*
-            * obeyMuteSwitch	boolean	true	否
-            * （仅在 iOS 生效）是否遵循静音开关，设置为 false 之后，即使是在静音模式下，也能播放声音
-            * */
-            // wx.setInnerAudioOption({
-            //     obeyMuteSwitch: false
-            // })
-            // this.ctx.onPlay(() => {
-            //     console.log('开始播放')
-            //     // this.show('开始播放')
-            //     // this.startPlayRecord()
-            // })
-            // this.ctx.onEnded(() => {
-            //     console.log('播放结束')
-            //     this.stopPlayRecord()
-            //     // this.setData({
-            //     //     isPlaying: false
-            //     // })
-            //     // this.show('播放结束')
-            // })
-            // this.ctx.onError((res) => {
-            //     // this.stopPlayRecord()
-            //     // console.log(res.errMsg)
-            //     // console.log(res.errCode)
-            //     this.isPlaying = false
-            //     // this.showModal(err.errMsg , 'ctx onError')
-            // })
         },
         data() {
             return {
-                left: '136px',
                 url: this.base,
                 isPlaying: false,
+                isPlayingAudio: false,
+
                 isRecording: false,
                 isRecorded: false,
                 //最大录音时间 10s
@@ -226,83 +175,82 @@
             }
         },
         methods: {
+            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),
+            handleTst() {
+                this.$router.push({name: 'individuality'})
+            },
             async init() {
+                console.log(window.location.href)
                 try {
+                    this.CHANGE_LOADING_BAR(true)
+                    this.setLoadingText('设置录音...')
                     const {
                         appid,
                         noncestr,
                         signature,
                         timestamp
                     } = await getSignInfo(window.location.href)
+                    const jsApiList = [
+                        'startRecord',
+                        'stopRecord',
+                        'onVoiceRecordEnd',
+                        'playVoice',
+                        'pauseVoice',
+                        'stopVoice',
+                        'onVoicePlayEnd',
+                        'uploadVoice',
+                        'downloadVoice'
+                    ]
+                    await wx_config(appid, timestamp, noncestr, signature, jsApiList)
 
-
-                    console.log(res)
+                    wx_registerOnVoicePlayEnd(() => {
+                        console.log('语音播放完毕')
+                        this.isPlaying = false
+                    })
+                    console.log('wx jdk init success')
                 } catch (e) {
                     console.log('error ', e)
+                } finally {
+                    this.CHANGE_LOADING_BAR(false)
                 }
             },
-            handleDev(e) {
-                const data = e.target.dataset.dev
-                let left = 0
-
-                switch (data) {
-                    case "0" :
-                        left = 68 * 2;
-                        break
-                    case "1" :
-                        left = 149 * 2;
-                        break
-                    case "2" :
-                        left = 230 * 2;
-                        break
-
+            audioend(item) {
+                console.log('end music', item)
+                this.curAudio = null
+                this.isPlayingAudio = false
+            },
+            stopaudio() {
+                if (this.isPlayingAudio && this.curAudio) {
+                    this.curAudio.pause();
+                    this.curAudio.currentTime = 0;
+                    this.isPlayingAudio = false
+                    this.curAudio = null
                 }
 
-                left += 'rpx'
-
-                console.log('handleDev', data, left)
-                this.setData({
-                    left: left
-                })
-
             },
-            handleRecord(e) {
+            async handleRecord(e) {
                 if (this.isRecording) {
-                    this.recorderManager.stop()
-
-                    // this.stopRecord()
+                    await this.stopRecord()
                 } else {
-                    //IOS 开始录音的时候不能为静音模式
-                    //或者开启 播放录音的:obeyMuteSwitch
-                    this.recorderManager.start(options)
-
-
-                    // this.startRecord()
+                    this.stopaudio()
+                    await this.stopPlayRecord()
+                    this.startRecord()
                 }
             },
             handlePlay(e) {
-                // this.setData({
-                //     isPlaying: true
-                // })
-
-                // return
                 if (!this.isHadRecord()) {
                     this.showModal('您还没有录音')
                     return
                 }
 
-                this.startPlayRecord()
                 if (this.isPlaying) {
-                    this.ctx.stop()
-                    this.isPlaying = false
+                    this.stopPlayRecord()
+                    wx_stopPlayRecord(this.tempFilePath)
                 } else {
-                    this.ctx.src = this.tempFilePath
-                    this.ctx.play()
-                    this.isPlaying = true
+                    this.stopaudio()
+                    this.startPlayRecord()
+                    wx_playRecord(this.tempFilePath)
                 }
-                // this.setData({
-                //     isPlaying: !this.isPlaying
-                // })
             },
             handleSave(e) {
                 if (!this.isHadRecord()) {
@@ -331,27 +279,12 @@
                     this.showModal('您还没有录音')
                     return
                 }
-
-                // if(this.ctx){
-                //     this.ctx.stop()
-                // }
-                // if(this.time){
-                //     clearInterval(this.time)
-                //     this.time = null
-                // }
-                // if(this.recorderManager){
-                //     this.recorderManager.stop()
-                // }
-
-
-                const url = `/pages/rhythm-share/index?temppath=${this.tempFilePath}`
-                console.log('url', url)
-                wx.navigateTo({
-                    url: url
+                this.$router.push({
+                    name: 'individuality',
+                    query: {
+                        recordId: this.tempFilePath
+                    }
                 })
-            },
-            setTaped(key) {
-
             },
             handleTouching(e, notPlay = false) {
                 const key = e
@@ -431,6 +364,7 @@
                 // this.setData({
                 //     isPlaying: true
                 // })
+                this.isPlaying = true
                 this.startTime = this.getTime()
                 this.cloneTimeline = [...this.timeline]
                 this.playRecordTime = setInterval(() => {
@@ -459,93 +393,60 @@
                 // console.log('time' , t)
                 return t
             },
-            startRecord() {
+            async startRecord() {
+                console.log('开始录音')
                 // this.show('录音开始')
+                await wx_startRecord()
                 this.startTime = this.getTime()
                 this.timeline = []
-
-                // this.setData({
-                //     isPlaying: false,
-                //     isRecording: true,
-                //     isPressMusicBtn: false,
-                //     tempFilePath: null,
-                //     remainTime: recordMaxTime,
-                //     isRecorded: false
-                // })
-
                 this.isPlaying = false
+                this.isPlayingAudio = false
                 this.isRecording = true
                 this.isPressMusicBtn = false
                 this.tempFilePath = null
                 this.remainTime = recordMaxTime
                 this.isRecorded = false
 
-                this.ctx.stop()
-                this.ctx.src = null
-
                 this.time = setInterval(() => {
                     const remain = --this.remainTime
                     console.log('remain', remain)
-                    // this.setData({
-                    //     remainTime: remain
-                    // })
-                    //
                     this.remainTime = remain
 
                     if (remain <= 0) {
-                        this.recorderManager.stop()
+                        this.stopRecord()
                     }
                 }, 1000)
             },
-            stopRecord(tempFilePath) {
+            async stopRecord() {
 
-                // this.show('录音结束')
+                console.log('stopRecord')
                 if (this.time) {
                     clearInterval(this.time)
                     this.time = null
                 }
-
-                //
-                // this.setData({
-                //     isPlaying: false,
-                //     isRecording: false,
-                //     tempFilePath: tempFilePath,
-                //     isRecorded: this.isPressMusicBtn
-                // })
-
-                this.isPlaying = false
+                const tempFilePath = await wx_stopRecord()
                 this.isRecording = false
                 this.tempFilePath = tempFilePath
                 this.isRecorded = this.isPressMusicBtn
-
-                this.ctx.stop()
-                this.ctx.src = null
-            },
-            onLoad() {
-
-
             },
             isHadRecord() {
                 return this.isRecorded
             },
-            playMusic(key) {
-                const ctx = this.ctx
-                //停止之前的播放
-                ctx.stop()
+            async playMusic(key) {
+                this.isPressMusicBtn = true
+                this.stopaudio()
 
-                this.isPlaying = false
-                this.isPressMusicBtn = this.isRecording
-                // this.setData({
-                //     isPlaying: false,
-                //     isPressMusicBtn: this.isRecording
-                // })
-
-
-                const b = `${this.url}${key}.mp3`
-                // showMsg(b)
-                ctx.src = b
-                return
-                ctx.play()
+                const audio = this.$refs[key]
+                if (audio) {
+                    this.curAudio = audio
+                    this.isPlayingAudio = true
+                    console.log('music playing')
+                    audio.play().catch(err=>{
+                        console.log('audio play error' , err)
+                    })
+                } else {
+                    console.error('music doesnot exist')
+                }
             },
             show(msg) {
                 const obj = {
@@ -566,43 +467,58 @@
                 //         }
                 //     }
                 // })
-            },
-            clearResource() {
-                if (this.ctx) {
-                    this.ctx.stop()
-                    this.ctx.destroy()
-                    this.ctx = null
-                }
-                if (this.time) {
-                    clearInterval(this.time)
-                    this.time = null
-                }
-                if (this.recorderManager) {
-                    this.recorderManager.stop()
-                    this.recorderManager = null
-                }
-            },
-            onHide() {
-                if (this.ctx) {
-                    this.isPlaying && this.ctx.stop()
-                }
-                if (this.time) {
-                    clearInterval(this.time)
-                    this.time = null
-                }
-                if (this.recorderManager) {
-                    this.isRecording && this.recorderManager.stop()
-                }
-            },
-            onUnload() {
-                this.clearResource()
             }
+        },
+        beforeRouteEnter(to, from, next) {
+            next()
+        },
+        beforeRouteUpdate(to, from, next) {
+            next()
+        },
+        async beforeRouteLeave(to, from, next) {
+
+            try {
+
+                console.log('beforeRouteLeave clear')
+                clearInterval(this.playRecordTime)
+                this.playRecordTime = null
+
+                clearInterval(this.time)
+                this.time = null
+
+                if (this.isRecording) {
+                    await wx_stopRecord()
+                    this.stopaudio()
+                }
+
+            }catch (e) {
+                console.error('beforeRouteLeave' , e)
+            }finally {
+                next()
+            }
+
+
         }
     }
 </script>
 
 <style scoped>
 
+    .to-share{
+        z-index: 10000;
+        position: fixed;
+        top:32px;
+        right:32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 28px;
+        width: 64px;
+        height: 64px;
+        border-radius: 64px;
+        border: 0;
+        margin: 0;
+    }
     .container {
         height: 100%;
         width: 100%;

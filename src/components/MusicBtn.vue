@@ -43,8 +43,14 @@
                 // console.log('结束按钮')
             }
         },
+        mounted(){
+            document.body.addEventListener('touchend' , this.handleEnd)
+        },
         beforeDestroy(){
             clearInterval(this.time)
+            this.time = null
+            document.body.removeEventListener('touchend' , this.handleEnd)
+            // console.log('beforeDestroy press')
         }
 
     }

@@ -13,13 +13,16 @@
     export default {
         name: "LoadingBar",
         props:{
-            content:{
-                type:String,
-                default:'数据加载中...'
-            }
+            // content:{
+            //     type:String,
+            //     default:'数据加载中...'
+            // }
         },
         computed:{
-            ...mapGetters(['base' , 'loading']),
+            ...mapGetters(['base' , 'loading' , 'loadingText']),
+            content(){
+                return this.loadingText ? this.loadingText : '数据加载中...'
+            },
             bg(){
                 return `${this.base}${page}bg.png`
             },

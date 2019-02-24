@@ -3,6 +3,7 @@
 export default {
     openid: null,
     loading:false,
+    loadingText:'',
     recordId:null,
     isPlaying:false,
     isPlayingRecord:false,

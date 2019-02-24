@@ -9,6 +9,12 @@ export default {
         }
 
         state.loading =  loadQueue.length > 0
+        if(!state.loading){
+            state.loadingText = ''
+        }
+    },
+    setLoadingText(state ,loadingText){
+        state.loadingText = loadingText
     },
     setRecordId(state ,id){
         state.recordId = id

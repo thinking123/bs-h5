@@ -1,67 +1,52 @@
-export const shareInWx = (data, params) => {
-    wx.config({
-        debug: false,
-        appId: data.appid, // 必填，公众号的唯一标识
-        timestamp: data.timestamp, // 必填，生成签名的时间戳
-        nonceStr: data.nonceStr, // 必填，生成签名的随机串
-        signature: data.signature, // 必填，签名
-        jsApiList: [
-            //自定义“分享给朋友”及“分享到QQ”按钮的分享内容
-            'updateAppMessageShareData',
-            //自定义“分享到朋友圈”及“分享到QQ空间”按钮的分享内容
-            'updateTimelineShareData'
-        ]
-    })
+export function wx_config(appid , timestamp , nonceStr , signature , jsApiList) {
+    return new Promise((resolve, reject) => {
+        wx.config({
+            debug: false,
+            appId,
+            timestamp,
+            nonceStr,
+            signature,
+            jsApiList
+        })
 
-    var _conf = {
-        title: params.title, // 分享标题
-        desc: params.content, // 分享描述
-        link: params.url || window.location.href, // 分享链接
-        imgUrl: params.imageUrl, // 分享图标
-        type: null, // 分享类型,music、video或link，不填默认为link
-        dataUrl: null, // 如果type是music或video，则要提供数据链接，默认为空
-        success: function (e) {
-            console.log('show success' , e)
-        }
-    }
-    wx.error(function(res){
-        alert('config error' )
-        alert(res )
-    });
-    wx.ready(function () {
-        // “分享给朋友”及“分享到QQ”
-        wx.updateAppMessageShareData(_conf)
-        // “分享到朋友圈”及“分享到QQ空间”
-        wx.updateTimelineShareData(_conf)
+        // jsApiList: [
+        //     'updateTimelineShareData',
+        //     'updateAppMessageShareData',
+        // ]
+        wx.ready(resolve)
+        wx.error(reject)
+    })
+}
+//定义分享到朋友圈内容
+export function wx_timelineShare(title, link, imgUrl) {
+    return new Promise((resolve, reject) => {
+        wx.updateTimelineShareData({
+            title,
+            link,
+            imgUrl,
+            success:resolve,
+            fail:reject,
+            cancel:res=>reject(new Error('用户取消分享')),
+        })
     })
 }
 
-export const wxRecordConfig = (data) => {
-    const debug = process.env.NODE_ENV !== 'production'
-    wx.config({
-        debug,
-        appId: data.appid, // 必填，公众号的唯一标识
-        timestamp: data.timestamp, // 必填，生成签名的时间戳
-        nonceStr: data.nonceStr, // 必填，生成签名的随机串
-        signature: data.signature, // 必填，签名
-        jsApiList: [
-            'startRecord',
-            'stopRecord',
-            'onVoiceRecordEnd',
-            'playVoice',
-            'pauseVoice',
-            'stopVoice',
-            'onVoicePlayEnd',
-            'uploadVoice',
-            'downloadVoice'
-        ]
+//定义“分享给朋友”及“分享到QQ”按钮的分享内容
+export function wx_appMessageShare(title, desc , link, imgUrl) {
+    return new Promise((resolve, reject) => {
+        wx.updateAppMessageShareData({
+            title,
+            desc,
+            link,
+            imgUrl,
+            success:resolve,
+            fail:reject,
+            cancel:res=>reject(new Error('用户取消分享')),
+        })
     })
 }
 
-// return new Promise((resolve ,reject) =>{
-//
-// })
-export const startRecord = () => {
+export const wx_startRecord = () => {
     return new Promise((resolve, reject) => {
         wx.startRecord({
             success: function (res) {
@@ -70,10 +55,8 @@ export const startRecord = () => {
             fail: err => reject(err)
         })
     })
-
-    // wx.startRecord();
 }
-export const stopRecord = () => {
+export const wx_stopRecord = () => {
     return new Promise((resolve, reject) => {
         wx.stopRecord({
             success: function (res) {
@@ -84,19 +67,19 @@ export const stopRecord = () => {
         })
     })
 }
-export const playRecord = (localId) => {
+export const wx_playRecord = (localId) => {
     wx.playVoice({
         localId// 需要播放的音频的本地ID，由stopRecord接口获得
     });
 }
 
-export const stopPlayRecord = (localId) => {
+export const wx_stopPlayRecord = (localId) => {
     wx.stopVoice({
         localId // 需要停止的音频的本地ID，由stopRecord接口获得
     });
 }
 
-export const playEnd = (localId) => {
+export const wx_playEnd = (localId) => {
     return new Promise((resolve, reject) => {
         wx.onVoicePlayEnd({
             success: function (res) {
@@ -109,19 +92,15 @@ export const playEnd = (localId) => {
 }
 
 
-export const registerOnVoicePlayEnd = (cb) => {
+export const wx_registerOnVoicePlayEnd = (cb) => {
     // 监听语音播放完毕接口
     wx.onVoicePlayEnd({
-        success: function (res) {
-            var localId = res.localId; // 返回音频的本地ID
-            cb(localId)
-        }
+        complete: cb
     });
 }
 
 
-
-export const uploadRecord = (localId) => {
+export const wx_uploadRecord = (localId) => {
     return new Promise((resolve, reject) => {
         wx.uploadVoice({
             localId, // 需要上传的音频的本地ID，由stopRecord接口获得
