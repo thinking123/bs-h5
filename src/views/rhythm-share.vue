@@ -1,30 +1,38 @@
 <template>
     <div class="container">
         <img :src="bg" class="img"/>
+        <move-arrow class="arrow"/>
 
+        <img :src="textIcon1"
+             v-if="showIcon1"
+             :class="[`text${rand}-icon1`]"/>
+        <img :src="textIcon2"
+             v-if="showIcon2"
+             :class="[`text${rand}-icon2`]"/>
 
-        <img :src="playingIcon"
-             class="stop-btn btn-small"
-             v-if="isPlaying"
-             bindtap="handlePlay"/>
-        <img :src="playIcon"
-             class="stop-btn btn-small"
-             wx:else
-             bindtap="handlePlay"/>
-
-        <!--<div class="btn-share btn-middle" bindtap="handleShare"/>-->
-        <button class="btn-share btn-middle"/>
-        <div class="btn-register btn-middle" @click="handleRegister"/>
-
+        <img :src="textIcon1"
+             v-if="showIcon1"
+             :class="[`text${rand}-icon3`]"/>
+        <img :src="textIcon2"
+             v-if="showIcon2"
+             :class="[`text${rand}-icon4`]"/>
         <share-music-playing-bar class="share-music-playing-bar" v-if="isPlaying"/>
 
 
-        <img :src="`${baseUrl}pause-btn.png`" class="pause-btn btm img-btn" v-if="isPlaying"/>
-        <img :src="`${baseUrl}play-btn.png`" class="pause-btn btm  img-btn" v-else/>
-        <img :src="`${baseUrl}download-btn.png`" class="download-btn btm  img-btn"/>
-        <img :src="`${baseUrl}try-play-btn.png`" class="try-play-btn btm"/>
+        <img :src="`${baseUrl}pause-btn.png`"
+             @click="handlePlay"
+             class="pause-btn btm img-btn" v-if="isPlaying"/>
+        <img :src="`${baseUrl}play-btn.png`"
+             @click="handlePlay"
+             class="pause-btn btm  img-btn" v-else/>
+        <img :src="`${baseUrl}download-btn.png`"
+             @click="handleDownloadImage"
+             class="download-btn btm  img-btn"/>
+        <img :src="`${baseUrl}try-play-btn.png`"
+             @click="handleGoToHome"
+             class="try-play-btn btm"/>
         <img :src="`${baseUrl}qr-code.png`" class="qr-code btm"/>
-        <move-arrow class="arrow"/>
+
 
     </div>
 </template>
@@ -52,9 +60,9 @@
         components: {MoveArrow, ShareMusicPlayingBar},
         computed: {
             ...mapGetters(['base']),
-            baseUrl(){
-                console.log('url' , `${this.base}${page}`)
-              return `${this.base}${page}`
+            baseUrl() {
+                console.log('url', `${this.base}${page}`)
+                return `${this.base}${page}`
             },
             // bg(){
             //     return `${this.base}${page}bg.png`
@@ -65,8 +73,33 @@
             playIcon() {
                 return `${this.base}${page}play.png`
             },
-            // baseUrl() {
-            //     return `${this.base}asserts/image/pages/`
+            textIcon1(){
+                return `${this.base}${page}text${this.rand}-icon1.png`
+            },
+            textIcon2(){
+                if(this.rand == 5){
+                    return `${this.base}${page}text${this.rand}-icon1.png`
+                }
+                return `${this.base}${page}text${this.rand}-icon2.png`
+            },
+            showIcon1(){
+                return this.rand != 3
+            },
+            showIcon2(){
+
+                return this.rand == 4 || this.rand == 5 || this.rand == 6
+            },
+            // textIconCls1(){
+            //     const clsName = `text${this.rand}-icon1`
+            //     return {
+            //         clsName
+            //     }
+            // },
+            // textIconCls2(){
+            //     const clsName = `text${this.rand}-icon2`
+            //     return {
+            //         clsName
+            //     }
             // }
         },
         data() {
@@ -81,13 +114,15 @@
         mounted(option) {
 
 
-            const rand = option && option.rand ? option.rand : getRandomInt(1, 5)
+            const rand = 4
+            // const rand = option && option.rand ? option.rand : getRandomInt(1, 6)
             const bg = `${this.base}${page}bg${rand}.png`
             const shareBg = `${this.base}${page}share-bg${rand}.jpg`
 
             this.bg = bg
             this.shareBg = shareBg
             this.rand = rand
+            // this.rand = 2
 
             this.init()
 
@@ -96,11 +131,11 @@
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),
             async init() {
                 try {
-                    this.CHANGE_LOADING_BAR(true)
+                    // this.CHANGE_LOADING_BAR(true)
                     this.setLoadingText('设置分享...')
                     this.recordId = this.$route.query.recordId
                     this.shareId = this.$route.query.shareid
-                    if(this.shareId){
+                    if (this.shareId) {
                         //从分享也进来，从服务器拿分享的录音视频链接
                     }
 
@@ -120,9 +155,9 @@
                     const title = 'h5微信分享'
                     const desc = 'h5微信分享内容'
                     let link = window.location.href
-                    link = link.replace(/[/]$/ , '')
+                    link = link.replace(/[/]$/, '')
                     link = `${link}?shareid=share`
-                    console.log('share link' , link)
+                    console.log('share link', link)
                     const imgUrl = 'http://pn3yoa4tm.bkt.clouddn.com/home-bg.png'
                     const jsApiList = [
                         'updateTimelineShareData',
@@ -134,7 +169,7 @@
 
                 } catch (e) {
                     console.log('error ', e)
-                }finally {
+                } finally {
                     this.CHANGE_LOADING_BAR(false)
                 }
             },
@@ -154,6 +189,13 @@
                 // wx.navigateTo({
                 //     url: '/pages/register/index'
                 // })
+            },
+
+            handleDownloadImage(){
+
+            },
+            handleGoToHome(){
+
             },
             onShareAppMessage(obj) {
                 console.log('onShareAppMessage', obj)
@@ -247,7 +289,6 @@
     }
 
 
-
     .btn-middle {
         position: absolute;
         height: 8.25%;
@@ -277,26 +318,29 @@
     }
 
 
-
-    .btm{
+    .btm {
         position: absolute;
         bottom: 6.6%;
         z-index: 100;
     }
-    .img-btn{
+
+    .img-btn {
 
         width: 36*2px;
         height: 36*2px;
         border-radius: 36*2px;
         overflow: hidden;
     }
-    .pause-btn{
+
+    .pause-btn {
         left: 36*2px;
     }
-    .download-btn{
+
+    .download-btn {
         left: 82*2px;
     }
-    .try-play-btn{
+
+    .try-play-btn {
         left: 127*2px;
 
         width: 95*2px;
@@ -304,16 +348,173 @@
         border-radius: 95*2px;
         overflow: hidden;
     }
-    .qr-code{
+
+    .qr-code {
         right: 33*2px;
         width: 62*2px;
         height: 62*2px;
     }
 
-    .arrow{
+    .arrow {
 
-        top:16px;
+        top: 16px;
         right: 16px;
 
+    }
+
+    $speed:3s;
+    $speed6:$speed;
+    $speed4:$speed;
+    .text1-icon1{
+        position: absolute;
+        z-index: 100;
+        top:16.64%;
+        height: 15.74%;
+        width: 256*2px;
+        left: 40*2px;
+    }
+    .text2-icon1{
+        position: absolute;
+        z-index: 100;
+        top:34.78%;
+        height: 23*2px;
+        width: 23*2px;
+        left: 40*2px;
+    }
+
+
+    .text4-icon1{
+        position: absolute;
+        z-index: 100;
+        top:80.51%;
+        height: 25*2px;
+        width: 25*2px;
+        right:190*2px;
+        animation: text4-icon1 $speed4 linear $speed4 infinite;
+    }
+    @keyframes  text4-icon1{
+        from{
+            right:190*2px;
+            transform: translateX(100%);
+        }
+        to{
+            right:315*2px;
+        }
+    }
+
+    .text4-icon2{
+        position: absolute;
+        z-index: 100;
+        top:80.51%;
+        height: 25*2px;
+        width: 25*2px;
+        right:160*2px;
+        animation: text4-icon2 $speed4 linear $speed4  infinite;
+    }
+    @keyframes  text4-icon2{
+        from{
+            right:160*2px;
+            transform: translateX(100%);
+        }
+        to{
+            right:285*2px;
+        }
+    }
+    .text4-icon3{
+        position: absolute;
+        z-index: 100;
+        top:80.51%;
+        height: 25*2px;
+        width: 25*2px;
+        right:130*2px;
+        animation: text4-icon3 $speed4 linear $speed4 infinite;
+    }
+    @keyframes  text4-icon3{
+        from{
+            right:130*2px;
+            transform: translateX(100%);
+        }
+        to{
+            right:255*2px;
+        }
+    }
+    .text4-icon4{
+        position: absolute;
+        z-index: 100;
+        top:80.51%;
+        height: 25*2px;
+        width: 25*2px;
+        animation: text4-icon4 $speed4 linear infinite;
+    }
+    @keyframes  text4-icon4{
+        from{
+            right:100*2px;
+            transform: translateX(100%);
+        }
+        to{
+            right:225*2px;
+        }
+    }
+    .text5-icon1{
+        position: absolute;
+        z-index: 100;
+        top:72.51%;
+        height: 1.95%;
+        width: 93*2px;
+        left: 40*2px;
+    }
+    .text5-icon2{
+        position: absolute;
+        z-index: 100;
+        top:75.56%;
+        height: 2.55%;
+        width: 122*2px;
+        left: 40*2px;
+    }
+    .text5-icon3{
+        position: absolute;
+        z-index: 100;
+        top:79.91%;
+        height: 3.45%;
+        width: 162*2px;
+        left: 40*2px;
+    }
+
+    .text6-icon1{
+        position: absolute;
+        z-index: 100;
+        top:30.88%;
+        height: 13.34%;
+        width: 148*2px;
+        left: 0;
+        animation: text6-icon1 $speed6 linear infinite;
+    }
+    @keyframes  text6-icon1{
+        from{
+            left:0;
+            transform: translateX(-100%);
+        }
+        to{
+            left: 100%;
+        }
+    }
+
+    .text6-icon2{
+        position: absolute;
+        z-index: 100;
+        top:50.97%;
+        height: 13.34%;
+        width: 153*2px;
+        right: 0;
+        animation: text6-icon2 $speed6 linear infinite;
+    }
+    @keyframes  text6-icon2{
+        from{
+            right:0;
+            transform: translateX(100%);
+        }
+        to{
+            right: 100%;
+        }
     }
 </style>

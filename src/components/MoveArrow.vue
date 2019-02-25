@@ -16,7 +16,7 @@
     $offset:50%;
     $speed:2s;
     $delay:0s;
-    $fun:ease-in;
+    $fun:ease-out;
 .move-arrow{
     width: 30px;
     height: 30px;
@@ -25,18 +25,18 @@
         position: absolute;
         width: 100%;
         height: 2px;
-        background-color: green;
+        background-color: white;
     }
     .line1{
         animation:$speed arrows1 $delay $fun infinite;
     }
     .line2{
         width: 42px;
-        background-color: red;
         right: 0;
         transform-origin: bottom right;
         transform: rotate(-45deg);
         animation: $speed arrows2 $delay $fun infinite;
+        z-index: 2;
     }
     .line3{
         transform: rotate(-90deg);
