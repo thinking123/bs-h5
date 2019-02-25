@@ -18,7 +18,14 @@
 
         <share-music-playing-bar class="share-music-playing-bar" v-if="isPlaying"/>
 
-        <img src="./qr-code1.jpg" class="qr-code"/>
+
+        <img :src="`${baseUrl}pause-btn.png`" class="pause-btn btm img-btn" v-if="isPlaying"/>
+        <img :src="`${baseUrl}play-btn.png`" class="pause-btn btm  img-btn" v-else/>
+        <img :src="`${baseUrl}download-btn.png`" class="download-btn btm  img-btn"/>
+        <img :src="`${baseUrl}try-play-btn.png`" class="try-play-btn btm"/>
+        <img :src="`${baseUrl}qr-code.png`" class="qr-code btm"/>
+        <move-arrow class="arrow"/>
+
     </div>
 </template>
 
@@ -37,13 +44,18 @@
         wx_appMessageShare,
         wx_registerOnVoicePlayEnd
     } from "../utils/wx-config";
+    import MoveArrow from "../components/MoveArrow";
 
     const page = 'rhythm-share-'
     export default {
         name: "rhythm-share",
-        components: {ShareMusicPlayingBar},
+        components: {MoveArrow, ShareMusicPlayingBar},
         computed: {
             ...mapGetters(['base']),
+            baseUrl(){
+                console.log('url' , `${this.base}${page}`)
+              return `${this.base}${page}`
+            },
             // bg(){
             //     return `${this.base}${page}bg.png`
             // },
@@ -53,9 +65,9 @@
             playIcon() {
                 return `${this.base}${page}play.png`
             },
-            baseUrl() {
-                return `${this.base}asserts/image/pages/`
-            }
+            // baseUrl() {
+            //     return `${this.base}asserts/image/pages/`
+            // }
         },
         data() {
             return {
@@ -217,7 +229,7 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
     .container {
         height: 100%;
@@ -228,28 +240,13 @@
 
     }
 
-    .qr-code {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 200px;
-        height: 200px;
-        z-index: 1000000;
-    }
 
     .img {
         height: 100%;
         width: 100%;
     }
 
-    .stop-btn {
-        position: absolute;
-        /*height: 4.65%;*/
-        height: 60px;
-        width: 145px;
-        right: 0;
-        top: 20.67%
-    }
+
 
     .btn-middle {
         position: absolute;
@@ -277,5 +274,46 @@
         position: absolute;
         left: 670px;
         top: 21.29%;
+    }
+
+
+
+    .btm{
+        position: absolute;
+        bottom: 6.6%;
+        z-index: 100;
+    }
+    .img-btn{
+
+        width: 36*2px;
+        height: 36*2px;
+        border-radius: 36*2px;
+        overflow: hidden;
+    }
+    .pause-btn{
+        left: 36*2px;
+    }
+    .download-btn{
+        left: 82*2px;
+    }
+    .try-play-btn{
+        left: 127*2px;
+
+        width: 95*2px;
+        height: 36*2px;
+        border-radius: 95*2px;
+        overflow: hidden;
+    }
+    .qr-code{
+        right: 33*2px;
+        width: 62*2px;
+        height: 62*2px;
+    }
+
+    .arrow{
+
+        top:16px;
+        right: 16px;
+
     }
 </style>

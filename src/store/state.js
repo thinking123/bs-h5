@@ -9,7 +9,7 @@ export default {
     isPlayingRecord:false,
     isStartRecording:false,
     //cdn base url
-    base : 'http://pn3yoa4tm.bkt.clouddn.com/',
+    base : 'http://pnfsoaxvh.bkt.clouddn.com/',
     appid:'',
     noncestr:'',
     signature:'',
