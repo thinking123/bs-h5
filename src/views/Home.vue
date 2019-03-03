@@ -1,18 +1,38 @@
 <template>
     <div class="container">
-        <img :src="bg" class="img"/>
-        <div class="how-to-play" @click="handleShowPlay"/>
-        <div class="start-my-music-journey" @click="handlePushPage"/>
-        <how-to-play-dialog :visible.sync="showHowtoplay"/>
-        <video  class="video-cs" id="video"  v-if="showVideo" ref="video" autoplay="autoplay"
-                width="400" height="400"
-               @ended="videoEnded">
-            <!--<source src="http://pn3yoa4tm.bkt.clouddn.com/asserts/image/pages/video/video.mp4" type="video/mp4">-->
-            <source src="./video2.mp4" type="video/mp4">
-        </video>
-        <button @click="handleSkip" class="skip-button">
-            跳过
-        </button>
+
+        <!--<video-->
+                <!--src="./video.mp4"-->
+                <!--x-webkit-airplay='true'-->
+                <!--x5-video-player-type='h5'-->
+                <!--x5-video-player-fullscreen='true'-->
+                <!--x5-video-orientation="portraint"-->
+                <!--style="object-fit:fill"-->
+                <!--id="video"-->
+                <!--preload="auto"-->
+                <!--width="500" height="500"-->
+                <!--autoplay>-->
+            <!--不支持播放视频-->
+        <!--</video>-->
+
+
+        <!--<div   v-if="showVideo" class="video-container">-->
+      <!---->
+        <!--</div>-->
+
+
+        <!--<button @click="handleSkip" class="skip-button"  v-if="showVideo">-->
+            <!--跳过-->
+        <!--</button>-->
+        <div class="content" >
+            <img :src="bg" class="img"/>
+            <div class="how-to-play" @click="handleShowPlay"/>
+            <div class="start-my-music-journey" @click="handlePushPage"/>
+            <how-to-play-dialog :visible.sync="showHowtoplay"/>
+
+        </div>
+
+
     </div>
 
 </template>
@@ -43,25 +63,45 @@
         },
 
         mounted() {
+            console.log('href' , window.location.href)
             this.init()
+            
+            // this.initVideo()
         },
         methods: {
+            initVideo(){
+                
+                const v = this.$refs.video
+                
+                video.attr('x5-video-player-type', 'h5');
+                video.attr('x-webkit-airplay', true);
+                video.attr('x5-video-player-fullscreen', true);
+                video.attr('x5-video-ignore-metadata', true);
+                video.attr('object-fit', 'fill');
+                video.attr('object-position', 'center center');
+            },
             ...mapMutations(['setShowVideo']),
             videoEnded(){
-                // this.setShowVideo(false)
+                this.setShowVideo(false)
+                // alert()
                 console.log('videoEnded')
             },
-            handleSkip(){
+            videoStop(){
+
+            },
+            async handleSkip(){
 
                 try {
                     const video = document.getElementById("video");
                     if(video){
                         console.log(video)
+                        await video.pause()
                     }
-                    video.play().catch(e=>console.log('err' , e))
-                    console.log('play video')
+
                 }catch (e) {
                     console.log(e)
+                }finally {
+                    this.setShowVideo(false)
                 }
 
                 // return
@@ -71,10 +111,11 @@
             },
             async init() {
                 try {
+
                     const res = await login()
                     console.log('login' , res)
                 } catch (e) {
-                    console.log('error ', e)
+                    console.log('login error ', e)
                 }
             },
             handlePushPage() {
@@ -99,7 +140,18 @@
     /*width: 100%;*/
     /*}*/
 
+    .video-container{
+        position: fixed;
+        height: 100%;
+        width: 100%;
+    }
+    .play-video{
+
+        height: 100%;
+        width: 100%;
+    }
     .video-cs{
+        z-index: 100;
         position: fixed;
         width: 100%;
         height: 100%;
@@ -114,6 +166,11 @@
         overflow: hidden;
     }
 
+    .content{
+        height: 100%;
+        width: 100%;
+        position: relative;
+    }
     .img {
         height: 100%;
         width: 100%;
@@ -152,6 +209,7 @@
         border-radius: 64px;
         border: 0;
         margin: 0;
+        background-color: white;
     }
 
 </style>

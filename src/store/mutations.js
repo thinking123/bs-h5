@@ -30,5 +30,17 @@ export default {
     },
     setShowVideo(state ,showVideo){
         state.showVideo = showVideo
-    }
+    },
+    setopenid(state ,openid){
+        state.openid = openid
+    },
+    setheadimgurl(state ,headimgurl){
+        state.headimgurl = headimgurl
+    },
+    setnickname(state ,nickname){
+        state.nickname = nickname
+    },
+    setsex(state ,sex){
+        state.sex = sex
+    },
 }

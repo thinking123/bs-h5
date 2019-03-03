@@ -77,9 +77,6 @@
         <music-btn class="music-btn row2 music-btn7" text="Xi" @touching="handleTouching" musicKey="xi"/>
 
 
-        <button @click="handleTst" class="to-share">
-            test to share
-        </button>
 
     </div>
 
@@ -126,7 +123,7 @@
                 return `${this.base}${page}bg.png`
             },
             startBtn() {
-                return `${this.base}${page}start-record-btn.png`
+                return `${this.base}${page}start-record-btn1.png`
             },
             pauseBtn() {
                 return `${this.base}${page}pause-btn.png`
@@ -176,9 +173,6 @@
         },
         methods: {
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),
-            handleTst() {
-                this.$router.push({name: 'individuality'})
-            },
             async init() {
                 console.log(window.location.href)
                 try {
@@ -703,7 +697,7 @@
     }
 
     .stop-btn {
-        top: 75.26%;
+        top: 73.26%;
         left: 50%;
         transform: translateX(-50%);
     }

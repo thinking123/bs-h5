@@ -54,6 +54,18 @@ export async function uploadFile(formData) {
     }).then(parseRespond)
 }
 
+
+export async function uploadRecord(openid) {
+    const url = `/interface/uploadImg`
+    console.log('form data', formData)
+    return http.post(url, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            'Accept': 'text/plain'
+        }
+    }).then(parseRespond)
+}
+
 export async function getSignInfo(signUrl) {
     const url = `/api/misic/signature?url=${signUrl}`
     const data = {
@@ -66,7 +78,7 @@ export async function getSignInfo(signUrl) {
     }).then(res=>res.rows)
 }
 export async function login() {
-    const url = `/api/login/htmllogin`
+    const url = `/login/api/login/htmllogin`
     return http.post(url, {}, {
         headers: {
             "Content-Type": "application/json"

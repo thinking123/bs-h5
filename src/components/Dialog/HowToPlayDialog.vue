@@ -108,7 +108,7 @@
         width: 348rpx;
         left:50%;
         transform: translateX(-50%);
-        border: 1px solid yellow;
+        /*border: 1px solid yellow;*/
     }
 
 </style>

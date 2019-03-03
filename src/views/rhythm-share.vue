@@ -1,20 +1,25 @@
 <template>
     <div class="container">
+        <avatar class="avatar"/>
         <img :src="bg" class="img"/>
         <move-arrow class="arrow"/>
 
         <img :src="textIcon1"
+             ref="icon1"
              v-if="showIcon1"
              :class="[`text${rand}-icon1`]"/>
         <img :src="textIcon2"
              v-if="showIcon2"
+             ref="icon2"
              :class="[`text${rand}-icon2`]"/>
 
         <img :src="textIcon1"
              v-if="showIcon1"
+             ref="icon3"
              :class="[`text${rand}-icon3`]"/>
         <img :src="textIcon2"
              v-if="showIcon2"
+             ref="icon4"
              :class="[`text${rand}-icon4`]"/>
         <share-music-playing-bar class="share-music-playing-bar" v-if="isPlaying"/>
 
@@ -53,11 +58,12 @@
         wx_registerOnVoicePlayEnd
     } from "../utils/wx-config";
     import MoveArrow from "../components/MoveArrow";
+    import Avatar from "../components/avatar";
 
     const page = 'rhythm-share-'
     export default {
         name: "rhythm-share",
-        components: {MoveArrow, ShareMusicPlayingBar},
+        components: {Avatar, MoveArrow, ShareMusicPlayingBar},
         computed: {
             ...mapGetters(['base']),
             baseUrl() {
@@ -73,34 +79,22 @@
             playIcon() {
                 return `${this.base}${page}play.png`
             },
-            textIcon1(){
+            textIcon1() {
                 return `${this.base}${page}text${this.rand}-icon1.png`
             },
-            textIcon2(){
-                if(this.rand == 5){
+            textIcon2() {
+                if (this.rand == 5) {
                     return `${this.base}${page}text${this.rand}-icon1.png`
                 }
                 return `${this.base}${page}text${this.rand}-icon2.png`
             },
-            showIcon1(){
+            showIcon1() {
                 return this.rand != 3
             },
-            showIcon2(){
+            showIcon2() {
 
                 return this.rand == 4 || this.rand == 5 || this.rand == 6
-            },
-            // textIconCls1(){
-            //     const clsName = `text${this.rand}-icon1`
-            //     return {
-            //         clsName
-            //     }
-            // },
-            // textIconCls2(){
-            //     const clsName = `text${this.rand}-icon2`
-            //     return {
-            //         clsName
-            //     }
-            // }
+            }
         },
         data() {
             return {
@@ -109,23 +103,27 @@
                 shareBg: '',
                 bg: '',
                 rand: 1,
+                isFromShare: false,
+                recordId:''
             }
         },
         mounted(option) {
 
+            // const rand = 4
+            let {recordurl , rand , recordId} = this.$route.query
 
-            const rand = 4
-            // const rand = option && option.rand ? option.rand : getRandomInt(1, 6)
+            rand = rand ? rand : getRandomInt(1, 6)
+            //是否从分享页面进来
+            const isFromShare = !!rand
             const bg = `${this.base}${page}bg${rand}.png`
             const shareBg = `${this.base}${page}share-bg${rand}.jpg`
 
             this.bg = bg
             this.shareBg = shareBg
             this.rand = rand
-            // this.rand = 2
-
+            this.isFromShare = isFromShare
+            this.recordId = recordId
             this.init()
-
         },
         methods: {
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),
@@ -133,11 +131,15 @@
                 try {
                     // this.CHANGE_LOADING_BAR(true)
                     this.setLoadingText('设置分享...')
-                    this.recordId = this.$route.query.recordId
-                    this.shareId = this.$route.query.shareid
-                    if (this.shareId) {
+                    let shareId = this.recordId
+                    if (this.isFromShare) {
                         //从分享也进来，从服务器拿分享的录音视频链接
+                        // this.recordId = ''
+                        console.log('从分享也进来，从服务器拿分享的录音视频链接')
                     }
+
+
+
 
                     wx_registerOnVoicePlayEnd(() => {
                         console.log('语音播放完毕')
@@ -152,13 +154,13 @@
                         timestamp
                     } = await getSignInfo(window.location.href)
 
-                    const title = 'h5微信分享'
-                    const desc = 'h5微信分享内容'
+                    const title = '我的音乐人格'
+                    const desc = '我的音乐人格分享'
                     let link = window.location.href
                     link = link.replace(/[/]$/, '')
-                    link = `${link}?shareid=share`
+                    link = `${link}?recordurl=${shareId}`
                     console.log('share link', link)
-                    const imgUrl = 'http://pn3yoa4tm.bkt.clouddn.com/home-bg.png'
+                    const imgUrl = this.shareBg
                     const jsApiList = [
                         'updateTimelineShareData',
                         'updateAppMessageShareData',
@@ -191,11 +193,14 @@
                 // })
             },
 
-            handleDownloadImage(){
+            handleDownloadImage() {
 
             },
-            handleGoToHome(){
-
+            handleGoToHome() {
+                // if(!this.isFromShare){
+                //     this.$router.back()
+                // }
+                this.$router.replace({name:'video'})
             },
             onShareAppMessage(obj) {
                 console.log('onShareAppMessage', obj)
@@ -272,6 +277,13 @@
 </script>
 
 <style scoped lang="scss">
+
+    .avatar{
+        position: absolute;
+        top:30*2px;
+        left: 43*2px;
+    }
+
 
     .container {
         height: 100%;
@@ -362,158 +374,274 @@
 
     }
 
-    $speed:3s;
-    $speed6:$speed;
-    $speed4:$speed;
-    .text1-icon1{
+    $speed: 3s;
+    $speed6: $speed * 2;
+    $speed4: 12s;
+    $delay4: 0s;
+    $speed3:3s;
+    .text1-icon1 {
         position: absolute;
         z-index: 100;
-        top:16.64%;
+        top: 16.64%;
         height: 15.74%;
         width: 256*2px;
         left: 40*2px;
     }
-    .text2-icon1{
+
+    .text2-icon1 {
         position: absolute;
         z-index: 100;
-        top:34.78%;
+        top: 34.78%;
         height: 23*2px;
         width: 23*2px;
         left: 40*2px;
+        animation: text2-icon1 $speed3 linear 0s infinite;
     }
 
+    @keyframes text2-icon1 {
+        0% {
 
-    .text4-icon1{
-        position: absolute;
-        z-index: 100;
-        top:80.51%;
-        height: 25*2px;
-        width: 25*2px;
-        right:190*2px;
-        animation: text4-icon1 $speed4 linear $speed4 infinite;
-    }
-    @keyframes  text4-icon1{
-        from{
-            right:190*2px;
-            transform: translateX(100%);
         }
-        to{
-            right:315*2px;
+        100% {
+            transform: rotate(360deg);
         }
     }
 
-    .text4-icon2{
+    .text4-icon1 {
         position: absolute;
         z-index: 100;
-        top:80.51%;
+        top: 80.51%;
         height: 25*2px;
         width: 25*2px;
-        right:160*2px;
-        animation: text4-icon2 $speed4 linear $speed4  infinite;
+        right: 190*2px;
+        animation: text4-icon1 $speed4 linear 0s infinite;
     }
-    @keyframes  text4-icon2{
-        from{
-            right:160*2px;
-            transform: translateX(100%);
+
+    @keyframes text4-icon1 {
+        0% {
+            right: 190*2px;
         }
-        to{
-            right:285*2px;
+        22.5% {
+            right: 315*2px;
+        }
+        90%{
+            opacity: 1;
+            right: 315*2px;
+        }
+        100% {
+            opacity: 0;
+            right: 315*2px;
         }
     }
-    .text4-icon3{
+
+    .text4-icon2 {
         position: absolute;
         z-index: 100;
-        top:80.51%;
+        top: 80.51%;
         height: 25*2px;
         width: 25*2px;
-        right:130*2px;
-        animation: text4-icon3 $speed4 linear $speed4 infinite;
+        right: 160*2px;
+        animation: text4-icon2 $speed4 linear 0s infinite;
     }
-    @keyframes  text4-icon3{
-        from{
-            right:130*2px;
-            transform: translateX(100%);
+
+    @keyframes text4-icon2 {
+        0% {
+            right: 160*2px;
         }
-        to{
-            right:255*2px;
+        22.5% {
+            right: 160*2px;
+        }
+        45% {
+            right: 285*2px;
+        }
+        90%{
+            opacity: 1;
+            right: 285*2px;
+        }
+
+        100% {
+            opacity: 0;
+            right: 285*2px;
         }
     }
-    .text4-icon4{
+
+    .text4-icon3 {
         position: absolute;
         z-index: 100;
-        top:80.51%;
+        top: 80.51%;
         height: 25*2px;
         width: 25*2px;
+        right: 130*2px;
+        animation: text4-icon3 $speed4 linear infinite;
+
+    }
+
+    @keyframes text4-icon3 {
+        0% {
+            right: 130*2px;
+        }
+        45% {
+            right: 130*2px;
+        }
+        67.5% {
+            right: 255*2px;
+        }
+        90%{
+            opacity: 1;
+            right: 255*2px;
+        }
+
+        100% {
+            opacity: 0;
+            right: 255*2px;
+        }
+
+    }
+
+    .text4-icon4 {
+        position: absolute;
+        z-index: 100;
+        top: 80.51%;
+        height: 25*2px;
+        width: 25*2px;
+        right: 100*2px;
         animation: text4-icon4 $speed4 linear infinite;
     }
-    @keyframes  text4-icon4{
-        from{
-            right:100*2px;
-            transform: translateX(100%);
+
+    @keyframes text4-icon4 {
+
+        0% {
+            right: 100*2px;
         }
-        to{
-            right:225*2px;
+        67.5% {
+            right: 100*2px;
+        }
+        90%{
+            opacity: 1;
+            right: 225*2px;
+        }
+
+        100% {
+            opacity: 0;
+            right: 225*2px;
         }
     }
-    .text5-icon1{
+
+    $speed5: 9s;
+    .text5-icon1 {
         position: absolute;
         z-index: 100;
-        top:72.51%;
+        top: 72.51%;
         height: 1.95%;
         width: 93*2px;
         left: 40*2px;
+        animation: text5-icon1 $speed5 linear infinite;
     }
-    .text5-icon2{
+
+    @keyframes text5-icon1 {
+        0% {
+            opacity: 0;
+        }
+        30% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
+    .text5-icon2 {
         position: absolute;
         z-index: 100;
-        top:75.56%;
+        top: 75.56%;
         height: 2.55%;
         width: 122*2px;
         left: 40*2px;
+        animation: text5-icon2 $speed5 linear infinite;
     }
-    .text5-icon3{
+
+    @keyframes text5-icon2 {
+        0% {
+            opacity: 0;
+        }
+        30% {
+            opacity: 0;
+        }
+        60% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
+    .text5-icon3 {
         position: absolute;
         z-index: 100;
-        top:79.91%;
+        top: 79.91%;
         height: 3.45%;
         width: 162*2px;
         left: 40*2px;
+        animation: text5-icon3 $speed5 linear infinite;
     }
 
-    .text6-icon1{
+    @keyframes text5-icon3 {
+        0% {
+            opacity: 0;
+        }
+        60% {
+            opacity: 0;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
+    .text6-icon1 {
         position: absolute;
         z-index: 100;
-        top:30.88%;
+        top: 30.88%;
         height: 13.34%;
         width: 148*2px;
         left: 0;
         animation: text6-icon1 $speed6 linear infinite;
     }
-    @keyframes  text6-icon1{
-        from{
-            left:0;
-            transform: translateX(-100%);
+
+    @keyframes text6-icon1 {
+        from {
+            left: 0;
+            transform: translateX(-200%);
         }
-        to{
+        to {
             left: 100%;
         }
     }
 
-    .text6-icon2{
+    .text6-icon2 {
         position: absolute;
         z-index: 100;
-        top:50.97%;
+        top: 50.97%;
         height: 13.34%;
         width: 153*2px;
         right: 0;
         animation: text6-icon2 $speed6 linear infinite;
     }
-    @keyframes  text6-icon2{
-        from{
-            right:0;
-            transform: translateX(100%);
+
+    @keyframes text6-icon2 {
+        from {
+            right: 0;
+            transform: translateX(200%);
         }
-        to{
+        to {
             right: 100%;
         }
     }

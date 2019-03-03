@@ -57,9 +57,17 @@
 </script>
 
 <style scoped>
+
+
+
+    @font-face {
+        font-family: 'MusicFont1';
+        src: url('../assets/fonts/music-font.ttf');
+    }
     .music-btn {
         /*user-select: none;*/
         /*z-index: 100;*/
+        font-family: MusicFont1 !important;
         position: absolute;
         /*height: 7.8%;*/
         width: 96px;

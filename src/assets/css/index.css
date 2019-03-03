@@ -120,3 +120,8 @@ ins, a {
 html ,body{
     background-color: transparent;
 }
+
+@font-face {
+    font-family: 'MusicFont';
+    src: url('../fonts/music-font.ttf');
+}
