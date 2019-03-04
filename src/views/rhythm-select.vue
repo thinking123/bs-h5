@@ -123,7 +123,11 @@
                 return `${this.base}${page}bg.png`
             },
             startBtn() {
-                return `${this.base}${page}start-record-btn1.png`
+                const btn = this.isRecording ? 'end-record-btn' : 'start-record-btn1'
+                return `${this.base}${page}${btn}.png`
+            },
+            endBtn() {
+                return `${this.base}${page}end-record-btn.png`
             },
             pauseBtn() {
                 return `${this.base}${page}pause-btn.png`
@@ -184,6 +188,12 @@
                         signature,
                         timestamp
                     } = await getSignInfo(window.location.href)
+
+                    console.log('appid' ,
+                        appid,
+                        noncestr,
+                        signature,
+                        timestamp)
                     const jsApiList = [
                         'startRecord',
                         'stopRecord',
@@ -238,11 +248,13 @@
                 }
 
                 if (this.isPlaying) {
+                    console.log('this.tempFilePath stopPlayRecord')
                     this.stopPlayRecord()
                     wx_stopPlayRecord(this.tempFilePath)
                 } else {
                     this.stopaudio()
                     this.startPlayRecord()
+                    console.log('this.tempFilePath startPlayRecord')
                     wx_playRecord(this.tempFilePath)
                 }
             },
@@ -798,11 +810,13 @@
     }
 
     .row1 {
-        top: 40.33%;
+        /*top: 40.33%;*/
+        top: 39.46%;
     }
 
     .row2 {
-        top: 48.87%;
+        /*top: 48.87%;*/
+        top: 48%;
     }
 
     .music-btn1 {

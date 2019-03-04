@@ -19,7 +19,7 @@ Vue.config.productionTip = false
 Vue.use(VueRouter)
 
 const router = new VueRouter({
-    mode: 'history',
+    // mode: 'history',
     routes
 })
 
@@ -31,16 +31,24 @@ router.beforeEach((pageTo, pageFrom, next) => {
     //     return next({name:'video'})
     // }
 
-    let {openid,headimgurl,nickname,sex} = pageTo.query
+    let {openid,headimgurl,nickname,sex , rand} = pageTo.query
+    if(rand){
+        console.log('从分享页进入' , pageTo.query)
+        next({name:'music-individuality' , query : pageTo.query})
+        return
+    }
     if(openid){
         store.commit('setopenid' , openid)
         store.commit('setheadimgurl' , headimgurl)
         store.commit('setnickname' , nickname)
         store.commit('setsex' , sex)
-        next({name:'home'})
         console.log('从微信授权返回' , pageTo.query)
+        next({name:'home'})
+
         return
     }
+
+
     next()
 
 })

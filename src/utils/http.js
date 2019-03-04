@@ -55,18 +55,34 @@ export async function uploadFile(formData) {
 }
 
 
-export async function uploadRecord(openid) {
-    const url = `/interface/uploadImg`
-    console.log('form data', formData)
-    return http.post(url, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-            'Accept': 'text/plain'
-        }
-    }).then(parseRespond)
+export async function uploadRecord(openid , mediaId) {
+
+
+    const url = `/api/misic/uploadQiniuyun`
+    return http.post(url, {
+        openid,mediaId
+    }).then(res=>res.rows)
 }
 
-export async function getSignInfo(signUrl) {
+export async function getSignInfo() {
+
+
+    var u = navigator.userAgent;
+    var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //g
+    var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+    let signUrl=''
+    if (isAndroid) {
+        signUrl=location.href.split('#')[0]
+    }
+    if (isIOS) {
+        signUrl=location.href.split('#')[0]  //hash后面的部分如果带上ios中config会不对
+    }
+    console.log('isAndroid' , isAndroid)
+    console.log('isIOS' , isIOS)
+    console.log('b signUrl' , signUrl)
+    signUrl = encodeURIComponent(signUrl)
+    console.log(' f location.href' , location.href)
+
     const url = `/api/misic/signature?url=${signUrl}`
     const data = {
         url: signUrl

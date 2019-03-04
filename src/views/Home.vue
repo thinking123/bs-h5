@@ -48,7 +48,7 @@
         name: "Home",
         components: {HowToPlayDialog, HButton},
         computed: {
-            ...mapGetters(['base' , 'showVideo']),
+            ...mapGetters(['base' , 'showVideo' , 'openid']),
             bg() {
                 return `${this.base}${page}bg.png`
             },
@@ -63,6 +63,11 @@
         },
 
         mounted() {
+
+            console.log('openid' , this.openid)
+            console.log('openid' , this.headimgurl)
+            console.log('openid' , this.nickname)
+            console.log('openid' , this.sex)
             console.log('href' , window.location.href)
             this.init()
             
@@ -112,8 +117,8 @@
             async init() {
                 try {
 
-                    const res = await login()
-                    console.log('login' , res)
+                    // const res = await login()
+                    // console.log('login' , res)
                 } catch (e) {
                     console.log('login error ', e)
                 }

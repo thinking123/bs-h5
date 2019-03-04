@@ -15,7 +15,7 @@ export default {
     timestamp:'',
     showVideo:true,
     openid:'',
-    headimgurl:'http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJR4VRqBhPeQqDvsUX0V5mBlCR72VqWQFQTkNBR0y7F3g71kNsYCIo1055M0ctbVtVUlaia7GUeib5g/132',
-    nickname:'text name',
+    headimgurl:'',
+    nickname:'',
     sex:''
 }

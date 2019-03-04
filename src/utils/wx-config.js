@@ -60,6 +60,7 @@ export const wx_stopRecord = () => {
     return new Promise((resolve, reject) => {
         wx.stopRecord({
             success: function (res) {
+                console.log('wx_stopRecord' , res , res.localId)
                 var localId = res.localId;
                 resolve(res.localId)
             },
@@ -68,8 +69,12 @@ export const wx_stopRecord = () => {
     })
 }
 export const wx_playRecord = (localId) => {
+    console.log('wx_playRecord')
     wx.playVoice({
-        localId// 需要播放的音频的本地ID，由stopRecord接口获得
+        localId,// 需要播放的音频的本地ID，由stopRecord接口获得,
+        fail:err=>{
+            console.log('wx_playRecord error'  ,err)
+        }
     });
 }
 

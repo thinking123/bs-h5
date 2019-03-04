@@ -1,42 +1,54 @@
 <template>
-    <div class="container">
-        <avatar class="avatar"/>
-        <img :src="bg" class="img"/>
-        <move-arrow class="arrow"/>
+    <div class="container" ref="rhythmShare">
+        <canvas id="canvas" class="canvas" ref="canvas" v-if="isSaveImage" ></canvas>
+        <audio ref="shareRecord" @ended="audioend">
+            <source :src="recordurl" type="audio/mpeg"/>
+        </audio>
+        <div v-else style="width: 100%;height: 100%">
+            <avatar class="avatar"/>
+            <img :src="bg" class="img"/>
+            <move-arrow class="arrow"/>
 
-        <img :src="textIcon1"
-             ref="icon1"
-             v-if="showIcon1"
-             :class="[`text${rand}-icon1`]"/>
-        <img :src="textIcon2"
-             v-if="showIcon2"
-             ref="icon2"
-             :class="[`text${rand}-icon2`]"/>
+            <img :src="textIcon1"
+                 ref="icon1"
+                 v-if="showIcon1"
+                 :class="[`text${rand}-icon1`]"/>
+            <img :src="textIcon2"
+                 v-if="showIcon2"
+                 ref="icon2"
+                 :class="[`text${rand}-icon2`]"/>
 
-        <img :src="textIcon1"
-             v-if="showIcon1"
-             ref="icon3"
-             :class="[`text${rand}-icon3`]"/>
-        <img :src="textIcon2"
-             v-if="showIcon2"
-             ref="icon4"
-             :class="[`text${rand}-icon4`]"/>
-        <share-music-playing-bar class="share-music-playing-bar" v-if="isPlaying"/>
+            <img :src="textIcon1"
+                 v-if="showIcon1"
+                 ref="icon3"
+                 :class="[`text${rand}-icon3`]"/>
+            <img :src="textIcon2"
+                 v-if="showIcon2"
+                 ref="icon4"
+                 :class="[`text${rand}-icon4`]"/>
+            <!--<share-music-playing-bar class="share-music-playing-bar" v-if="isPlaying"/>-->
 
 
-        <img :src="`${baseUrl}pause-btn.png`"
-             @click="handlePlay"
-             class="pause-btn btm img-btn" v-if="isPlaying"/>
-        <img :src="`${baseUrl}play-btn.png`"
-             @click="handlePlay"
-             class="pause-btn btm  img-btn" v-else/>
-        <img :src="`${baseUrl}download-btn.png`"
-             @click="handleDownloadImage"
-             class="download-btn btm  img-btn"/>
-        <img :src="`${baseUrl}try-play-btn.png`"
-             @click="handleGoToHome"
-             class="try-play-btn btm"/>
-        <img :src="`${baseUrl}qr-code.png`" class="qr-code btm"/>
+            <img :src="`${baseUrl}pause-btn.png`"
+                 @click="handlePlay"
+                 class="pause-btn btm img-btn" v-if="isPlaying"/>
+            <img :src="`${baseUrl}play-btn.png`"
+                 @click="handlePlay"
+                 class="pause-btn btm  img-btn" v-else/>
+            <img :src="`${baseUrl}download-btn.png`"
+                 @click="handleDownloadImage"
+                 class="download-btn btm  img-btn"/>
+            <img :src="`${baseUrl}try-play-btn.png`"
+                 @click="handleGoToHome"
+                 class="try-play-btn btm"/>
+            <img :src="`${baseUrl}qr-code.png`" class="qr-code btm"/>
+        </div>
+
+        <div id="preview" class="preview"
+             @click="handlePreview" v-if="showPreview">
+
+        </div>
+
 
 
     </div>
@@ -48,7 +60,7 @@
     import {mapGetters, mapMutations} from 'vuex'
     import {CHANGE_LOADING_BAR} from "../store/mutations";
     import ShareMusicPlayingBar from "../components/ShareMusicPlayingBar";
-    import {getSignInfo} from "../utils/http";
+    import {getSignInfo , uploadRecord} from "../utils/http";
     import {
         wx_config,
         wx_playRecord,
@@ -65,7 +77,7 @@
         name: "rhythm-share",
         components: {Avatar, MoveArrow, ShareMusicPlayingBar},
         computed: {
-            ...mapGetters(['base']),
+            ...mapGetters(['base' , 'headimgurl' , 'nickname' , 'openid']),
             baseUrl() {
                 console.log('url', `${this.base}${page}`)
                 return `${this.base}${page}`
@@ -104,39 +116,74 @@
                 bg: '',
                 rand: 1,
                 isFromShare: false,
-                recordId:''
+                recordId:'',
+                imgStr:'',
+                isSaveImage:false,
+                showPreview:false,
+                recordurl:''
             }
         },
         mounted(option) {
 
+            // this.downLoadImage()
+            // const rhythmShare = this.$refs.canvas
+            // if(rhythmShare){
+            //     console.log('long press rhythmShare')
+            //     rhythmShare.addEventListener('long-press', this.longPress)
+            // }
             // const rand = 4
-            let {recordurl , rand , recordId} = this.$route.query
+            let {recordurl , rand , recordId } = this.$route.query
 
+            console.log('recordurl , rand , recordId' , recordurl , rand , recordId)
+            console.log('mounted' , recordurl , rand , recordId)
             rand = rand ? rand : getRandomInt(1, 6)
             //是否从分享页面进来
-            const isFromShare = !!rand
+            const isFromShare = !!recordurl
             const bg = `${this.base}${page}bg${rand}.png`
-            const shareBg = `${this.base}${page}share-bg${rand}.jpg`
+            const shareBg = `${this.base}${page}bg${rand}.png`
 
+            console.log('shareBg' , shareBg)
             this.bg = bg
             this.shareBg = shareBg
             this.rand = rand
             this.isFromShare = isFromShare
             this.recordId = recordId
+            this.recordurl = recordurl
             this.init()
         },
         methods: {
+            handlePreview(){
+                console.log('handlePreview')
+                this.showPreview = false
+            },
+            downLoadImage(){
+                console.log('downLoadImage')
+                loadImage(this.headimgurl , img =>  {
+                    console.log('downLoadImage img' , img)
+                    this.imgStr = img
+                })
+            },
+            longPress(e){
+                e.preventDefault()
+                console.log('longPress' , e.target)
+                this.screenShot()
+            },
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),
             async init() {
                 try {
                     // this.CHANGE_LOADING_BAR(true)
                     this.setLoadingText('设置分享...')
-                    let shareId = this.recordId
+                    let shareId = ''
                     if (this.isFromShare) {
                         //从分享也进来，从服务器拿分享的录音视频链接
+                        shareId = this.recordurl
                         // this.recordId = ''
                         console.log('从分享也进来，从服务器拿分享的录音视频链接')
+                    }else{
+                        shareId =  await uploadRecord(this.openid , this.recordId)
+                        console.log('上传录音' , this.openid , this.recordId , 'share url' , shareId)
                     }
+
 
 
 
@@ -156,9 +203,9 @@
 
                     const title = '我的音乐人格'
                     const desc = '我的音乐人格分享'
-                    let link = window.location.href
+                    let link = window.location.href.split('?')[0]
                     link = link.replace(/[/]$/, '')
-                    link = `${link}?recordurl=${shareId}`
+                    link = `${link}?recordurl=${shareId}&rand=${this.rand}`
                     console.log('share link', link)
                     const imgUrl = this.shareBg
                     const jsApiList = [
@@ -193,14 +240,153 @@
                 // })
             },
 
-            handleDownloadImage() {
+            async getImage(url){
+                return new Promise((res , rej)=>{
+                    // const image = new Image();
+                    //
+                    // image.onload = () => {
+                    //     image.setAttribute("crossOrigin",'*')
+                    //     res(image)
+                    //
+                    // };
+                    // image.src = url
+                    // image.setAttribute("crossOrigin",'Anonymous')
+
+
+
+                    loadImage(url , img=>{
+                        if(img.type === 'error'){
+                            console.log('error img loadImage' , url)
+                            rej('error img')
+                        }else{
+                            res(img)
+                        }
+                    } , {
+                        crossOrigin:"Anonymous"
+                    })
+                })
+
+
+                // return new Promise((res , rej)=>{
+                //     const image = new Image();
+                //
+                //     image.onload = () => {
+                //         image.setAttribute("crossOrigin",'*')
+                //         res(image)
+                //
+                //     };
+                //     image.src = url
+                //     image.setAttribute("crossOrigin",'Anonymous')
+                // })
+
+
+
+
+
+            },
+             handleDownloadImage() {
+                console.log('screenShot')
+                try {
+                    this.isSaveImage = true
+                    this.$nextTick(()=>{
+                        this.screenShot()
+                    })
+
+                }catch (e) {
+                    console.log('screenShot' , e)
+                }finally {
+                    // this.isSaveImage = false
+                }
+
+            },
+            async screenShot(){
+
+                function rem(p) {
+                    const pxTorem = window.innerWidth/10
+                    const px = 37.5
+                    return pxTorem * p / px
+                }
+                try {
+                  
+                    const canvas = document.getElementById('canvas')
+                    console.log('toDataURL',canvas)
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    console.log(window.innerWidth , window.innerHeight)
+                    const ctx = canvas.getContext('2d')
+                    const bg = await this.getImage(this.shareBg)
+
+                    ctx.drawImage(bg , 0 , 0 , window.innerWidth , window.innerHeight)
+
+
+
+                    // ctx.save()
+                    // ctx.beginPath();
+                    // ctx.arc(rem(43) + rem(25)/2,
+                    //     rem(30) + rem(25)/2,
+                    //     rem(25)/2, 0,
+                    //     Math.PI * 2, true);
+                    // ctx.closePath();
+                    // ctx.clip();
+                    // const head = await this.getImage(this.headimgurl)
+                    //
+                    // ctx.drawImage(head ,
+                    //     rem(43),
+                    //     rem(30) ,
+                    //     rem(25) ,
+                    //     rem(25))
+                    //
+                    // ctx.restore();
+
+                    ctx.save()
+                    ctx.fillStyle = 'white'
+                    ctx.textBaseline = 'middle'
+                    ctx.font = `${rem(18)}px -apple-system-font, Helvetica Neue, sans-serif`;
+                    ctx.fillText(this.nickname , rem(72) , rem(45))
+                    ctx.restore();
+
+                    let qr = `${this.baseUrl}qr-code.png`
+                    qr = await this.getImage(qr)
+
+                    const top = 556/667 * window.innerHeight
+                    ctx.drawImage(qr ,
+                        rem(278),
+                        top ,
+                        rem(62) ,
+                        rem(62))
+
+                    const res = canvas.toDataURL('image/png')
+                    this.isSaveImage = false
+                    this.showPreview = true
+                    this.$nextTick(()=>{
+                        console.log('preview')
+                        const img = new Image()
+                        img.src = canvas.toDataURL('image/png')
+
+                        // img.width = window.innerWidth
+                        // img.height = window.innerHeight
+                        img.style.height = '100%';
+                        img.style.width = '100%';
+                        const preview = document.getElementById('preview')
+                        preview.append(img)
+                    })
+
+
+
+
+
+                }catch (e) {
+                    console.error(e)
+                }finally {
+                    this.isSaveImage = false
+                }
 
             },
             handleGoToHome() {
                 // if(!this.isFromShare){
                 //     this.$router.back()
                 // }
-                this.$router.replace({name:'video'})
+                this.$router.replace({name:'home'})
             },
             onShareAppMessage(obj) {
                 console.log('onShareAppMessage', obj)
@@ -278,12 +464,25 @@
 
 <style scoped lang="scss">
 
+    .preview{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left:0;
+        right: 0;
+        top:0;
+        bottom: 0;
+        z-index: 100;
+    }
     .avatar{
         position: absolute;
         top:30*2px;
         left: 43*2px;
     }
 
+    .canvas{
+        display: none;
+    }
 
     .container {
         height: 100%;
@@ -292,6 +491,10 @@
         margin: 0;
         padding: 0;
 
+        /*>div{*/
+            /*height: 100%;*/
+            /*width: 100%;*/
+        /*}*/
     }
 
 
