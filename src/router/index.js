@@ -3,7 +3,7 @@ import store from '../store'
 const Home = () => import(/* webpackChunkName: "Home" */ '../views/Home')
 const ArrangementsInteract = () => import(/* webpackChunkName: "ArrangementsInteract" */ '../views/rhythm-select')
 const MusicIndividuality = () => import(/* webpackChunkName: "MusicIndividuality" */ '../views/rhythm-share')
-const Video = () => import(/* webpackChunkName: "Video" */ '../views/rhytem-video')
+const Video = () => import(/* webpackChunkName: "Video" */ '../views/rhytem-video1')
 
 export default [
     {

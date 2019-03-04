@@ -1,10 +1,11 @@
 <template>
     <div class="container" ref="rhythmShare">
         <canvas id="canvas" class="canvas" ref="canvas" v-if="isSaveImage" ></canvas>
-        <audio ref="shareRecord" @ended="audioend">
-            <source :src="recordurl" type="audio/mpeg"/>
-        </audio>
+
         <div v-else style="width: 100%;height: 100%">
+            <audio ref="shareRecord" @ended="audioend">
+                <source :src="recordurl" type="audio/mpeg"/>
+            </audio>
             <avatar class="avatar"/>
             <img :src="bg" class="img"/>
             <move-arrow class="arrow"/>

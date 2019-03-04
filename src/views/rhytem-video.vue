@@ -1,20 +1,23 @@
 <template>
     <div class="wrap">
 
-        <canvas id="canvas" class="canvas">
+        <!--<canvas id="canvas" class="canvas" @touchstart="handlePlayVideo">-->
 
-        </canvas>
+        <!--</canvas>-->
         <button @click="handleStop">
             跳过
         </button>
         <video id="video"
                class="video"
                :src="video"
-
                preload="auto"
-
-               x5-video-orientation="portraint"
+               style="object-fit:fill"
                x5-video-player-fullscreen="true"
+               x5-video-orientation="portrait"
+               x5-video-player-type="h5"
+               webkit-playsinline="true"
+               playsinline="true"
+               x-webkit-airplay="allow"
                @play="handlePlay"
                @ended="handleEnd"
         >
@@ -26,36 +29,28 @@
 
 <script>
     import {mapGetters, mapMutations} from 'vuex'
-    import jquery from 'jquery'
+    // import jquery from 'jquery'
     // import videojs from 'video.js'
     export default {
-        name: "rhytem-video",
+        name: "video-",
         computed: {
             ...mapGetters(['base', 'showVideo']),
             video() {
-                return `${this.base}video.mp4`
+                return `${this.base}video2.mp4`
             }
         },
         data() {
             return {
-                showCanvas: false
+                showCanvas: false,
+                isAndroid:true
             }
         },
         methods: {
             gotoSignInURL() {
-                window.location.href = 'http://bsxyzqy.ysmine.com/login/api/login/htmllogin'
-
-
-                // window.location.href = 'http://localhost:8080/?openid=oGJAbuG4O80vlLPhTdD6ctBPTp9Q&nickname=52533&sex=1&headimgurl=http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJR4VRqBhPeQqDvsUX0V5mBlCR72VqWQFQTkNBR0y7F3g71kNsYCIo1055M0ctbVtVUlaia7GUeib5g/132'
-
-
-                // http://bsxyzqy.ysmine.com/?openid=oGJAbuG4O80vlLPhTdD6ctBPTp9Q&nickname=52533&sex=1&headimgurl=http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJR4VRqBhPeQqDvsUX0V5mBlCR72VqWQFQTkNBR0y7F3g71kNsYCIo1055M0ctbVtVUlaia7GUeib5g/132#/video
-            },
+                window.location.href = 'http://bsxyzqy.ysmine.com/login/api/login/htmllogin'},
             ...mapMutations(['setShowVideo']),
             handleEnd() {
                 console.log('handleEnd')
-                // this.setShowVideo(false)
-                // this.$router.replace({name:'home'})
                 this.gotoSignInURL()
             },
             handleStop() {
@@ -63,13 +58,11 @@
                 console.log('handleStop')
                 video.pause();
                 video.currentTime = 0;
-                // this.setShowVideo(false)
-                // this.$router.replace({name:'home'})
 
                 this.gotoSignInURL()
             },
             handlePlay() {
-                // return
+                return
                 console.log('handlePlay')
                 var video = document.getElementById('video');
                 var canvas = document.getElementById('canvas');
@@ -85,7 +78,7 @@
                 // } else {
                 //     console.log('not paused', $this.paused)
                 // }
-                jquery(video).hide()
+                // jquery(video).hide()
                 // video.style.display = 'none'
                 var w = window,
                     d = document,
@@ -106,6 +99,13 @@
                         setTimeout(loop, 1000 / 30); // drawing at 30fps
                     }
                 })();
+            },
+            handlePlayVideo(){
+                if(this.isAndroid){
+
+                    alert('start play')
+                    document.getElementById('video').play();
+                }
             }
         },
         mounted() {
@@ -114,14 +114,22 @@
             var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //g
             var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 
-            if (isAndroid) {
-                document.addEventListener('touchstart', function () {
-                    document.getElementById('video').play();
-                });
-            } else {
+            this.isAndroid = isAndroid
+            const video =   document.getElementById('video')
+            if(isIOS){
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
-                    document.getElementById('video').play();
+                    video.play();
                 }, false);
+            }else{
+                video.addEventListener('timeupdate', function (e) {
+                    console.log('timeupdate' , e)
+                })
+                video.addEventListener('x5videoenterfullscreen', function (e) {
+                    console.log('x5videoenterfullscreen' , e)
+                })
+                video.addEventListener('x5videoexitfullscreen', function (e) {
+                    console.log('x5videoexitfullscreen' , e)
+                })
             }
 
 
@@ -166,7 +174,7 @@
         position: absolute;
         left: 0;
         top: 0;
-        opacity: 0;
+        /*opacity: 0;*/
         width: 100%;
         height: 100%;
         object-fit: contain;
