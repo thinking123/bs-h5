@@ -30,30 +30,66 @@ router.beforeEach((pageTo, pageFrom, next) => {
     //     console.log('rep')
     //     return next({name:'video'})
     // }
+    let l = location;
+    let h = l.href
 
-    let {openid,headimgurl,nickname,sex , rand} = pageTo.query
-    if(rand){
-        console.log('从分享页进入' , pageTo.query)
-        next({name:'music-individuality' , query : pageTo.query})
+    // alert(h)
+    console.log('route 当前href' , h)
+    const reg = /[?].*[#]/
+    if(h.match(reg)){
+        //微信分享信息
+
+        // setTimeout(()=>{
+        //     let r = l.href.replace(reg , '#')
+        //
+        //     console.log('r' , r)
+        //     l.href = r
+        //     return
+        // } , 30000)
+
+
+
+        let r = l.href.replace(reg , '#')
+
+        console.log('r' , r)
+        l.href = r
         return
+
+    }else{
+        let {openid,headimgurl,nickname,sex , rand} = pageTo.query
+        // if(rand){
+        //     console.log('从分享页进入' , pageTo.query)
+        //     next({name:'share' , query : pageTo.query})
+        //     return
+        // }
+        if(openid){
+            store.commit('setopenid' , openid)
+            store.commit('setheadimgurl' , headimgurl)
+            store.commit('setnickname' , nickname)
+            store.commit('setsex' , sex)
+            console.log('从微信授权返回' , pageTo.query)
+            next({name:'home'})
+
+            return
+        }
+
+
+        next()
     }
-    if(openid){
-        store.commit('setopenid' , openid)
-        store.commit('setheadimgurl' , headimgurl)
-        store.commit('setnickname' , nickname)
-        store.commit('setsex' , sex)
-        console.log('从微信授权返回' , pageTo.query)
-        next({name:'home'})
-
-        return
-    }
 
 
-    next()
 
 })
 
 router.afterEach((route) => {
+    // let l = location;
+    // // //强制?#方式访问 以兼容微信分享
+    // if (l.href.indexOf('?#') === -1) {
+    //     location.href = l.origin + l.pathname + '?' + l.hash;
+    //     console.log('b',location.href)
+    //     return false;
+    // }
+
     document.title = route.meta.title;
 });
 

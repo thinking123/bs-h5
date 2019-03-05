@@ -1,4 +1,4 @@
-export function wx_config(appId , timestamp , nonceStr , signature , jsApiList) {
+export function wx_config(appId , timestamp , nonceStr , signature , jsApiList , imgUrl) {
     return new Promise((resolve, reject) => {
         wx.config({
             debug: false,
@@ -13,10 +13,165 @@ export function wx_config(appId , timestamp , nonceStr , signature , jsApiList) 
         //     'updateTimelineShareData',
         //     'updateAppMessageShareData',
         // ]
-        wx.ready(resolve)
+        wx.ready(function () {
+
+            resolve()
+            // return
+            //
+            //
+            // const title = '测试分享数据'
+            // const desc = '测试分享数据描述'
+            // const shareId = 'testhserid'
+            // let link = window.location.href.split('?')[0]
+            // link = link.replace(/[/]$/, '')
+            // link = `${link}?recordurl=${shareId}&rand=${2}`
+            // // const imgUrl = ''
+            // console.log('ready 测试分享数据' , link)
+            //
+            // // imgUrl = ''
+            // wx.updateTimelineShareData({
+            //     title,
+            //     link,
+            //     imgUrl,
+            //     success:res=>{
+            //         console.log('定义分享到朋友圈内容 success')
+            //         console.log('imgUrl' , imgUrl)
+            //         // resolve(res)
+            //     },
+            //     fail:err=>{
+            //         console.log('定义分享到朋友圈内容 fail')
+            //         reject(err)
+            //     },
+            //     cancel:res=>reject(new Error('用户取消分享')),
+            // })
+            //
+            // wx.updateAppMessageShareData({
+            //     title,
+            //     desc,
+            //     link,
+            //     imgUrl,
+            //     success:res=>{
+            //         console.log('分享给朋友 success')
+            //         // resolve(res)
+            //     },
+            //     fail:err=>{
+            //         console.log('分享给朋友 fail')
+            //         reject(err)
+            //     },
+            //     cancel:res=>reject(new Error('用户取消分享')),
+            // })
+            //
+            //
+            // const shareData = {
+            //     title,
+            //     desc,
+            //     link,
+            //     imgUrl,
+            //     success:res=>{
+            //         console.log('分享给朋友 onMenuShareAppMessage success')
+            //         // resolve(res)
+            //     },
+            //     fail:err=>{
+            //         console.log('分享给朋友 onMenuShareAppMessage fail')
+            //         reject(err)
+            //     },
+            //     cancel:res=>reject(new Error('用户取消分享')),
+            // }
+            //
+            //
+            // wx.onMenuShareAppMessage(shareData);
+            // wx.onMenuShareTimeline(shareData);
+            //
+            // setTimeout(()=>{
+            //     resolve()
+            // } , 5000)
+
+        })
         wx.error(reject)
     })
 }
+//获取“分享到朋友圈”按钮点击状态及自定义分享内容接口（即将废弃）
+export function onMenuShareTimeline(title, link, imgUrl) {
+    wx.onMenuShareTimeline({
+        title,
+        link,
+        imgUrl,
+        success:res=>{
+            console.log('分享到朋友圈 即将废弃 success')
+
+        },
+        fail:err=>{
+            console.log('分享到朋友圈 即将废弃 fail')
+
+        },
+        cancel:res=>{
+            console.log('分享到朋友圈 即将废弃 fail')
+        },
+    })
+}
+//获取“分享给朋友”按钮点击状态及自定义分享内容接口（即将废弃）
+export function onMenuShareAppMessage(title, desc , link, imgUrl) {
+    wx.onMenuShareAppMessage({
+        title,
+        desc,
+        link,
+        imgUrl,
+        success:res=>{
+            console.log('分享给朋友 即将废弃 success')
+        },
+        fail:err=>{
+            console.log('分享给朋友 即将废弃 fail')
+        },
+        cancel:res=>{
+            console.log('分享给朋友 即将废弃 fail')
+        },
+    })
+}
+
+//获取“分享到QQ”按钮点击状态及自定义分享内容接口（即将废弃）
+export function onMenuShareQQ(title, desc , link, imgUrl) {
+    return new Promise((resolve, reject) => {
+        wx.onMenuShareQQ({
+            title,
+            desc,
+            link,
+            imgUrl,
+            success:res=>{
+                console.log('分享到QQ success')
+                resolve(res)
+            },
+            fail:err=>{
+                console.log('分享到QQ fail')
+                reject(err)
+            },
+            cancel:res=>reject(new Error('用户取消分享')),
+        })
+    })
+}
+
+//获取“分享到QQ空间”按钮点击状态及自定义分享内容接口（即将废弃）
+export function onMenuShareQZone(title, desc , link, imgUrl) {
+    return new Promise((resolve, reject) => {
+        wx.onMenuShareQZone({
+            title,
+            desc,
+            link,
+            imgUrl,
+            success:res=>{
+                console.log('分享到QQ空间 success')
+                resolve(res)
+            },
+            fail:err=>{
+                console.log('分享到QQ空间 fail')
+                reject(err)
+            },
+            cancel:res=>reject(new Error('用户取消分享')),
+        })
+    })
+}
+
+
+
 //定义分享到朋友圈内容
 export function wx_timelineShare(title, link, imgUrl) {
     return new Promise((resolve, reject) => {
@@ -24,8 +179,14 @@ export function wx_timelineShare(title, link, imgUrl) {
             title,
             link,
             imgUrl,
-            success:resolve,
-            fail:reject,
+            success:res=>{
+                console.log('定义分享到朋友圈内容 success')
+                resolve(res)
+            },
+            fail:err=>{
+                console.log('定义分享到朋友圈内容 fail')
+                reject(err)
+            },
             cancel:res=>reject(new Error('用户取消分享')),
         })
     })
@@ -39,8 +200,14 @@ export function wx_appMessageShare(title, desc , link, imgUrl) {
             desc,
             link,
             imgUrl,
-            success:resolve,
-            fail:reject,
+            success:res=>{
+                console.log('分享给朋友 success')
+                resolve(res)
+            },
+            fail:err=>{
+                console.log('分享给朋友 fail')
+                reject(err)
+            },
             cancel:res=>reject(new Error('用户取消分享')),
         })
     })

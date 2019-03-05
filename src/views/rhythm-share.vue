@@ -1,11 +1,33 @@
 <template>
     <div class="container" ref="rhythmShare">
+
+
+        <audio ref="do" @ended="audioend('do')">
+            <source src="../assets/musics/rhythm-select-do.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="re" @ended="audioend('re')">
+            <source src="../assets/musics/rhythm-select-re.mp3" type="audio/mpeg"/>
+        </audio>
+
+        <audio ref="mi" @ended="audioend('mi')">
+            <source src="../assets/musics/rhythm-select-mi.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="fa" @ended="audioend('fa')">
+            <source src="../assets/musics/rhythm-select-fa.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="sol" @ended="audioend('sol')">
+            <source src="../assets/musics/rhythm-select-sol.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="la" @ended="audioend('la')">
+            <source src="../assets/musics/rhythm-select-la.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="xi" @ended="audioend('xi')">
+            <source src="../assets/musics/rhythm-select-xi.mp3" type="audio/mpeg"/>
+        </audio>
+
         <canvas id="canvas" class="canvas" ref="canvas" v-if="isSaveImage" ></canvas>
 
         <div v-else style="width: 100%;height: 100%">
-            <audio ref="shareRecord" @ended="audioend">
-                <source :src="recordurl" type="audio/mpeg"/>
-            </audio>
             <avatar class="avatar"/>
             <img :src="bg" class="img"/>
             <move-arrow class="arrow"/>
@@ -68,7 +90,11 @@
         wx_stopPlayRecord,
         wx_timelineShare,
         wx_appMessageShare,
-        wx_registerOnVoicePlayEnd
+        wx_registerOnVoicePlayEnd,
+        onMenuShareAppMessage,
+        onMenuShareQQ,
+        onMenuShareQZone,
+        onMenuShareTimeline
     } from "../utils/wx-config";
     import MoveArrow from "../components/MoveArrow";
     import Avatar from "../components/avatar";
@@ -78,7 +104,7 @@
         name: "rhythm-share",
         components: {Avatar, MoveArrow, ShareMusicPlayingBar},
         computed: {
-            ...mapGetters(['base' , 'headimgurl' , 'nickname' , 'openid']),
+            ...mapGetters(['base' , 'headimgurl' , 'nickname' , 'openid' , 'timeline']),
             baseUrl() {
                 console.log('url', `${this.base}${page}`)
                 return `${this.base}${page}`
@@ -121,33 +147,23 @@
                 imgStr:'',
                 isSaveImage:false,
                 showPreview:false,
-                recordurl:''
+                recordurl:'',
+
+
             }
         },
         mounted(option) {
 
-            // this.downLoadImage()
-            // const rhythmShare = this.$refs.canvas
-            // if(rhythmShare){
-            //     console.log('long press rhythmShare')
-            //     rhythmShare.addEventListener('long-press', this.longPress)
-            // }
-            // const rand = 4
             let {recordurl , rand , recordId } = this.$route.query
 
             console.log('recordurl , rand , recordId' , recordurl , rand , recordId)
-            console.log('mounted' , recordurl , rand , recordId)
-            rand = rand ? rand : getRandomInt(1, 6)
             //是否从分享页面进来
-            const isFromShare = !!recordurl
-            const bg = `${this.base}${page}bg${rand}.png`
-            const shareBg = `${this.base}${page}bg${rand}.png`
 
-            console.log('shareBg' , shareBg)
-            this.bg = bg
-            this.shareBg = shareBg
+            rand = rand ? rand : getRandomInt(1, 6)
             this.rand = rand
-            this.isFromShare = isFromShare
+            this.bg = `${this.base}${page}bg${rand}.png`
+            this.shareBg = `${this.base}${page}bg${rand}.png`
+
             this.recordId = recordId
             this.recordurl = recordurl
             this.init()
@@ -164,122 +180,180 @@
                     this.imgStr = img
                 })
             },
-            longPress(e){
-                e.preventDefault()
-                console.log('longPress' , e.target)
-                this.screenShot()
-            },
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),
             async init() {
                 try {
-                    // this.CHANGE_LOADING_BAR(true)
+                    this.CHANGE_LOADING_BAR(true)
                     this.setLoadingText('设置分享...')
                     let shareId = ''
-                    if (this.isFromShare) {
+                    if (this.recordurl) {
                         //从分享也进来，从服务器拿分享的录音视频链接
                         shareId = this.recordurl
                         // this.recordId = ''
-                        console.log('从分享也进来，从服务器拿分享的录音视频链接')
+                        console.log('从分享也进来' , this.recordurl)
                     }else{
-                        shareId =  await uploadRecord(this.openid , this.recordId)
+                        // shareId =  await uploadRecord(this.openid , this.recordId)
+                        shareId =  'testshareid'
                         console.log('上传录音' , this.openid , this.recordId , 'share url' , shareId)
                     }
 
 
-
-
-
-                    wx_registerOnVoicePlayEnd(() => {
-                        console.log('语音播放完毕')
-                        this.isPlaying = false
-                    })
-
                     console.log('this.$route', this.$route)
+                    let link = window.location.href.split('?')[0]
+                    // let link = window.location.href.split('#')[0]
+                    // link = link.replace(/[/]$/, '')
+                    //分享link强制?#模式，否则android会截断?后的query
+                    link  = link.replace('#' , '?#')
+                    link = `${link}?recordurl=${shareId}&rand=${this.rand}`
+
                     const {
                         appid,
                         noncestr,
                         signature,
                         timestamp
-                    } = await getSignInfo(window.location.href)
+                    } = await getSignInfo(link)
 
-                    const title = '我的音乐人格'
-                    const desc = '我的音乐人格分享'
-                    let link = window.location.href.split('?')[0]
-                    link = link.replace(/[/]$/, '')
-                    link = `${link}?recordurl=${shareId}&rand=${this.rand}`
+                    console.log('noncestr' ,   appid,
+                        noncestr,
+                        signature,
+                        timestamp)
+                    const title = '测试分享数据'
+                    const desc = '测试分享数据desc'
+
                     console.log('share link', link)
                     const imgUrl = this.shareBg
+                    // const imgUrl = `${this.base}rank-list-search.png`
                     const jsApiList = [
-                        'updateTimelineShareData',
                         'updateAppMessageShareData',
+                        'updateTimelineShareData',
+                        //下面这两个api，虽然已经废弃，但是android必须调用，否则不能分享
+                        'onMenuShareAppMessage',
+                        'onMenuShareTimeline',
+                        // 'onMenuShareQQ',
+                        // 'onMenuShareQZone',
                     ]
-                    await wx_config(appid, timestamp, noncestr, signature, jsApiList)
-                    await wx_timelineShare(title, link, imgUrl)
+                    console.log('分享数据title, desc, link, imgUrl' , title, desc, link, imgUrl)
+                    await wx_config(appid, timestamp, noncestr, signature, jsApiList , imgUrl)
+                    console.log('分享结束1')
                     await wx_appMessageShare(title, desc, link, imgUrl)
+                    console.log('分享结束2')
+                    await wx_timelineShare(title, link, imgUrl)
+                    console.log('分享结束3')
+                     onMenuShareTimeline(title, link, imgUrl)
+                    console.log('分享结束4')
+                     onMenuShareAppMessage(title, desc, link, imgUrl)
+                    // await onMenuShareQQ(title, desc, link, imgUrl)
+                    // await onMenuShareQZone(title, desc, link, imgUrl)
 
+                    console.log('分享结束5')
                 } catch (e) {
                     console.log('error ', e)
                 } finally {
                     this.CHANGE_LOADING_BAR(false)
                 }
             },
+            audioend(item) {
+                this.curAudio = null
+                this.isPlayingAudio = false
+            },
+            getTime() {
+                const d = new Date()
+                const t = d.getTime();
+                // console.log('time' , t)
+                return t
+            },
+            stopPlayRecord() {
+                this.isPlaying = false
+                clearInterval(this.playRecordTime)
+            },
+            async playMusic(key) {
+                this.isPressMusicBtn = true
+                this.stopaudio()
+
+                const audio = this.$refs[key]
+                if (audio) {
+                    this.curAudio = audio
+                    this.isPlayingAudio = true
+                    console.log('music playing')
+                    audio.play().catch(err=>{
+                        console.log('audio play error' , err)
+                    })
+                } else {
+                    console.error('music doesnot exist')
+                }
+            },
+            startPlayRecord() {
+                this.isPlaying = true
+                this.startTime = this.getTime()
+                this.cloneTimeline = [...this.timeline]
+                let endTime = this.cloneTimeline.pop()
+                this.playRecordTime = setInterval(() => {
+                    const offTime = this.getTime() - this.startTime
+
+                    if(offTime + 90 > endTime.time){
+                        //end
+                        this.isPlaying = false
+                    }
+                    if (this.cloneTimeline.length > 0) {
+                        const cur = this.cloneTimeline[0]
+                        console.log('offTime', offTime, cur)
+                        if (cur.time > offTime - 50 && cur.time < offTime + 50) {
+                            this.playMusic(cur.key)
+                            this.cloneTimeline.shift()
+                            console.log('get key', cur.key)
+                        }
+                    }
+                }, 90)
+            },
+            stopaudio() {
+                if (this.isPlayingAudio && this.curAudio) {
+                    this.curAudio.pause();
+                    this.curAudio.currentTime = 0;
+                    this.isPlayingAudio = false
+                    this.curAudio = null
+                }
+
+            },
             handlePlay(e) {
                 console.log('handlePlay')
                 if (this.isPlaying) {
-                    wx_stopPlayRecord(this.recordId)
-                    this.isPlaying = false
+                    console.log('this.tempFilePath stopPlayRecord')
+                    this.stopPlayRecord()
+                    // wx_stopPlayRecord(this.tempFilePath)
                 } else {
-                    wx_playRecord(this.recordId)
-                    this.isPlaying = true
+                    this.stopaudio()
+                    this.startPlayRecord()
+                    console.log('this.tempFilePath startPlayRecord')
                 }
-            },
-            handleRegister(e) {
-                this.handlePlay()
-                // console.log('handleRegister')
-                // wx.navigateTo({
-                //     url: '/pages/register/index'
-                // })
             },
 
             async getImage(url){
                 return new Promise((res , rej)=>{
-                    // const image = new Image();
-                    //
-                    // image.onload = () => {
-                    //     image.setAttribute("crossOrigin",'*')
-                    //     res(image)
-                    //
-                    // };
-                    // image.src = url
-                    // image.setAttribute("crossOrigin",'Anonymous')
+                    if(url.indexOf('qlogo') !== -1){
+                        console.log('下载微信头像')
+                        loadImage(url , img=>{
+                            if(img.type === 'error'){
+                                console.log('error img loadImage' , url)
+                                rej('error img')
+                            }else{
+                                res(img)
+                            }
+                        } , {
+                        })
+                    }else{
+                        loadImage(url , img=>{
+                            if(img.type === 'error'){
+                                console.log('error img loadImage' , url)
+                                rej('error img')
+                            }else{
+                                res(img)
+                            }
+                        } , {
+                            crossOrigin:"Anonymous"
+                        })
+                    }
 
-
-
-                    loadImage(url , img=>{
-                        if(img.type === 'error'){
-                            console.log('error img loadImage' , url)
-                            rej('error img')
-                        }else{
-                            res(img)
-                        }
-                    } , {
-                        crossOrigin:"Anonymous"
-                    })
                 })
-
-
-                // return new Promise((res , rej)=>{
-                //     const image = new Image();
-                //
-                //     image.onload = () => {
-                //         image.setAttribute("crossOrigin",'*')
-                //         res(image)
-                //
-                //     };
-                //     image.src = url
-                //     image.setAttribute("crossOrigin",'Anonymous')
-                // })
-
 
 
 
@@ -321,23 +395,23 @@
 
 
 
-                    // ctx.save()
-                    // ctx.beginPath();
-                    // ctx.arc(rem(43) + rem(25)/2,
-                    //     rem(30) + rem(25)/2,
-                    //     rem(25)/2, 0,
-                    //     Math.PI * 2, true);
-                    // ctx.closePath();
-                    // ctx.clip();
-                    // const head = await this.getImage(this.headimgurl)
-                    //
-                    // ctx.drawImage(head ,
-                    //     rem(43),
-                    //     rem(30) ,
-                    //     rem(25) ,
-                    //     rem(25))
-                    //
-                    // ctx.restore();
+                    ctx.save()
+                    ctx.beginPath();
+                    ctx.arc(rem(43) + rem(25)/2,
+                        rem(30) + rem(25)/2,
+                        rem(25)/2, 0,
+                        Math.PI * 2, true);
+                    ctx.closePath();
+                    ctx.clip();
+                    const head = await this.getImage(this.headimgurl)
+
+                    ctx.drawImage(head ,
+                        rem(43),
+                        rem(30) ,
+                        rem(25) ,
+                        rem(25))
+
+                    ctx.restore();
 
                     ctx.save()
                     ctx.fillStyle = 'white'
@@ -388,77 +462,28 @@
                 //     this.$router.back()
                 // }
                 this.$router.replace({name:'home'})
-            },
-            onShareAppMessage(obj) {
-                console.log('onShareAppMessage', obj)
-
-                // showMsg(this.data.rand.toString())
-                return {
-                    title: '我的音乐人格',
-                    path: `/pages/rhythm-share/index?rand=${this.data.rand}`,
-                    imageUrl: `${this.data.url}${this.data.shareBg}`
-                }
-            },
-
-            clearResource() {
-                if (this.ctx) {
-                    this.ctx.stop()
-                    this.ctx.destroy()
-                    this.ctx = null
-                }
-            },
-            onHide() {
-                if (this.ctx) {
-                    this.data.isPlaying && this.ctx.stop()
-                }
-            },
-            onUnload() {
-                this.clearResource()
-            },
-            initPlay() {
-                this.ctx = wx.createInnerAudioContext()
-                this.ctx.onPlay(() => {
-                    console.log('开始播放')
-                })
-                this.ctx.onEnded(() => {
-                    console.log('播放结束')
-                    this.setData({
-                        isPlaying: false
-                    })
-                })
-                this.ctx.onError((res) => {
-                    console.log('error', res)
-                    this.setData({
-                        isPlaying: false
-                    })
-                })
-            },
-            play() {
-                this.ctx.src = this.tempFilePath
-                this.ctx.play()
-                this.setData({
-                    isPlaying: true
-                })
-            },
-            stop() {
-                this.ctx.stop()
-                this.setData({
-                    isPlaying: false
-                })
-            },
-            showModal(msg, title = '') {
-                wx.showModal({
-                    title: title.length === 0 ? '提示' : title,
-                    content: msg,
-                    success(res) {
-                        if (res.confirm) {
-                            console.log('用户点击确定')
-                        } else if (res.cancel) {
-                            console.log('用户点击取消')
-                        }
-                    }
-                })
             }
+        },
+        beforeRouteEnter(to, from, next) {
+            next()
+        },
+        beforeRouteUpdate(to, from, next) {
+            next()
+        },
+        async beforeRouteLeave(to, from, next) {
+
+            try {
+
+                clearInterval(this.playRecordTime)
+                this.playRecordTime = null
+
+            }catch (e) {
+                console.error('beforeRouteLeave' , e)
+            }finally {
+                next()
+            }
+
+
         }
     }
 </script>

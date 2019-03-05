@@ -20,26 +20,35 @@
                 // this.setData({
                 //     pressing: true
                 // })
+                console.log('touchstart')
                 this.pressing = true
                 this.$emit('touching', this.musicKey)
-                this.time = setInterval(() => {
-                    // console.log('开始按钮')
-                    this.$emit('touching', this.musicKey)
-                }, 300)
+                // this.time = setInterval(() => {
+                //     // console.log('开始按钮')
+                //     this.$emit('touching', this.musicKey)
+                // }, 300)
 
                 // console.log('开始按钮')
 
 
             },
             touchend(e) {
+                // console.log('touchend')
+                this.time = setTimeout(()=>{
+                    this.$emit('touchingend', this.musicKey)
+                    if(this.time){
+                        clearTimeout(this.time)
+                        this.time = null
+                    }
 
+                } , 100000)
 
                 // this.setData({
                 //     pressing: false
                 // })
                 this.pressing = false
-                clearInterval(this.time)
-                this.time = null
+                // clearInterval(this.time)
+                // this.time = null
                 // console.log('结束按钮')
             }
         },
@@ -47,8 +56,8 @@
             document.body.addEventListener('touchend' , this.handleEnd)
         },
         beforeDestroy(){
-            clearInterval(this.time)
-            this.time = null
+            // clearInterval(this.time)
+            // this.time = null
             document.body.removeEventListener('touchend' , this.handleEnd)
             // console.log('beforeDestroy press')
         }
@@ -62,12 +71,12 @@
 
     @font-face {
         font-family: 'MusicFont1';
-        src: url('../assets/fonts/music-font.ttf');
+        src: url('https://cdnpepsi.ysmine.com/music-font.ttf');
     }
     .music-btn {
         /*user-select: none;*/
         /*z-index: 100;*/
-        font-family: MusicFont1 !important;
+        /*font-family: MusicFont1 !important;*/
         position: absolute;
         /*height: 7.8%;*/
         width: 96px;

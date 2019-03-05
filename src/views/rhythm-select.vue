@@ -40,7 +40,7 @@
         <img :src="yp"
              class="yp-wrap"/>
         <img :src="downIcon"
-             :style="style1"
+             :class="{ 'taped1':icon1Taped }"
              class="icon icon1 "/>
         <img :src="downIcon"
              :style="{animationName: (icon2Taped ? 'taped2' : '')}"
@@ -68,13 +68,27 @@
              @click="handleMusicPerson"/>
 
         <start-recording-bar class="start-recording-bar" v-if="isRecording"/>
-        <music-btn class="music-btn row1 music-btn1" text="Do" @touching="handleTouching" musicKey="do"/>
-        <music-btn class="music-btn row1 music-btn2" text="Re" @touching="handleTouching" musicKey="re"/>
-        <music-btn class="music-btn row1 music-btn3" text="Mi" @touching="handleTouching" musicKey="mi"/>
-        <music-btn class="music-btn row1 music-btn4" text="Fa" @touching="handleTouching" musicKey="fa"/>
-        <music-btn class="music-btn row2 music-btn5" text="Sol" @touching="handleTouching" musicKey="sol"/>
-        <music-btn class="music-btn row2 music-btn6" text="La" @touching="handleTouching" musicKey="la"/>
-        <music-btn class="music-btn row2 music-btn7" text="Xi" @touching="handleTouching" musicKey="xi"/>
+        <music-btn class="music-btn row1 music-btn1" text="Do"
+                   @touchingend="handleTouchingEnd"
+                   @touching="handleTouching" musicKey="do"/>
+        <music-btn class="music-btn row1 music-btn2" text="Re"
+                   @touchingend="handleTouchingEnd"
+                   @touching="handleTouching" musicKey="re"/>
+        <music-btn class="music-btn row1 music-btn3" text="Mi"
+                   @touchingend="handleTouchingEnd"
+                   @touching="handleTouching" musicKey="mi"/>
+        <music-btn class="music-btn row1 music-btn4" text="Fa"
+                   @touchingend="handleTouchingEnd"
+                   @touching="handleTouching" musicKey="fa"/>
+        <music-btn class="music-btn row2 music-btn5" text="Sol"
+                   @touchingend="handleTouchingEnd"
+                   @touching="handleTouching" musicKey="sol"/>
+        <music-btn class="music-btn row2 music-btn6" text="La"
+                   @touchingend="handleTouchingEnd"
+                   @touching="handleTouching" musicKey="la"/>
+        <music-btn class="music-btn row2 music-btn7" text="Xi"
+                   @touchingend="handleTouchingEnd"
+                   @touching="handleTouching" musicKey="xi"/>
 
 
 
@@ -115,7 +129,7 @@
         name: "rhythm-select",
         components: {StartRecordingBar, MusicBtn},
         computed: {
-            ...mapGetters(['base']),
+            ...mapGetters(['base' , 'headimgurl' , 'nickname' , 'openid']),
             style1() {
                 return {animationName: this.icon1Taped ? 'taped1' : ''}
             },
@@ -148,9 +162,6 @@
                 return `${this.base}${page}to-share-btn.png`
             }
         },
-        mounted() {
-            this.init()
-        },
         data() {
             return {
                 url: this.base,
@@ -172,54 +183,13 @@
                 icon6Taped: false,
                 icon7Taped: false,
 
-                timeline: []
+                timeline: [],
+                preKey:''
             }
         },
         methods: {
-            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),
-            async init() {
-                console.log(window.location.href)
-                try {
-                    this.CHANGE_LOADING_BAR(true)
-                    this.setLoadingText('设置录音...')
-                    const {
-                        appid,
-                        noncestr,
-                        signature,
-                        timestamp
-                    } = await getSignInfo(window.location.href)
-
-                    console.log('appid' ,
-                        appid,
-                        noncestr,
-                        signature,
-                        timestamp)
-                    const jsApiList = [
-                        'startRecord',
-                        'stopRecord',
-                        'onVoiceRecordEnd',
-                        'playVoice',
-                        'pauseVoice',
-                        'stopVoice',
-                        'onVoicePlayEnd',
-                        'uploadVoice',
-                        'downloadVoice'
-                    ]
-                    await wx_config(appid, timestamp, noncestr, signature, jsApiList)
-
-                    wx_registerOnVoicePlayEnd(() => {
-                        console.log('语音播放完毕')
-                        this.isPlaying = false
-                    })
-                    console.log('wx jdk init success')
-                } catch (e) {
-                    console.log('error ', e)
-                } finally {
-                    this.CHANGE_LOADING_BAR(false)
-                }
-            },
+            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText' , 'settimeline']),
             audioend(item) {
-                console.log('end music', item)
                 this.curAudio = null
                 this.isPlayingAudio = false
             },
@@ -242,55 +212,62 @@
                 }
             },
             handlePlay(e) {
-                if (!this.isHadRecord()) {
+                if (!this.hadRecord()) {
                     this.showModal('您还没有录音')
                     return
                 }
 
                 if (this.isPlaying) {
-                    console.log('this.tempFilePath stopPlayRecord')
                     this.stopPlayRecord()
-                    wx_stopPlayRecord(this.tempFilePath)
                 } else {
                     this.stopaudio()
                     this.startPlayRecord()
-                    console.log('this.tempFilePath startPlayRecord')
-                    wx_playRecord(this.tempFilePath)
-                }
-            },
-            handleSave(e) {
-                if (!this.isHadRecord()) {
-                    this.showModal('您还没有录音')
-                    return
-                }
-                this._saveFile()
-                console.log('handleSave')
-            },
-            async _saveFile() {
-                try {
-                    showLoading('正在保存...')
-                    console.log('this.tempFilePath', this.tempFilePath)
-                    const path = await saveFile(this.tempFilePath, recordDir)
-                    this.setData({
-                        tempFilePath: path
-                    })
-                } catch (e) {
-                    showMsg(e)
-                } finally {
-                    hideLoading()
                 }
             },
             handleMusicPerson(e) {
-                if (!this.isHadRecord()) {
+                if (!this.hadRecord()) {
                     this.showModal('您还没有录音')
                     return
                 }
+
+
+                this.settimeline(this.timeline)
                 this.$router.push({
-                    name: 'individuality',
+                    name: 'share',
                     query: {
                         recordId: this.tempFilePath
                     }
                 })
+            },
+            handleTouchingEnd(e){
+                console.log('handleTouchingEnd')
+                const key = e
+                switch (key) {
+                    case 'do':
+                        this.icon1Taped = false
+
+                        break
+                    case 're':
+                        this.icon2Taped = false
+                        break
+                    case 'mi':
+                        this.icon3Taped = false
+                        break
+                    case 'fa':
+                        this.icon4Taped = false
+                        break
+                    case 'sol':
+                        this.icon5Taped = false
+                        break
+                    case 'la':
+                        this.icon6Taped = false
+                        break
+                    case 'xi':
+                        this.icon7Taped = false
+                        break
+                }
+
+                // this.stopaudio()
             },
             handleTouching(e, notPlay = false) {
                 const key = e
@@ -306,86 +283,50 @@
                 switch (key) {
                     case 'do':
                         this.icon1Taped = true
-                        this.playTime = setTimeout(() => {
-                            this.icon1Taped = false
-                            clearTimeout(this.playTime)
-                        }, 250)
-
                         break
                     case 're':
                         this.icon2Taped = true
-                        this.playTime = setTimeout(() => {
-                            this.icon2Taped = false
-                            clearTimeout(this.playTime)
-                        }, 250)
-
                         break
                     case 'mi':
                         this.icon3Taped = true
-                        this.playTime = setTimeout(() => {
-                            this.icon3Taped = false
-                            clearTimeout(this.playTime)
-                        }, 250)
-
                         break
                     case 'fa':
                         this.icon4Taped = true
-                        this.playTime = setTimeout(() => {
-                            this.icon4Taped = false
-                            clearTimeout(this.playTime)
-                        }, 250)
-
                         break
                     case 'sol':
                         this.icon5Taped = true
-                        this.playTime = setTimeout(() => {
-                            this.icon5Taped = false
-                            clearTimeout(this.playTime)
-                        }, 250)
-
                         break
                     case 'la':
                         this.icon6Taped = true
-                        this.playTime = setTimeout(() => {
-                            this.icon6Taped = false
-                            clearTimeout(this.playTime)
-                        }, 250)
-
                         break
                     case 'xi':
                         this.icon7Taped = true
-                        this.playTime = setTimeout(() => {
-                            this.icon7Taped = false
-                            clearTimeout(this.playTime)
-                        }, 250)
-
                         break
                 }
-                if (!notPlay) {
-                    this.playMusic(key)
-                }
+                this.playMusic(key)
 
             },
             startPlayRecord() {
-                // this.setData({
-                //     isPlaying: true
-                // })
                 this.isPlaying = true
                 this.startTime = this.getTime()
                 this.cloneTimeline = [...this.timeline]
+                let endTime = this.cloneTimeline.pop()
                 this.playRecordTime = setInterval(() => {
                     const offTime = this.getTime() - this.startTime
 
+                    if(offTime + 90 > endTime.time){
+                        //end
+                        this.isPlaying = false
+                    }
                     if (this.cloneTimeline.length > 0) {
                         const cur = this.cloneTimeline[0]
                         console.log('offTime', offTime, cur)
                         if (cur.time > offTime - 50 && cur.time < offTime + 50) {
-                            this.handleTouching(cur.key, true)
+                            this.handleTouching(cur.key)
+                            // this.preKey = cur.key
                             this.cloneTimeline.shift()
                             console.log('get key', cur.key)
                         }
-                    } else {
-                        clearInterval(this.playRecordTime)
                     }
                 }, 90)
             },
@@ -396,13 +337,13 @@
             getTime() {
                 const d = new Date()
                 const t = d.getTime();
-                // console.log('time' , t)
                 return t
+            },
+            hadRecord(){
+              return   this.isRecorded
             },
             async startRecord() {
                 console.log('开始录音')
-                // this.show('录音开始')
-                await wx_startRecord()
                 this.startTime = this.getTime()
                 this.timeline = []
                 this.isPlaying = false
@@ -430,13 +371,16 @@
                     clearInterval(this.time)
                     this.time = null
                 }
-                const tempFilePath = await wx_stopRecord()
+
+                this.timeline.push({
+                    key: 'end',
+                    time: (this.getTime() - this.startTime)
+                })
+                // const tempFilePath = await wx_stopRecord()
+                const tempFilePath = 'tempFilePath'
                 this.isRecording = false
                 this.tempFilePath = tempFilePath
                 this.isRecorded = this.isPressMusicBtn
-            },
-            isHadRecord() {
-                return this.isRecorded
             },
             async playMusic(key) {
                 this.isPressMusicBtn = true
@@ -451,28 +395,11 @@
                         console.log('audio play error' , err)
                     })
                 } else {
-                    console.error('music doesnot exist')
+                    console.error('music doesnot exist' , key)
                 }
-            },
-            show(msg) {
-                const obj = {
-                    title: msg,
-                }
-                wx.showToast(obj)
             },
             showModal(msg, title = '') {
                 showMsg(msg)
-                // wx.showModal({
-                //     title: title.length === 0 ? '提示' : title,
-                //     content: msg,
-                //     success(res) {
-                //         if (res.confirm) {
-                //             console.log('用户点击确定')
-                //         } else if (res.cancel) {
-                //             console.log('用户点击取消')
-                //         }
-                //     }
-                // })
             }
         },
         beforeRouteEnter(to, from, next) {
@@ -493,7 +420,6 @@
                 this.time = null
 
                 if (this.isRecording) {
-                    await wx_stopRecord()
                     this.stopaudio()
                 }
 
@@ -562,15 +488,20 @@
         height: 4.2%;
         width: 20px;
 
-        animation-name: taped1;
-        animation-timing-function: ease-in;
-        animation-direction: alternate;
-        animation-duration: 0.25s;
+
     }
+
 
     .icon1 {
         top: 66.27%;
         left: 260px;
+    }
+    .taped1{
+        animation-name: taped1;
+        animation-timing-function: ease-in;
+        /*animation-direction: alternate;*/
+        animation-duration: 0.25s;
+        animation-iteration-count: 1;
     }
 
     .icon2 {
@@ -810,13 +741,13 @@
     }
 
     .row1 {
-        /*top: 40.33%;*/
-        top: 39.46%;
+        top: 40.33%;
+        /*top: 39.46%;*/
     }
 
     .row2 {
-        /*top: 48.87%;*/
-        top: 48%;
+        top: 48.87%;
+        /*top: 48%;*/
     }
 
     .music-btn1 {

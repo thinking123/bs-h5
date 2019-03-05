@@ -43,4 +43,7 @@ export default {
     setsex(state ,sex){
         state.sex = sex
     },
+    settimeline(state ,timeline){
+        state.timeline = timeline
+    },
 }

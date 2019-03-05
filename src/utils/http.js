@@ -64,7 +64,7 @@ export async function uploadRecord(openid , mediaId) {
     }).then(res=>res.rows)
 }
 
-export async function getSignInfo() {
+export async function getSignInfo(link) {
 
 
     var u = navigator.userAgent;
@@ -73,15 +73,14 @@ export async function getSignInfo() {
     let signUrl=''
     if (isAndroid) {
         signUrl=location.href.split('#')[0]
+        // signUrl=link
+        signUrl = encodeURIComponent(signUrl)
+        console.log("signUrl" , signUrl)
     }
     if (isIOS) {
         signUrl=location.href.split('#')[0]  //hash后面的部分如果带上ios中config会不对
+        signUrl = encodeURIComponent(signUrl)
     }
-    console.log('isAndroid' , isAndroid)
-    console.log('isIOS' , isIOS)
-    console.log('b signUrl' , signUrl)
-    signUrl = encodeURIComponent(signUrl)
-    console.log(' f location.href' , location.href)
 
     const url = `/api/misic/signature?url=${signUrl}`
     const data = {

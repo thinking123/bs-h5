@@ -17,5 +17,6 @@ export default {
     openid:'',
     headimgurl:'',
     nickname:'',
-    sex:''
+    sex:'',
+    timeline:[]
 }

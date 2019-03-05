@@ -64,12 +64,13 @@
 
         mounted() {
 
-            console.log('openid' , this.openid)
-            console.log('openid' , this.headimgurl)
-            console.log('openid' , this.nickname)
-            console.log('openid' , this.sex)
-            console.log('href' , window.location.href)
-            this.init()
+            // console.log('openid' , this.openid)
+            // console.log('openid' , this.headimgurl)
+            // console.log('openid' , this.nickname)
+            // console.log('openid' , this.sex)
+            // console.log('href' , window.location.href)
+            // this.$router.push({name:'share'})
+            // this.init()
             
             // this.initVideo()
         },
@@ -124,7 +125,7 @@
                 }
             },
             handlePushPage() {
-                this.$router.push({name: 'interact'})
+                this.$router.push({name: 'select'})
             },
             handleShowPlay() {
                 this.showHowtoplay = true

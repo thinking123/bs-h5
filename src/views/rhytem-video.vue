@@ -1,53 +1,75 @@
 <template>
     <div class="wrap">
 
-        <!--<canvas id="canvas" class="canvas" @touchstart="handlePlayVideo">-->
+        <div class="tap" @click="handleTap">
 
-        <!--</canvas>-->
+        </div>
+        <canvas id="canvas" class="canvas">
+
+        </canvas>
         <button @click="handleStop">
             跳过
         </button>
+
         <video id="video"
                class="video"
                :src="video"
                preload="auto"
-               style="object-fit:fill"
-               x5-video-player-fullscreen="true"
-               x5-video-orientation="portrait"
-               x5-video-player-type="h5"
-               webkit-playsinline="true"
                playsinline="true"
-               x-webkit-airplay="allow"
+               webkit-playsinline="true"
                @play="handlePlay"
                @ended="handleEnd"
-        >
+               style="display: none"
+               width="1" height="1"></video>
 
-        </video>
+
+        <!--<video id="video"-->
+               <!--class="video"-->
+               <!--:src="video"-->
+               <!--autoplay-->
+               <!--preload="auto"-->
+               <!--style="object-fit:fill"-->
+               <!--x5-video-player-fullscreen="true"-->
+               <!--x5-video-orientation="portrait"-->
+               <!--x5-video-player-type="h5"-->
+               <!--webkit-playsinline="true"-->
+               <!--playsinline-->
+               <!--x-webkit-airplay="allow"-->
+               <!--@play="handlePlay"-->
+               <!--@ended="handleEnd"-->
+        <!--&gt;-->
+
+        <!--</video>-->
     </div>
 
 </template>
 
 <script>
     import {mapGetters, mapMutations} from 'vuex'
-    // import jquery from 'jquery'
-    // import videojs from 'video.js'
+    import jquery from 'jquery'
+    import videojs from 'video.js'
     export default {
         name: "video-",
         computed: {
             ...mapGetters(['base', 'showVideo']),
             video() {
-                return `${this.base}video2.mp4`
+                return `${this.base}video.mp4`
             }
         },
         data() {
             return {
                 showCanvas: false,
-                isAndroid:true
+                isAndroid: true
             }
         },
         methods: {
             gotoSignInURL() {
-                window.location.href = 'http://bsxyzqy.ysmine.com/login/api/login/htmllogin'},
+
+                // console.log('gotoSignInURL')
+                // return
+
+                window.location.href = 'http://bsxyzqy.ysmine.com/login/api/login/htmllogin'
+            },
             ...mapMutations(['setShowVideo']),
             handleEnd() {
                 console.log('handleEnd')
@@ -61,25 +83,16 @@
 
                 this.gotoSignInURL()
             },
+            handleTap(){
+                var video = document.getElementById('video');
+                video.play().catch(err=>console.log(err))
+            },
             handlePlay() {
-                return
                 console.log('handlePlay')
                 var video = document.getElementById('video');
                 var canvas = document.getElementById('canvas');
                 var ctx = canvas.getContext('2d');
-                var $this = video; //cache
-                // canvas.attr("width", $(window).get(0).innerWidth);
-                //
-                // canvas.attr("height", $(window).get(0).innerHeight);
-
-                // if ($this.paused) {
-                //     console.log('paused')
-                //     return
-                // } else {
-                //     console.log('not paused', $this.paused)
-                // }
-                // jquery(video).hide()
-                // video.style.display = 'none'
+                var $this = video;
                 var w = window,
                     d = document,
                     e = d.documentElement,
@@ -89,8 +102,7 @@
 
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
-                // canvas.style.width = x + 'px'
-                // canvas.style.height = y + 'px'
+                jquery(video).hide()
                 (function loop() {
                     // console.log('loop')
                     console.log(x, y)
@@ -100,8 +112,8 @@
                     }
                 })();
             },
-            handlePlayVideo(){
-                if(this.isAndroid){
+            handlePlayVideo() {
+                if (this.isAndroid) {
 
                     alert('start play')
                     document.getElementById('video').play();
@@ -109,27 +121,33 @@
             }
         },
         mounted() {
-
             var u = navigator.userAgent;
             var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //g
             var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 
             this.isAndroid = isAndroid
-            const video =   document.getElementById('video')
-            if(isIOS){
+
+            console.log('hopme locaiton' , window.location.href)
+            if (isIOS) {
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
+                    console.log('start play')
+                    const video = document.getElementById('video')
                     video.play();
                 }, false);
-            }else{
-                video.addEventListener('timeupdate', function (e) {
-                    console.log('timeupdate' , e)
-                })
-                video.addEventListener('x5videoenterfullscreen', function (e) {
-                    console.log('x5videoenterfullscreen' , e)
-                })
-                video.addEventListener('x5videoexitfullscreen', function (e) {
-                    console.log('x5videoexitfullscreen' , e)
-                })
+            } else {
+
+                // this.$router.push({name:'home'})
+                // return
+                // this.gotoSignInURL()
+                // video.addEventListener('timeupdate', function (e) {
+                //     console.log('timeupdate' , e)
+                // })
+                // video.addEventListener('x5videoenterfullscreen', function (e) {
+                //     console.log('x5videoenterfullscreen' , e)
+                // })
+                // video.addEventListener('x5videoexitfullscreen', function (e) {
+                //     console.log('x5videoexitfullscreen' , e)
+                // })
             }
 
 
@@ -144,6 +162,13 @@
         position: relative;
     }
 
+    .tap{
+        width: 20%;
+        height: 20%;
+        position: absolute;
+        z-index: 100;
+        background-color: yellow;
+    }
     button {
         z-index: 10000;
         position: fixed;
@@ -163,18 +188,18 @@
 
     .canvas {
         position: absolute;
-        left: 0%;
-        top: 0%;
-        width: 100%;
-        height: 100%;
-        border: 1px solid red;
+        left: 50%;
+        top: 50%;
+        width: 10px;
+        height: 10px;
+        border: 1px solid green;
     }
 
     .video {
         position: absolute;
         left: 0;
         top: 0;
-        /*opacity: 0;*/
+        opacity: 0;
         width: 100%;
         height: 100%;
         object-fit: contain;
