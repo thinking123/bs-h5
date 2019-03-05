@@ -190,7 +190,7 @@
                         //从分享也进来，从服务器拿分享的录音视频链接
                         shareId = this.recordurl
                         // this.recordId = ''
-                        console.log('从分享也进来' , this.recordurl)
+                        console.log('从分享也进来' , this.recordurl , this.rand , this.$route.query)
                     }else{
                         // shareId =  await uploadRecord(this.openid , this.recordId)
                         shareId =  'testshareid'
@@ -202,6 +202,7 @@
                     let link = window.location.href.split('?')[0]
                     // let link = window.location.href.split('#')[0]
                     // link = link.replace(/[/]$/, '')
+
                     //分享link强制?#模式，否则android会截断?后的query
                     link  = link.replace('#' , '?#')
                     link = `${link}?recordurl=${shareId}&rand=${this.rand}`

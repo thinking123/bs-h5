@@ -1,26 +1,38 @@
 <template>
     <div class="wrap">
 
-        <div class="tap" @click="handleTap">
+        <!--<div class="tap" @click="handleTap">-->
 
-        </div>
-        <canvas id="canvas" class="canvas">
+        <!--</div>-->
+        <canvas id="canvas" class="canvas" v-if="isIOS">
 
         </canvas>
-        <button @click="handleStop">
+        <button @click="handleStop" class="button">
             跳过
         </button>
+        <div class="control-wrap" v-if="!isPlaying && isAndroid"  @click="handleStart" id="control">
+            <!--开始播放-->
+            <img :src="bg"/>
+        </div>
+        <div   class="video-wrap">
+            <video id="video"
+                    class="video"
+                   :class="{'hidden-video':isIOS}"
+                   src="https://cdnpepsi.ysmine.com/video.mp4"
+                   webkit-playsinline="true"
+                   playsinline
+                   x-webkit-airplay="allow"
 
-        <video id="video"
-               class="video"
-               :src="video"
-               preload="auto"
-               playsinline="true"
-               webkit-playsinline="true"
-               @play="handlePlay"
-               @ended="handleEnd"
-               style="display: none"
-               width="1" height="1"></video>
+                   x5-video-player-fullscreen="true"
+                   x5-video-orientation="portrait"
+                   x5-video-player-type="h5"
+
+                   width="100"
+                   height="100"
+                   @play="handlePlay"
+                   @ended="handleEnd"></video>
+        </div>
+
 
 
         <!--<video id="video"-->
@@ -46,31 +58,31 @@
 
 <script>
     import {mapGetters, mapMutations} from 'vuex'
-    import jquery from 'jquery'
-    import videojs from 'video.js'
+    import $ from 'jquery'
+    // import videojs from 'video.js'
     export default {
         name: "video-",
         computed: {
-            ...mapGetters(['base', 'showVideo']),
+            ...mapGetters(['base']),
             video() {
                 return `${this.base}video.mp4`
+            },
+            bg() {
+                return `${this.base}rhythm-share-share-bg3.png`
             }
         },
         data() {
             return {
-                showCanvas: false,
-                isAndroid: true
+                isAndroid: true,
+                showControl:true,
+                isPlaying:false,
+                isIOS:false
             }
         },
         methods: {
             gotoSignInURL() {
-
-                // console.log('gotoSignInURL')
-                // return
-
                 window.location.href = 'http://bsxyzqy.ysmine.com/login/api/login/htmllogin'
             },
-            ...mapMutations(['setShowVideo']),
             handleEnd() {
                 console.log('handleEnd')
                 this.gotoSignInURL()
@@ -83,41 +95,48 @@
 
                 this.gotoSignInURL()
             },
-            handleTap(){
-                var video = document.getElementById('video');
-                video.play().catch(err=>console.log(err))
-            },
             handlePlay() {
-                console.log('handlePlay')
-                var video = document.getElementById('video');
-                var canvas = document.getElementById('canvas');
-                var ctx = canvas.getContext('2d');
-                var $this = video;
-                var w = window,
-                    d = document,
-                    e = d.documentElement,
-                    g = d.getElementsByTagName('body')[0],
-                    x = w.innerWidth || e.clientWidth || g.clientWidth,
-                    y = w.innerHeight || e.clientHeight || g.clientHeight;
 
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                jquery(video).hide()
-                (function loop() {
-                    // console.log('loop')
-                    console.log(x, y)
-                    if (!$this.paused && !$this.ended) {
-                        ctx.drawImage($this, 0, 0, x, y);
-                        setTimeout(loop, 1000 / 30); // drawing at 30fps
-                    }
-                })();
-            },
-            handlePlayVideo() {
-                if (this.isAndroid) {
+                if( this.isAndroid){
+                    console.log('handlePlay isAndroid')
+                    this.isPlaying = true
+                    return
+                }else{
+                    var video = document.getElementById('video');
+                    var canvas = document.getElementById('canvas');
+                    var ctx = canvas.getContext('2d');
+                    var $this = video;
+                    var w = window,
+                        d = document,
+                        e = d.documentElement,
+                        g = d.getElementsByTagName('body')[0],
+                        x = w.innerWidth || e.clientWidth || g.clientWidth,
+                        y = w.innerHeight || e.clientHeight || g.clientHeight;
 
-                    alert('start play')
-                    document.getElementById('video').play();
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    // jquery(video).hide()
+                    (function loop() {
+                        // console.log('loop')
+                        console.log(x, y)
+                        if (!$this.paused && !$this.ended) {
+                            ctx.drawImage($this, 0, 0, x, y);
+                            setTimeout(loop, 1000 / 30); // drawing at 30fps
+                        }
+                    })();
                 }
+
+
+            },
+            handleStart(){
+                const video = document.getElementById('video')
+
+
+                video.play().catch(err=>{
+                    console.log('play err' , err)
+                });
+
+                console.log('handleStart')
             }
         },
         mounted() {
@@ -126,28 +145,72 @@
             var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 
             this.isAndroid = isAndroid
+            this.isIOS = isIOS
 
-            console.log('hopme locaiton' , window.location.href)
+            console.log('isAndroid' , isAndroid)
+            console.log('isIOS' , isIOS)
             if (isIOS) {
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
                     console.log('start play')
                     const video = document.getElementById('video')
                     video.play();
                 }, false);
-            } else {
 
-                // this.$router.push({name:'home'})
-                // return
-                // this.gotoSignInURL()
-                // video.addEventListener('timeupdate', function (e) {
-                //     console.log('timeupdate' , e)
-                // })
-                // video.addEventListener('x5videoenterfullscreen', function (e) {
-                //     console.log('x5videoenterfullscreen' , e)
-                // })
-                // video.addEventListener('x5videoexitfullscreen', function (e) {
-                //     console.log('x5videoexitfullscreen' , e)
-                // })
+                console.log('start play')
+                const video = document.getElementById('video')
+                video.play();
+            }
+            if(isAndroid){
+                document.addEventListener("WeixinJSBridgeReady", function (e) {
+                    // console.log('start play')
+                    const video = document.getElementById('video')
+                    // video.play();
+                    video.addEventListener("x5videoenterfullscreen", function(){
+
+                        console.log('player enterfullscreen')
+                        // alert("player enterfullscreen");
+
+                        const video = this
+
+                        // video.style.width = window.innerWidth + "px";
+                        //
+                        // video.style.height = window.innerHeight + "px";
+                        // v.width = window.innerWidth;
+                        // v.height = window.innerHeight*2;
+
+                        // const vd = $(v)
+                        // vd.hide()
+                        // jquery(video).hide()
+                        // v.width =
+                    })
+
+                    video.addEventListener("x5videoexitfullscreen", function(){
+
+                        // alert("player x5videoexitfullscreen");
+                        console.log('player x5videoexitfullscreen')
+                        this.gotoSignInURL()
+
+                    })
+
+                    window.onresize = function(){
+                        const video = document.getElementById('video')
+                        if(!video.paused && !video.paused){
+                            $('.control-wrap').fadeOut("slow");
+                            video.style.width = window.innerWidth +  "px";
+
+                            video.style.height = window.innerHeight + "px";
+                        }
+                    }
+
+//                     video.addEventListener('timeupdate', function (e) {
+//                         console.log(video.currentTime) // 当前播放的进度
+//                     })
+//
+//                     video.addEventListener('ended', function (e) {
+// // 播放结束时触发
+//                     })
+
+                }, false);
             }
 
 
@@ -172,7 +235,7 @@
     button {
         z-index: 10000;
         position: fixed;
-        top: 32px;
+        top: 132px;
         right: 32px;
         display: flex;
         justify-content: center;
@@ -188,21 +251,54 @@
 
     .canvas {
         position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 10px;
-        height: 10px;
-        border: 1px solid green;
-    }
-
-    .video {
-        position: absolute;
-        left: 0;
-        top: 0;
-        opacity: 0;
+        left: 0%;
+        top: 0%;
+        bottom: 0%;
+        right: 0%;
         width: 100%;
         height: 100%;
-        object-fit: contain;
-        border: 1px solid yellow;
+        /*border: 1px solid green;*/
     }
+
+    .control-wrap{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        /*border: 10px solid gold;*/
+        background-color: green;
+
+    }
+
+    .control-wrap > img{
+        width: 100%;
+        height: 100%;
+    }
+    .video{
+        /*object-fit: fill;*/
+    }
+
+    .hidden-video{
+        display: none;
+    }
+    .video-wrap{
+        /*border: 5px solid red;*/
+
+    }
+    .title-bar{
+        position: fixed;
+        width: 100%;
+        height: 100px;
+        background-color: sandybrown;
+        z-index: 10000;
+    }
+    /*.video {*/
+        /*position: absolute;*/
+        /*left: 0;*/
+        /*top: 0;*/
+        /*opacity: 0;*/
+        /*width: 100%;*/
+        /*height: 100%;*/
+        /*object-fit: contain;*/
+        /*border: 10px solid yellow;*/
+    /*}*/
 </style>
