@@ -31,17 +31,12 @@
                 // console.log('开始按钮')
 
 
+                //禁止长按弹出菜单
+                e.preventDefault()
             },
             touchend(e) {
                 // console.log('touchend')
-                this.time = setTimeout(()=>{
-                    this.$emit('touchingend', this.musicKey)
-                    if(this.time){
-                        clearTimeout(this.time)
-                        this.time = null
-                    }
-
-                } , 100000)
+                this.$emit('touchingend', this.musicKey)
 
                 // this.setData({
                 //     pressing: false
@@ -74,6 +69,7 @@
         src: url('https://cdnpepsi.ysmine.com/music-font.ttf');
     }
     .music-btn {
+        /*pointer-events: none;*/
         /*user-select: none;*/
         /*z-index: 100;*/
         /*font-family: MusicFont1 !important;*/

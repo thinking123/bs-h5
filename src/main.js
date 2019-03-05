@@ -10,6 +10,8 @@ import Vuex from 'vuex'
 import App from './App.vue'
 import routes from './router'
 import store from './store'
+import VueResource from 'vue-resource'
+import MusicPlay from './utils/MusicPlay'
 import './assets/css/index.css'
 import 'weui'
 // import Mint from 'mint-ui';
@@ -17,7 +19,8 @@ import 'weui'
 
 Vue.config.productionTip = false
 Vue.use(VueRouter)
-
+Vue.use(VueResource);
+Vue.prototype.$music = MusicPlay
 const router = new VueRouter({
     // mode: 'history',
     routes

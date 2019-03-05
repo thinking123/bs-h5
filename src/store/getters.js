@@ -12,4 +12,33 @@ export default {
     nickname: state => state.nickname,
     sex: state => state.sex,
     timeline: state => state.timeline,
+    do:state=>{
+        const url = `${state.base}rhythm-select-do.mp3`
+
+        return url
+    },
+    re:state=>{
+        const url = `${state.base}rhythm-select-re.mp3`
+        return url
+    },
+    mi:state=>{
+        const url = `${state.base}rhythm-select-mi.mp3`
+        return url
+    },
+    fa:state=>{
+        const url = `${state.base}rhythm-select-fa.mp3`
+        return url
+    },
+    sol:state=>{
+        const url = `${state.base}rhythm-select-sol.mp3`
+        return url
+    },
+    la:state=>{
+        const url = `${state.base}rhythm-select-la.mp3`
+        return url
+    },
+    xi:state=>{
+        const url = `${state.base}rhythm-select-xi.mp3`
+        return url
+    },
 }

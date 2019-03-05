@@ -1,29 +1,28 @@
 <template>
     <div class="container">
+        <audio ref="do" >
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-do.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="re" >
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-re.mp3" type="audio/mpeg"/>
+        </audio>
 
-        <!--<video-->
-                <!--src="./video.mp4"-->
-                <!--x-webkit-airplay='true'-->
-                <!--x5-video-player-type='h5'-->
-                <!--x5-video-player-fullscreen='true'-->
-                <!--x5-video-orientation="portraint"-->
-                <!--style="object-fit:fill"-->
-                <!--id="video"-->
-                <!--preload="auto"-->
-                <!--width="500" height="500"-->
-                <!--autoplay>-->
-            <!--不支持播放视频-->
-        <!--</video>-->
-
-
-        <!--<div   v-if="showVideo" class="video-container">-->
-      <!---->
-        <!--</div>-->
-
-
-        <!--<button @click="handleSkip" class="skip-button"  v-if="showVideo">-->
-            <!--跳过-->
-        <!--</button>-->
+        <audio ref="mi" >
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-mi.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="fa" >
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-fa.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="sol" >
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-sol.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="la" >
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-la.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="xi" >
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-xi.mp3" type="audio/mpeg"/>
+        </audio>
+        
         <div class="content" >
             <img :src="bg" class="img"/>
             <div class="how-to-play" @click="handleShowPlay"/>
@@ -31,24 +30,24 @@
             <how-to-play-dialog :visible.sync="showHowtoplay"/>
 
         </div>
-
-
     </div>
-
 </template>
 
 <script>
     import HButton from "../components/HButton";
+
+    import {CHANGE_LOADING_BAR} from "../store/mutations";
     import HowToPlayDialog from "../components/Dialog/HowToPlayDialog";
     import {getSignInfo , login} from "../utils/http";
     import {mapGetters , mapMutations} from 'vuex'
+    import music from '../utils/MusicPlay'
     const baseAudioUrl = `asserts/audio/video/video.mp4`
     const page = 'music-journey-'
     export default {
         name: "Home",
         components: {HowToPlayDialog, HButton},
         computed: {
-            ...mapGetters(['base' , 'showVideo' , 'openid']),
+            ...mapGetters(['base' , 'showVideo' , 'openid','headimgurl' , 'nickname' ,]),
             bg() {
                 return `${this.base}${page}bg.png`
             },
@@ -63,18 +62,15 @@
         },
 
         mounted() {
+            const that = this
+            document.addEventListener("WeixinJSBridgeReady", function (e) {
+                console.log('WeixinJSBridgeReady init')
+                that.init()
+            }, false);
 
-            // console.log('openid' , this.openid)
-            // console.log('openid' , this.headimgurl)
-            // console.log('openid' , this.nickname)
-            // console.log('openid' , this.sex)
-            // console.log('href' , window.location.href)
-            // this.$router.push({name:'share'})
-            // this.init()
-            
-            // this.initVideo()
         },
         methods: {
+            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),
             initVideo(){
                 
                 const v = this.$refs.video
@@ -87,41 +83,15 @@
                 video.attr('object-position', 'center center');
             },
             ...mapMutations(['setShowVideo']),
-            videoEnded(){
-                this.setShowVideo(false)
-                // alert()
-                console.log('videoEnded')
-            },
-            videoStop(){
-
-            },
-            async handleSkip(){
-
-                try {
-                    const video = document.getElementById("video");
-                    if(video){
-                        console.log(video)
-                        await video.pause()
-                    }
-
-                }catch (e) {
-                    console.log(e)
-                }finally {
-                    this.setShowVideo(false)
-                }
-
-                // return
-                // const video = document.getElementById("video");
-                // video.pause()
-                // this.setShowVideo(false)
-            },
             async init() {
                 try {
-
-                    // const res = await login()
-                    // console.log('login' , res)
+                    console.log('headimgurl' , this.headimgurl)
+                    this.CHANGE_LOADING_BAR(true)
+                    await this.$music.init()
                 } catch (e) {
                     console.log('login error ', e)
+                }finally {
+                    this.CHANGE_LOADING_BAR(false)
                 }
             },
             handlePushPage() {

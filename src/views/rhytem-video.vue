@@ -10,9 +10,13 @@
         <button @click="handleStop" class="button">
             跳过
         </button>
-        <div class="control-wrap" v-if="!isPlaying && isAndroid"  @click="handleStart" id="control">
+        <div class="control-wrap"  v-if="!isPlaying && isAndroid"   id="control">
             <!--开始播放-->
             <img :src="bg"/>
+            <div class="bg-btn-wrap" @click="handleStart" >
+                <img :src="bgBtn" class="bg-btn"/>
+            </div>
+
         </div>
         <div   class="video-wrap">
             <video id="video"
@@ -58,7 +62,7 @@
 
 <script>
     import {mapGetters, mapMutations} from 'vuex'
-    import $ from 'jquery'
+    // import $ from 'jquery'
     // import videojs from 'video.js'
     export default {
         name: "video-",
@@ -68,7 +72,10 @@
                 return `${this.base}video.mp4`
             },
             bg() {
-                return `${this.base}rhythm-share-share-bg3.png`
+                return `${this.base}video-bg.png`
+            },
+            bgBtn() {
+                return `${this.base}video-thumb.png`
             }
         },
         data() {
@@ -156,9 +163,9 @@
                     video.play();
                 }, false);
 
-                console.log('start play')
-                const video = document.getElementById('video')
-                video.play();
+                // console.log('start play')
+                // const video = document.getElementById('video')
+                // video.play();
             }
             if(isAndroid){
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
@@ -195,7 +202,7 @@
                     window.onresize = function(){
                         const video = document.getElementById('video')
                         if(!video.paused && !video.paused){
-                            $('.control-wrap').fadeOut("slow");
+                            // $('.control-wrap').fadeOut("slow");
                             video.style.width = window.innerWidth +  "px";
 
                             video.style.height = window.innerHeight + "px";
@@ -251,10 +258,10 @@
 
     .canvas {
         position: absolute;
-        left: 0%;
-        top: 0%;
-        bottom: 0%;
-        right: 0%;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
         width: 100%;
         height: 100%;
         /*border: 1px solid green;*/
@@ -290,6 +297,25 @@
         height: 100px;
         background-color: sandybrown;
         z-index: 10000;
+    }
+
+    .bg-btn-wrap{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+
+        justify-content: center;
+    }
+    .bg-btn{
+        width: 128rpx;
+        height: 128rpx;
     }
     /*.video {*/
         /*position: absolute;*/

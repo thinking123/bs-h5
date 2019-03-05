@@ -1,26 +1,26 @@
 <template>
     <div class="container">
-        <audio ref="do" @ended="audioend('do')">
-            <source src="../assets/musics/rhythm-select-do.mp3" type="audio/mpeg"/>
+        <audio ref="do" @ended="audioend('do')" preload>
+            <source ref="dosrc" type="audio/mpeg"/>
         </audio>
-        <audio ref="re" @ended="audioend('re')">
-            <source src="../assets/musics/rhythm-select-re.mp3" type="audio/mpeg"/>
+        <audio ref="re" @ended="audioend('re')" preload>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-re.mp3" type="audio/mpeg"/>
         </audio>
 
-        <audio ref="mi" @ended="audioend('mi')">
-            <source src="../assets/musics/rhythm-select-mi.mp3" type="audio/mpeg"/>
+        <audio ref="mi" @ended="audioend('mi')" preload>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-mi.mp3" type="audio/mpeg"/>
         </audio>
-        <audio ref="fa" @ended="audioend('fa')">
-            <source src="../assets/musics/rhythm-select-fa.mp3" type="audio/mpeg"/>
+        <audio ref="fa" @ended="audioend('fa')" preload>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-fa.mp3" type="audio/mpeg"/>
         </audio>
-        <audio ref="sol" @ended="audioend('sol')">
-            <source src="../assets/musics/rhythm-select-sol.mp3" type="audio/mpeg"/>
+        <audio ref="sol" @ended="audioend('sol')" preload>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-sol.mp3" type="audio/mpeg"/>
         </audio>
-        <audio ref="la" @ended="audioend('la')">
-            <source src="../assets/musics/rhythm-select-la.mp3" type="audio/mpeg"/>
+        <audio ref="la" @ended="audioend('la')" preload>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-la.mp3" type="audio/mpeg"/>
         </audio>
-        <audio ref="xi" @ended="audioend('xi')">
-            <source src="../assets/musics/rhythm-select-xi.mp3" type="audio/mpeg"/>
+        <audio ref="xi" @ended="audioend('xi')" preload>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-xi.mp3" type="audio/mpeg"/>
         </audio>
 
         <img :src="bg" class="img"/>
@@ -43,22 +43,28 @@
              :class="{ 'taped1':icon1Taped }"
              class="icon icon1 "/>
         <img :src="downIcon"
+             :class="{ 'taped2':icon2Taped }"
              :style="{animationName: (icon2Taped ? 'taped2' : '')}"
              class="icon icon2 "/>
         <img :src="downIcon"
+             :class="{ 'taped3':icon3Taped }"
              :style="{animationName:icon3Taped ? 'taped3' : ''}"
              class="icon icon3 "/>
         <img :src="downIcon"
+             :class="{ 'taped4':icon4Taped }"
              :style="{animationName:icon4Taped ? 'taped4' : ''}"
              class="icon icon4 "/>
         <img :src="downIcon"
+             :class="{ 'taped5':icon5Taped }"
              :style="{animationName:icon5Taped ? 'taped5' : ''}"
              class="icon icon5 "/>
 
         <img :src="upIcon"
+             :class="{ 'taped6':icon6Taped }"
              :style="{animationName:icon6Taped ? 'taped6' : ''}"
              class="icon icon6 "/>
         <img :src="upIcon"
+             :class="{ 'taped7':icon7Taped }"
              :style="{animationName:icon7Taped ? 'taped7' : ''}"
              class="icon icon7 "/>
 
@@ -91,14 +97,13 @@
                    @touching="handleTouching" musicKey="xi"/>
 
 
-
     </div>
 
 </template>
 
 <script>
     import {mapGetters, mapMutations} from 'vuex'
-
+    import {Howl, Howler} from 'howler'
     import MusicBtn from "../components/MusicBtn";
     import StartRecordingBar from "../components/StartRecordingBar";
     import {getSignInfo} from "../utils/http";
@@ -129,7 +134,18 @@
         name: "rhythm-select",
         components: {StartRecordingBar, MusicBtn},
         computed: {
-            ...mapGetters(['base' , 'headimgurl' , 'nickname' , 'openid']),
+            ...mapGetters(['base',
+                'headimgurl',
+                'nickname',
+                'openid',
+                'do',
+                're',
+                'mi',
+                'fa',
+                'sol',
+                'la',
+                'xi',
+            ]),
             style1() {
                 return {animationName: this.icon1Taped ? 'taped1' : ''}
             },
@@ -184,11 +200,55 @@
                 icon7Taped: false,
 
                 timeline: [],
-                preKey:''
+                preKey: ''
             }
         },
+        mounted() {
+
+            console.log('do' , this.do)
+
+            return
+            this.setMusic()
+        },
         methods: {
-            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText' , 'settimeline']),
+            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText', 'settimeline']),
+            async setMusic() {
+                try {
+                    this.CHANGE_LOADING_BAR(true)
+                    this.setLoadingText('下载音乐文件...')
+                    const list = await this.downloadAllMusic()
+
+                    console.log('list' , list)
+                    const dosrc = this.$refs.dosrc
+                    dosrc.src = list[0]
+                    console.log('list ', list)
+                } catch (e) {
+                    console.log(e)
+                } finally {
+                    this.CHANGE_LOADING_BAR(false)
+                }
+
+            },
+            downloadAllMusic() {
+                const keys = [
+                    "do",
+                    "re",
+                    "mi",
+                    "fa",
+                    "sol",
+                    "la",
+                    "xi"
+                ]
+                const base = `${this.base}${page}`
+
+                return Promise.all(keys.map(k => {
+                    const url = `${base}${k}.mp3`
+                    return this.downloadMusic(url)
+                }))
+            },
+            downloadMusic(url) {
+                return this.$http.get(url)
+            },
             audioend(item) {
                 this.curAudio = null
                 this.isPlayingAudio = false
@@ -239,7 +299,7 @@
                     }
                 })
             },
-            handleTouchingEnd(e){
+            handleTouchingEnd(e) {
                 console.log('handleTouchingEnd')
                 const key = e
                 switch (key) {
@@ -314,7 +374,7 @@
                 this.playRecordTime = setInterval(() => {
                     const offTime = this.getTime() - this.startTime
 
-                    if(offTime + 90 > endTime.time){
+                    if (offTime + 90 > endTime.time) {
                         //end
                         this.isPlaying = false
                     }
@@ -339,8 +399,8 @@
                 const t = d.getTime();
                 return t
             },
-            hadRecord(){
-              return   this.isRecorded
+            hadRecord() {
+                return this.isRecorded
             },
             async startRecord() {
                 console.log('开始录音')
@@ -384,6 +444,18 @@
             },
             async playMusic(key) {
                 this.isPressMusicBtn = true
+                //
+                // this.$music.play(key)
+                // return
+
+                // var audio = new Audio(this.do);
+                // audio.play();
+
+
+                var sound = new Howl({
+                    src: this.do
+                }).play();
+                return
                 this.stopaudio()
 
                 const audio = this.$refs[key]
@@ -391,11 +463,11 @@
                     this.curAudio = audio
                     this.isPlayingAudio = true
                     console.log('music playing')
-                    audio.play().catch(err=>{
-                        console.log('audio play error' , err)
+                    audio.play().catch(err => {
+                        console.log('audio play error', err)
                     })
                 } else {
-                    console.error('music doesnot exist' , key)
+                    console.error('music doesnot exist', key)
                 }
             },
             showModal(msg, title = '') {
@@ -423,9 +495,9 @@
                     this.stopaudio()
                 }
 
-            }catch (e) {
-                console.error('beforeRouteLeave' , e)
-            }finally {
+            } catch (e) {
+                console.error('beforeRouteLeave', e)
+            } finally {
                 next()
             }
 
@@ -436,11 +508,11 @@
 
 <style scoped>
 
-    .to-share{
+    .to-share {
         z-index: 10000;
         position: fixed;
-        top:32px;
-        right:32px;
+        top: 32px;
+        right: 32px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -451,6 +523,7 @@
         border: 0;
         margin: 0;
     }
+
     .container {
         height: 100%;
         width: 100%;
@@ -487,7 +560,7 @@
         position: absolute;
         height: 4.2%;
         width: 20px;
-
+        transition: transform 0.25s ease-in-out;
 
     }
 
@@ -496,13 +569,8 @@
         top: 66.27%;
         left: 260px;
     }
-    .taped1{
-        animation-name: taped1;
-        animation-timing-function: ease-in;
-        /*animation-direction: alternate;*/
-        animation-duration: 0.25s;
-        animation-iteration-count: 1;
-    }
+
+
 
     .icon2 {
         top: 65.82%;
@@ -540,24 +608,10 @@
 
     }
 
-    @keyframes taped1 {
-        0% {
-            top: 66.27%;
-        }
-        100% {
-            top: 65.27%;
-        }
-    }
 
-    @-moz-keyframes taped1 {
-        0% {
-            top: 66.27%;
-        }
-        100% {
-            top: 65.27%;
-        }
+    .taped1 {
+        top: 65.27%;
     }
-
     @-webkit-keyframes taped1 {
         0% {
             top: 66.27%;
@@ -566,7 +620,9 @@
             top: 65.27%;
         }
     }
-
+    .taped2 {
+        top: 64.82%;
+    }
     @keyframes taped2 {
         0% {
             top: 65.82%;
@@ -575,7 +631,9 @@
             top: 64.82%;
         }
     }
-
+    .taped3 {
+        top: 64.37%;
+    }
     @keyframes taped3 {
         0% {
             top: 65.37%;
@@ -584,7 +642,9 @@
             top: 64.37%;
         }
     }
-
+    .taped4 {
+        top: 63.92%;
+    }
     @keyframes taped4 {
         0% {
             top: 64.92%;
@@ -593,7 +653,9 @@
             top: 63.92%;
         }
     }
-
+    .taped5 {
+        top: 63.67%;
+    }
     @keyframes taped5 {
         0% {
             top: 64.67%;
@@ -602,7 +664,9 @@
             top: 63.67%;
         }
     }
-
+    .taped6 {
+        top: 66.82%;
+    }
     @keyframes taped6 {
         0% {
             top: 65.82%;
@@ -611,7 +675,9 @@
             top: 66.82%;
         }
     }
-
+    .taped7 {
+        top: 66.37%;
+    }
     @keyframes taped7 {
         0% {
             top: 65.37%;

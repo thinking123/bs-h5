@@ -62,6 +62,7 @@
                  @click="handleDownloadImage"
                  class="download-btn btm  img-btn"/>
             <img :src="`${baseUrl}try-play-btn.png`"
+                 v-if="recordurl"
                  @click="handleGoToHome"
                  class="try-play-btn btm"/>
             <img :src="`${baseUrl}qr-code.png`" class="qr-code btm"/>
@@ -169,6 +170,36 @@
             this.init()
         },
         methods: {
+            async getWeChatUserHeadImg (picurl) {
+
+                return new Promise((res , rej)=>{
+                    try {
+                        let img = new Image()
+                        let canvas = document.createElement('CANVAS')
+                        let ctx = canvas.getContext('2d')
+                        img.crossOrigin = 'Anonymous'
+                        img.onload = function () {
+                            console.log('getWeChatUserHeadImg')
+                            canvas.height = img.height
+                            canvas.width = img.width
+                            ctx.drawImage(img, 0, 0)
+                            var dataURL = canvas.toDataURL('image/png')
+                            console.log('dataURL' , dataURL)
+                            canvas = null
+
+                            const resImg = new Image()
+                            resImg.src= dataURL
+
+                            res(resImg)
+                        }
+                        img.src = picurl
+                    }catch (e) {
+                        rej(e)
+                    }
+
+                })
+
+            },
             handlePreview(){
                 console.log('handlePreview')
                 this.showPreview = false
@@ -185,6 +216,7 @@
                 try {
                     this.CHANGE_LOADING_BAR(true)
                     this.setLoadingText('设置分享...')
+
                     let shareId = ''
                     if (this.recordurl) {
                         //从分享也进来，从服务器拿分享的录音视频链接
@@ -218,8 +250,8 @@
                         noncestr,
                         signature,
                         timestamp)
-                    const title = '测试分享数据'
-                    const desc = '测试分享数据desc'
+                    const title = '我的音乐人格'
+                    const desc = '来测测你的音乐人格吧'
 
                     console.log('share link', link)
                     const imgUrl = this.shareBg
@@ -330,29 +362,16 @@
 
             async getImage(url){
                 return new Promise((res , rej)=>{
-                    if(url.indexOf('qlogo') !== -1){
-                        console.log('下载微信头像')
-                        loadImage(url , img=>{
-                            if(img.type === 'error'){
-                                console.log('error img loadImage' , url)
-                                rej('error img')
-                            }else{
-                                res(img)
-                            }
-                        } , {
-                        })
-                    }else{
-                        loadImage(url , img=>{
-                            if(img.type === 'error'){
-                                console.log('error img loadImage' , url)
-                                rej('error img')
-                            }else{
-                                res(img)
-                            }
-                        } , {
-                            crossOrigin:"Anonymous"
-                        })
-                    }
+                    loadImage(url , img=>{
+                        if(img.type === 'error'){
+                            console.log('error img loadImage' , url)
+                            rej('error img')
+                        }else{
+                            res(img)
+                        }
+                    } , {
+                        crossOrigin:"Anonymous"
+                    })
 
                 })
 
@@ -396,6 +415,7 @@
 
 
 
+                    console.log('drawImage beginPath')
                     ctx.save()
                     ctx.beginPath();
                     ctx.arc(rem(43) + rem(25)/2,
@@ -462,7 +482,12 @@
                 // if(!this.isFromShare){
                 //     this.$router.back()
                 // }
-                this.$router.replace({name:'home'})
+                // this.$router.replace({name:'video'})
+                const r = window.location.origin
+                // const r = window.location.href.replace(/#[/].*/ , '#/video')
+                console.log('goto r' , r)
+                // alert(r)
+                window.location.href = r
             }
         },
         beforeRouteEnter(to, from, next) {
