@@ -452,10 +452,10 @@
                 // audio.play();
 
 
-                var sound = new Howl({
-                    src: this.do
-                }).play();
-                return
+                // var sound = new Howl({
+                //     src: this.do
+                // }).play();
+                // return
                 this.stopaudio()
 
                 const audio = this.$refs[key]

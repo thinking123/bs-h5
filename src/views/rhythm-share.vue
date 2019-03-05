@@ -51,6 +51,7 @@
                  :class="[`text${rand}-icon4`]"/>
             <!--<share-music-playing-bar class="share-music-playing-bar" v-if="isPlaying"/>-->
 
+            <icon3 class="icon3-com" v-if="rand == 3"/>
 
             <img :src="`${baseUrl}pause-btn.png`"
                  @click="handlePlay"
@@ -99,11 +100,12 @@
     } from "../utils/wx-config";
     import MoveArrow from "../components/MoveArrow";
     import Avatar from "../components/avatar";
+    import Icon3 from "../components/Icon3";
 
     const page = 'rhythm-share-'
     export default {
         name: "rhythm-share",
-        components: {Avatar, MoveArrow, ShareMusicPlayingBar},
+        components: {Icon3, Avatar, MoveArrow, ShareMusicPlayingBar},
         computed: {
             ...mapGetters(['base' , 'headimgurl' , 'nickname' , 'openid' , 'timeline']),
             baseUrl() {
@@ -662,6 +664,12 @@
         }
     }
 
+    .icon3-com{
+        position: absolute;
+        z-index: 100;
+        top: 31.03%;
+        left: 132*2px;
+    }
     .text4-icon1 {
         position: absolute;
         z-index: 100;
