@@ -1,57 +1,31 @@
 import http from './axios'
 
-const HTTP_OK = '200';
-
-function parseRespond(res) {
-    const {status, msg, code} = res;
-
-    if (code && msg) {
-        throw new Error(msg);
+function parseRespond(res, errMsg, resolveStatus = []) {
+    if (!!res && res.status && res.status.indexOf('2') > -1) {
+        // return res.rows ? res.rows : res
+        return res.rows
     } else {
-        return res
+        const msg = res && res.message ? res.message : errMsg
+        throw new Error(msg ? msg : 'error')
     }
 }
-
-async function checkInvitationCode(params) {
-    const url = `/interface/checkInvitationCode`
+//获取h5头像
+/*
+* createTime (string, optional),
+id (integer, optional),
+musicUrl (string, optional): 节奏信息 ,
+openidGzh (string, optional),
+updateTime (string, optional),
+userHead (string, optional),
+userName (string, optional),
+userPhone (string, optional)
+* */
+export async function getAvater(id) {
+    const url = `/api/login/HFiveUser`
+    const params = {
+        id
+    }
     return http.get(url, {params}).then(parseRespond)
-}
-
-
-async function register(params) {
-    const url = `/interface/register`
-    return http.get(url, {params}).then(parseRespond)
-}
-
-export async function getLink(params = {}) {
-    const url = `/interface/getLink`
-    return http.get(url, {params}).then(parseRespond)
-}
-
-export async function checkPhone(params) {
-    const url = `/interface/checkPhone`
-    return http.get(url, {params}).then(parseRespond)
-}
-
-export async function checkOpenid(params) {
-    const url = `/interface/checkOpenid`
-    return http.get(url, {params}).then(parseRespond)
-}
-
-export async function getUser(params) {
-    const url = `/interface/getUser`
-    return http.get(url, {params}).then(parseRespond)
-}
-
-export async function uploadFile(formData) {
-    const url = `/interface/uploadImg`
-    console.log('form data', formData)
-    return http.post(url, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-            'Accept': 'text/plain'
-        }
-    }).then(parseRespond)
 }
 
 
