@@ -27,7 +27,7 @@
             width: 25*2px;
             height: 100%;
             border-radius: 25*2px;
-            border:1px solid white;/*no*/
+            /*border:1px solid white;!*no*!*/
         }
         .avatar-name{
             color: white;

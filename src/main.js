@@ -12,6 +12,7 @@ import routes from './router'
 import store from './store'
 import VueResource from 'vue-resource'
 import MusicPlay from './utils/MusicPlay'
+import SoundPlay from './utils/SoundPlay'
 import './assets/css/index.css'
 import 'weui'
 // import Mint from 'mint-ui';
@@ -20,7 +21,13 @@ import 'weui'
 Vue.config.productionTip = false
 Vue.use(VueRouter)
 Vue.use(VueResource);
-Vue.prototype.$music = MusicPlay
+// Vue.prototype.$music = MusicPlay
+
+//
+// const soundlist = [
+//     {'do'}
+//     ]
+Vue.prototype.$sound = new SoundPlay()
 const router = new VueRouter({
     // mode: 'history',
     routes

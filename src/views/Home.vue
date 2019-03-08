@@ -62,6 +62,7 @@
         },
 
         mounted() {
+            this.$sound.load()
             const that = this
             document.addEventListener("WeixinJSBridgeReady", function (e) {
                 console.log('WeixinJSBridgeReady init')
@@ -87,7 +88,7 @@
                 try {
                     console.log('headimgurl' , this.headimgurl)
                     this.CHANGE_LOADING_BAR(true)
-                    await this.$music.init()
+                    // await this.$music.init()
                 } catch (e) {
                     console.log('login error ', e)
                 }finally {

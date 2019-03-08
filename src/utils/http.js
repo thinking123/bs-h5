@@ -58,10 +58,13 @@ export async function uploadFile(formData) {
 export async function uploadRecord(openid , mediaId) {
 
 
-    const url = `/api/misic/uploadQiniuyun`
+    const url = `/login/api/misic/uploadRecord`
     return http.post(url, {
         openid,mediaId
-    }).then(res=>res.rows)
+    }).then(res=>{
+        console.log('uploadQiniuyun record' , res)
+        return res.rows
+    })
 }
 
 export async function getSignInfo(link) {
@@ -82,7 +85,7 @@ export async function getSignInfo(link) {
         signUrl = encodeURIComponent(signUrl)
     }
 
-    const url = `/api/misic/signature?url=${signUrl}`
+    const url = `/login/api/misic/signature?url=${signUrl}`
     const data = {
         url: signUrl
     }
@@ -93,7 +96,7 @@ export async function getSignInfo(link) {
     }).then(res=>res.rows)
 }
 export async function login() {
-    const url = `/login/api/login/htmllogin`
+    const url = `/login/login/api/login/htmllogin`
     return http.post(url, {}, {
         headers: {
             "Content-Type": "application/json"

@@ -1,28 +1,27 @@
 <template>
     <div class="container" ref="rhythmShare">
 
+        <audio ref="do" @ended="audioend('do')" preload>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-do.mp3" type="audio/mpeg"/>
+        </audio>
+        <audio ref="re" @ended="audioend('re')" preload>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-re.mp3" type="audio/mpeg"/>
+        </audio>
 
-        <audio ref="do" @ended="audioend('do')">
-            <source src="../assets/musics/rhythm-select-do.mp3" type="audio/mpeg"/>
+        <audio ref="mi" @ended="audioend('mi')" preload>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-mi.mp3" type="audio/mpeg"/>
         </audio>
-        <audio ref="re" @ended="audioend('re')">
-            <source src="../assets/musics/rhythm-select-re.mp3" type="audio/mpeg"/>
+        <audio ref="fa" @ended="audioend('fa')" preload>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-fa.mp3" type="audio/mpeg"/>
         </audio>
-
-        <audio ref="mi" @ended="audioend('mi')">
-            <source src="../assets/musics/rhythm-select-mi.mp3" type="audio/mpeg"/>
+        <audio ref="sol" @ended="audioend('sol')" preload>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-sol.mp3" type="audio/mpeg"/>
         </audio>
-        <audio ref="fa" @ended="audioend('fa')">
-            <source src="../assets/musics/rhythm-select-fa.mp3" type="audio/mpeg"/>
+        <audio ref="la" @ended="audioend('la')" preload>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-la.mp3" type="audio/mpeg"/>
         </audio>
-        <audio ref="sol" @ended="audioend('sol')">
-            <source src="../assets/musics/rhythm-select-sol.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="la" @ended="audioend('la')">
-            <source src="../assets/musics/rhythm-select-la.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="xi" @ended="audioend('xi')">
-            <source src="../assets/musics/rhythm-select-xi.mp3" type="audio/mpeg"/>
+        <audio ref="xi" @ended="audioend('xi')" preload>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-xi.mp3" type="audio/mpeg"/>
         </audio>
 
         <canvas id="canvas" class="canvas" ref="canvas" v-if="isSaveImage" ></canvas>
@@ -226,8 +225,11 @@
                         // this.recordId = ''
                         console.log('从分享也进来' , this.recordurl , this.rand , this.$route.query)
                     }else{
-                        // shareId =  await uploadRecord(this.openid , this.recordId)
-                        shareId =  'testshareid'
+                        const timeline = JSON.stringify(this.timeline)
+                        console.log('timelinme' , timeline)
+                        await uploadRecord(this.openid , timeline)
+                        shareId = this.openid
+                        // shareId =  'testshareid'
                         console.log('上传录音' , this.openid , this.recordId , 'share url' , shareId)
                     }
 
@@ -303,6 +305,10 @@
             },
             async playMusic(key) {
                 this.isPressMusicBtn = true
+
+                this.$sound.play(key)
+
+                return
                 this.stopaudio()
 
                 const audio = this.$refs[key]

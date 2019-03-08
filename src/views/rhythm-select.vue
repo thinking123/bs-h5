@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <audio ref="do" @ended="audioend('do')" preload>
-            <source ref="dosrc" type="audio/mpeg"/>
+            <source src="https://cdnpepsi.ysmine.com/rhythm-select-do.mp3" type="audio/mpeg"/>
         </audio>
         <audio ref="re" @ended="audioend('re')" preload>
             <source src="https://cdnpepsi.ysmine.com/rhythm-select-re.mp3" type="audio/mpeg"/>
@@ -340,26 +340,49 @@
 
                     console.log('lenght', this.timeline.length)
                 }
+                const timeout = 250
                 switch (key) {
                     case 'do':
                         this.icon1Taped = true
+
+                        this.isPlaying && setTimeout(()=>{
+                            this.icon1Taped = false
+                        } , timeout)
                         break
                     case 're':
                         this.icon2Taped = true
+                        this.isPlaying && setTimeout(()=>{
+                            this.icon2Taped = false
+                        } , timeout)
                         break
                     case 'mi':
                         this.icon3Taped = true
+                        this.isPlaying && setTimeout(()=>{
+                            this.icon3Taped = false
+                        } , timeout)
                         break
                     case 'fa':
                         this.icon4Taped = true
+                        this.isPlaying && setTimeout(()=>{
+                            this.icon4Taped = false
+                        } , timeout)
                         break
                     case 'sol':
                         this.icon5Taped = true
+                        this.isPlaying && setTimeout(()=>{
+                            this.icon5Taped = false
+                        } , timeout)
                         break
                     case 'la':
                         this.icon6Taped = true
+                        this.isPlaying && setTimeout(()=>{
+                            this.icon6Taped = false
+                        } , timeout)
                         break
                     case 'xi':
+                        this.isPlaying && setTimeout(()=>{
+                            this.icon7Taped = false
+                        } , timeout)
                         this.icon7Taped = true
                         break
                 }
@@ -462,9 +485,9 @@
                 if (audio) {
                     this.curAudio = audio
                     this.isPlayingAudio = true
-                    console.log('music playing')
+                    console.log('music playing' , key)
                     audio.play().catch(err => {
-                        console.log('audio play error', err)
+                        console.log('audio play error', err , audio)
                     })
                 } else {
                     console.error('music doesnot exist', key)
