@@ -1,11 +1,12 @@
 <template>
-    <div class="container" ref="rhythmShare">
+    <div class="container" ref="rhythmShare" :class="{'con6':rand==6}">
 
         <canvas id="canvas" class="canvas" ref="canvas" v-if="isSaveImage" ></canvas>
 
         <div v-else style="width: 100%;height: 100%">
             <avatar class="avatar"/>
-            <img :src="bg" class="img"/>
+            <img :src="bg" class="img"
+                 :class="{'img6':rand==6}">/>
             <move-arrow class="arrow"/>
 
             <img :src="textIcon1"
@@ -18,11 +19,11 @@
                  :class="[`text${rand}-icon2`]"/>
 
             <img :src="textIcon1"
-                 v-if="showIcon1"
+                 v-if="showIcon1 && rand != 6"
                  ref="icon3"
                  :class="[`text${rand}-icon3`]"/>
             <img :src="textIcon2"
-                 v-if="showIcon2"
+                 v-if="showIcon2 && rand != 6"
                  ref="icon4"
                  :class="[`text${rand}-icon4`]"/>
             <!--<share-music-playing-bar class="share-music-playing-bar" v-if="isPlaying"/>-->
@@ -879,4 +880,13 @@
             right: 100%;
         }
     }
+
+    .con6{
+        background-color: #0072BE;
+    }
+
+    .img6{
+        height: px(667);
+    }
+
 </style>

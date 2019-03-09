@@ -36,7 +36,7 @@ class SoundPlay {
 
         console.log(this.ids)
         this.queue = new createjs.LoadQueue()
-        createjs.Sound.registerPlugins([createjs.HTMLAudioPlugin]);
+        createjs.Sound.registerPlugins([createjs.WebAudioPlugin, createjs.HTMLAudioPlugin]);
         createjs.Sound.alternateExtensions = ["mp3"];
         this.queue.installPlugin(createjs.Sound);
         this.queue.on('fileload' , this.handleFileLoad)
