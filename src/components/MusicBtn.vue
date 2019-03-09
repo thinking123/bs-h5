@@ -2,17 +2,31 @@
     <div class="music-btn"
          @touchstart="touchstart"
          @touchend="touchend">
-        {{text}}
+        <img :src="`${base}${page}${key}.png`"/>
     </div>
 
 </template>
 
 <script>
+    import {mapGetters, mapMutations} from 'vuex'
+    const page = 'rhythm-select-'
     export default {
+
         name: "MusicBtn",
         props: {
             text: String,
             musicKey: String,
+        },
+        computed: {
+            ...mapGetters(['base']),
+            key(){
+                return this.text.charAt(0).toUpperCase() +  this.text.slice(1);
+            }
+        },
+        data(){
+            return {
+                page:page
+            }
         },
         methods: {
             touchstart(e) {
@@ -20,6 +34,7 @@
                 // this.setData({
                 //     pressing: true
                 // })
+                // createjs.WebAudioPlugin.playEmptySound();
                 console.log('touchstart')
                 this.pressing = true
                 this.$emit('touching', this.musicKey)
@@ -60,7 +75,7 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
 
 
@@ -73,7 +88,7 @@
         /*user-select: none;*/
         /*z-index: 100;*/
         /*font-family: MusicFont1 !important;*/
-        position: absolute;
+        /*position: absolute;*/
         /*height: 7.8%;*/
         width: 96px;
         /*background-image: url("./btn-wrap.png");*/
@@ -85,5 +100,11 @@
         font-weight: bold;
         color: #0094FF;
         font-size: 50px;
+
+        margin: 0 5px;
+        >img{
+            width: 100%;
+            height: 100%;
+        }
     }
 </style>

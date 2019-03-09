@@ -1,4 +1,5 @@
 import store from '../store'
+import {isIphone} from "./common";
 import {CHANGE_LOADING_BAR} from "../store/mutations";
 
 function getSoundList() {
@@ -28,9 +29,14 @@ class SoundPlay {
      * lists:[{id:'' , src:''}]
      * */
     constructor(){
+        console.log('init sound')
         this.lists = getSoundList()
-        this.ids = this.lists.map(m=>m.id)
+        this.ids = {}
+        this.lists.forEach(l=>this.ids[l.id] = l.id)
+
+        console.log(this.ids)
         this.queue = new createjs.LoadQueue()
+        createjs.Sound.registerPlugins([createjs.HTMLAudioPlugin]);
         createjs.Sound.alternateExtensions = ["mp3"];
         this.queue.installPlugin(createjs.Sound);
         this.queue.on('fileload' , this.handleFileLoad)
@@ -49,6 +55,9 @@ class SoundPlay {
 
     handleComplete(e){
         store.commit('CHANGE_LOADING_BAR', false)
+        if(isIphone()){
+            // createjs.WebAudioPlugin.playEmptySound();
+        }
         console.log('handleComplete' , e)
     }
 
@@ -62,7 +71,13 @@ class SoundPlay {
 
     stop(id){
         if(this.ids[id]){
-            createjs.Sound.stop()
+            try {
+                console.log('stop music')
+                createjs.Sound.stop()
+            }catch (e) {
+                console.error('error music' , e)
+            }
+
         }else{
             console.log(id , 'not exist stop')
         }

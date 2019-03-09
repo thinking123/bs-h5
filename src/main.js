@@ -33,6 +33,26 @@ const router = new VueRouter({
     routes
 })
 
+window.onload = function () {
+    //alert($(window).height());
+    var u = navigator.userAgent;
+    if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {//安卓手机
+    } else if (u.indexOf('iPhone') > -1) {//苹果手机
+                                          //屏蔽ios下上下弹性
+        $(window).on('scroll.elasticity', function (e) {
+            console.log('scroll.elasticity')
+            e.preventDefault();
+        }).on('touchmove.elasticity', function (e) {
+            console.log('scroll.touchmoveelasticity')
+            e.preventDefault();
+        });
+    } else if (u.indexOf('Windows Phone') > -1) {//winphone手机
+    }
+    //预加载
+    // loading();
+}
+
+
 router.beforeEach((pageTo, pageFrom, next) => {
 
     // console.log('store.state' , store.state)

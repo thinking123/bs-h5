@@ -26,7 +26,9 @@
         <div class="content" >
             <img :src="bg" class="img"/>
             <div class="how-to-play" @click="handleShowPlay"/>
-            <div class="start-my-music-journey" @click="handlePushPage"/>
+            <div class="start-my-music-journey"
+                 @touchstart="touchstart"
+                 @touchend="handlePushPage" />
             <how-to-play-dialog :visible.sync="showHowtoplay"/>
 
         </div>
@@ -62,13 +64,16 @@
         },
 
         mounted() {
-            this.$sound.load()
+
             const that = this
             document.addEventListener("WeixinJSBridgeReady", function (e) {
                 console.log('WeixinJSBridgeReady init')
-                that.init()
+                that.$sound.load()
+                // that.init()
             }, false);
+            document.addEventListener("WeixinJSBridgeReady", function (e) {
 
+            })
         },
         methods: {
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),
@@ -95,7 +100,11 @@
                     this.CHANGE_LOADING_BAR(false)
                 }
             },
+            touchstart(){
+                createjs.HTMLAudioPlugin.playEmptySound();
+            },
             handlePushPage() {
+                createjs.WebAudioPlugin.playEmptySound();
                 this.$router.push({name: 'select'})
             },
             handleShowPlay() {

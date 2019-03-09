@@ -1,29 +1,6 @@
 <template>
     <div class="container" ref="rhythmShare">
 
-        <audio ref="do" @ended="audioend('do')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-do.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="re" @ended="audioend('re')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-re.mp3" type="audio/mpeg"/>
-        </audio>
-
-        <audio ref="mi" @ended="audioend('mi')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-mi.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="fa" @ended="audioend('fa')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-fa.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="sol" @ended="audioend('sol')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-sol.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="la" @ended="audioend('la')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-la.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="xi" @ended="audioend('xi')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-xi.mp3" type="audio/mpeg"/>
-        </audio>
-
         <canvas id="canvas" class="canvas" ref="canvas" v-if="isSaveImage" ></canvas>
 
         <div v-else style="width: 100%;height: 100%">
@@ -111,9 +88,6 @@
                 console.log('url', `${this.base}${page}`)
                 return `${this.base}${page}`
             },
-            // bg(){
-            //     return `${this.base}${page}bg.png`
-            // },
             playingIcon() {
                 return `${this.base}${page}playing.png`
             },
@@ -155,6 +129,11 @@
             }
         },
         mounted(option) {
+            try {
+                this.$sound.load()
+            }catch (e) {
+                console.log('load error ' , e)
+            }
 
             let {recordurl , rand , recordId } = this.$route.query
 
@@ -289,10 +268,6 @@
                     this.CHANGE_LOADING_BAR(false)
                 }
             },
-            audioend(item) {
-                this.curAudio = null
-                this.isPlayingAudio = false
-            },
             getTime() {
                 const d = new Date()
                 const t = d.getTime();
@@ -307,21 +282,6 @@
                 this.isPressMusicBtn = true
 
                 this.$sound.play(key)
-
-                return
-                this.stopaudio()
-
-                const audio = this.$refs[key]
-                if (audio) {
-                    this.curAudio = audio
-                    this.isPlayingAudio = true
-                    console.log('music playing')
-                    audio.play().catch(err=>{
-                        console.log('audio play error' , err)
-                    })
-                } else {
-                    console.error('music doesnot exist')
-                }
             },
             startPlayRecord() {
                 this.isPlaying = true
@@ -335,9 +295,14 @@
                         //end
                         this.isPlaying = false
                     }
+
+                    if(!this.isPlaying){
+                        return
+                    }
+
                     if (this.cloneTimeline.length > 0) {
                         const cur = this.cloneTimeline[0]
-                        console.log('offTime', offTime, cur)
+                        // console.log('offTime', offTime, cur)
                         if (cur.time > offTime - 50 && cur.time < offTime + 50) {
                             this.playMusic(cur.key)
                             this.cloneTimeline.shift()

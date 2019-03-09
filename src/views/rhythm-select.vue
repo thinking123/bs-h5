@@ -1,102 +1,120 @@
 <template>
     <div class="container">
-        <audio ref="do" @ended="audioend('do')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-do.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="re" @ended="audioend('re')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-re.mp3" type="audio/mpeg"/>
-        </audio>
-
-        <audio ref="mi" @ended="audioend('mi')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-mi.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="fa" @ended="audioend('fa')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-fa.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="sol" @ended="audioend('sol')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-sol.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="la" @ended="audioend('la')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-la.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="xi" @ended="audioend('xi')" preload>
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-xi.mp3" type="audio/mpeg"/>
-        </audio>
-
         <img :src="bg" class="img"/>
-        <img :src="startBtn"
-             class="record-btn btn-middle"
-             @click="handleRecord"/>
-
-        <img :src="pauseBtn"
-             class="stop-btn btn-middle"
-             v-if="isPlaying"
-             @click="handlePlay"/>
-        <img :src="stopBtn"
-             class="stop-btn btn-middle"
-             v-else
-             @click="handlePlay"/>
-
-        <img :src="yp"
-             class="yp-wrap"/>
-        <img :src="downIcon"
-             :class="{ 'taped1':icon1Taped }"
-             class="icon icon1 "/>
-        <img :src="downIcon"
-             :class="{ 'taped2':icon2Taped }"
-             :style="{animationName: (icon2Taped ? 'taped2' : '')}"
-             class="icon icon2 "/>
-        <img :src="downIcon"
-             :class="{ 'taped3':icon3Taped }"
-             :style="{animationName:icon3Taped ? 'taped3' : ''}"
-             class="icon icon3 "/>
-        <img :src="downIcon"
-             :class="{ 'taped4':icon4Taped }"
-             :style="{animationName:icon4Taped ? 'taped4' : ''}"
-             class="icon icon4 "/>
-        <img :src="downIcon"
-             :class="{ 'taped5':icon5Taped }"
-             :style="{animationName:icon5Taped ? 'taped5' : ''}"
-             class="icon icon5 "/>
-
-        <img :src="upIcon"
-             :class="{ 'taped6':icon6Taped }"
-             :style="{animationName:icon6Taped ? 'taped6' : ''}"
-             class="icon icon6 "/>
-        <img :src="upIcon"
-             :class="{ 'taped7':icon7Taped }"
-             :style="{animationName:icon7Taped ? 'taped7' : ''}"
-             class="icon icon7 "/>
+        <img :src="`${base}${page}footer.png`"
+             class="footer"/>
+        <div class="page-wrap">
 
 
-        <img :src="shareBtn"
-             class="music-person-btn"
-             @click="handleMusicPerson"/>
+        <div class="content-wrap">
 
-        <start-recording-bar class="start-recording-bar" v-if="isRecording"/>
-        <music-btn class="music-btn row1 music-btn1" text="Do"
-                   @touchingend="handleTouchingEnd"
-                   @touching="handleTouching" musicKey="do"/>
-        <music-btn class="music-btn row1 music-btn2" text="Re"
-                   @touchingend="handleTouchingEnd"
-                   @touching="handleTouching" musicKey="re"/>
-        <music-btn class="music-btn row1 music-btn3" text="Mi"
-                   @touchingend="handleTouchingEnd"
-                   @touching="handleTouching" musicKey="mi"/>
-        <music-btn class="music-btn row1 music-btn4" text="Fa"
-                   @touchingend="handleTouchingEnd"
-                   @touching="handleTouching" musicKey="fa"/>
-        <music-btn class="music-btn row2 music-btn5" text="Sol"
-                   @touchingend="handleTouchingEnd"
-                   @touching="handleTouching" musicKey="sol"/>
-        <music-btn class="music-btn row2 music-btn6" text="La"
-                   @touchingend="handleTouchingEnd"
-                   @touching="handleTouching" musicKey="la"/>
-        <music-btn class="music-btn row2 music-btn7" text="Xi"
-                   @touchingend="handleTouchingEnd"
-                   @touching="handleTouching" musicKey="xi"/>
+            <img :src="`${base}${page}title.png`"
+                 class="title"/>
+            <img :src="`${base}${page}border.png`"
+                 class="border"/>
+
+            <img :src="`${base}${page}icon-title.png`"
+                 class="icon-title"/>
 
 
+
+
+
+
+            <div class="btn-wrap">
+                <div>
+                    <music-btn class="music-btn row1 music-btn1" text="Do"
+                               @touchingend="handleTouchingEnd"
+                               @touching="handleTouching" musicKey="do"/>
+                    <music-btn class="music-btn row1 music-btn2" text="Re"
+                               @touchingend="handleTouchingEnd"
+                               @touching="handleTouching" musicKey="re"/>
+                    <music-btn class="music-btn row1 music-btn3" text="Mi"
+                               @touchingend="handleTouchingEnd"
+                               @touching="handleTouching" musicKey="mi"/>
+                    <music-btn class="music-btn row1 music-btn4" text="Fa"
+                               @touchingend="handleTouchingEnd"
+                               @touching="handleTouching" musicKey="fa"/>
+                </div>
+                <div>
+                    <music-btn class="music-btn row2 music-btn5" text="Sol"
+                               @touchingend="handleTouchingEnd"
+                               @touching="handleTouching" musicKey="sol"/>
+                    <music-btn class="music-btn row2 music-btn6" text="La"
+                               @touchingend="handleTouchingEnd"
+                               @touching="handleTouching" musicKey="la"/>
+                    <music-btn class="music-btn row2 music-btn7" text="Xi"
+                               @touchingend="handleTouchingEnd"
+                               @touching="handleTouching" musicKey="xi"/>
+                </div>
+
+
+            </div>
+
+            <div class="record-btn-wrap">
+
+                <start-recording-bar class="start-recording-bar" v-if="isRecording"/>
+                <img :src="startBtn"
+                     class="record-btn"
+                     @click="handleRecord"/>
+            </div>
+
+
+
+
+            <div class="yp-wrap">
+                <img :src="yp"
+                     class="yp"/>
+                <img :src="downIcon"
+                     :class="{ 'taped1':icon1Taped }"
+                     class="icon icon1 "/>
+                <img :src="downIcon"
+                     :class="{ 'taped2':icon2Taped }"
+                     :style="{animationName: (icon2Taped ? 'taped2' : '')}"
+                     class="icon icon2 "/>
+                <img :src="downIcon"
+                     :class="{ 'taped3':icon3Taped }"
+                     :style="{animationName:icon3Taped ? 'taped3' : ''}"
+                     class="icon icon3 "/>
+                <img :src="downIcon"
+                     :class="{ 'taped4':icon4Taped }"
+                     :style="{animationName:icon4Taped ? 'taped4' : ''}"
+                     class="icon icon4 "/>
+                <img :src="downIcon"
+                     :class="{ 'taped5':icon5Taped }"
+                     :style="{animationName:icon5Taped ? 'taped5' : ''}"
+                     class="icon icon5 "/>
+
+                <img :src="upIcon"
+                     :class="{ 'taped6':icon6Taped }"
+                     :style="{animationName:icon6Taped ? 'taped6' : ''}"
+                     class="icon icon6 "/>
+                <img :src="upIcon"
+                     :class="{ 'taped7':icon7Taped }"
+                     :style="{animationName:icon7Taped ? 'taped7' : ''}"
+                     class="icon icon7 "/>
+
+            </div>
+
+            <img :src="pauseBtn"
+                 class="stop-btn"
+                 v-if="isPlaying"
+                 @click="handlePlay"/>
+            <img :src="stopBtn"
+                 class="stop-btn"
+                 v-else
+                 @click="handlePlay"/>
+
+
+
+
+
+        </div>
+
+            <img :src="shareBtn"
+                 class="music-person-btn"
+                 @click="handleMusicPerson"/>
+    </div>
     </div>
 
 </template>
@@ -121,14 +139,6 @@
     const page = 'rhythm-select-'
 
     const recordMaxTime = 10
-    const options = {
-        duration: 60000,
-        sampleRate: 44100,
-        numberOfChannels: 1,
-        encodeBitRate: 192000,
-        format: 'aac',
-        frameSize: 50
-    }
 
     export default {
         name: "rhythm-select",
@@ -200,68 +210,15 @@
                 icon7Taped: false,
 
                 timeline: [],
-                preKey: ''
+                preKey: '',
+                page:page
             }
         },
         mounted() {
-
-            console.log('do' , this.do)
-
-            return
-            this.setMusic()
+            this.$sound.load()
         },
         methods: {
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText', 'settimeline']),
-            async setMusic() {
-                try {
-                    this.CHANGE_LOADING_BAR(true)
-                    this.setLoadingText('下载音乐文件...')
-                    const list = await this.downloadAllMusic()
-
-                    console.log('list' , list)
-                    const dosrc = this.$refs.dosrc
-                    dosrc.src = list[0]
-                    console.log('list ', list)
-                } catch (e) {
-                    console.log(e)
-                } finally {
-                    this.CHANGE_LOADING_BAR(false)
-                }
-
-            },
-            downloadAllMusic() {
-                const keys = [
-                    "do",
-                    "re",
-                    "mi",
-                    "fa",
-                    "sol",
-                    "la",
-                    "xi"
-                ]
-                const base = `${this.base}${page}`
-
-                return Promise.all(keys.map(k => {
-                    const url = `${base}${k}.mp3`
-                    return this.downloadMusic(url)
-                }))
-            },
-            downloadMusic(url) {
-                return this.$http.get(url)
-            },
-            audioend(item) {
-                this.curAudio = null
-                this.isPlayingAudio = false
-            },
-            stopaudio() {
-                if (this.isPlayingAudio && this.curAudio) {
-                    this.curAudio.pause();
-                    this.curAudio.currentTime = 0;
-                    this.isPlayingAudio = false
-                    this.curAudio = null
-                }
-
-            },
             async handleRecord(e) {
                 if (this.isRecording) {
                     await this.stopRecord()
@@ -270,6 +227,10 @@
                     await this.stopPlayRecord()
                     this.startRecord()
                 }
+            },
+            stopaudio(){
+                console.log('stopaudio')
+                this.$sound.stop()
             },
             handlePlay(e) {
                 if (!this.hadRecord()) {
@@ -401,9 +362,12 @@
                         //end
                         this.isPlaying = false
                     }
+                    if(!this.isPlaying){
+                        return
+                    }
                     if (this.cloneTimeline.length > 0) {
                         const cur = this.cloneTimeline[0]
-                        console.log('offTime', offTime, cur)
+                        // console.log('offTime', offTime, cur)
                         if (cur.time > offTime - 50 && cur.time < offTime + 50) {
                             this.handleTouching(cur.key)
                             // this.preKey = cur.key
@@ -468,8 +432,8 @@
             async playMusic(key) {
                 this.isPressMusicBtn = true
                 //
-                // this.$music.play(key)
-                // return
+                this.$sound.play(key)
+                 return
 
                 // var audio = new Audio(this.do);
                 // audio.play();
@@ -514,8 +478,12 @@
                 clearInterval(this.time)
                 this.time = null
 
-                if (this.isRecording) {
+                //removeAllSounds
+                if (this.isPlaying) {
+                    console.log('')
+                    this.isPlaying = false
                     this.stopaudio()
+                    // this.$sound.removeAllSounds()
                 }
 
             } catch (e) {
@@ -529,7 +497,7 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
     .to-share {
         z-index: 10000;
@@ -564,14 +532,7 @@
         width: 100%;
     }
 
-    .yp-wrap {
-        position: absolute;
-        top: 63.87%;
-        left: 50%;
-        transform: translateX(-50%);
-        height: 6.75%;
-        width: 418px;
-    }
+
 
     /*
     H :90 px
@@ -580,49 +541,46 @@
     top:442
     */
     .icon {
-        position: absolute;
-        height: 4.2%;
+        position: relative;
+        height: px(454-426);
         width: 20px;
         transition: transform 0.25s ease-in-out;
-
+        margin: 0 px(5);
     }
 
 
+    $step:5;
+    $start:441-426;
     .icon1 {
-        top: 66.27%;
-        left: 260px;
+        top: px($start);
+        margin-left: px(130-84);
+
     }
 
 
 
     .icon2 {
-        top: 65.82%;
-        left: 300px;
+        top: px($start - $step);
     }
 
     .icon3 {
-        top: 65.37%;
-        left: 340px;
+        top: px($start - $step * 2);
     }
 
     .icon4 {
-        top: 64.92%;
-        left: 380px;
+        top: px($start - $step * 3);
     }
 
     .icon5 {
-        top: 64.67%;
-        left: 420px;
+        top: px($start - $step * 4);
     }
 
     .icon6 {
-        top: 65.82%;
-        left: 460px;
+        top: px($start);
     }
 
     .icon7 {
-        top: 65.37%;
-        left: 500px;
+        top: px($start - $step);
     }
 
     .down-icon-taped {
@@ -632,19 +590,20 @@
     }
 
 
+    $offset:10;
     .taped1 {
-        top: 65.27%;
+        top: px($start + $offset);
     }
-    @-webkit-keyframes taped1 {
+    @keyframes taped1 {
         0% {
-            top: 66.27%;
+            top: px($start);
         }
         100% {
-            top: 65.27%;
+            top: px($start + $offset);
         }
     }
     .taped2 {
-        top: 64.82%;
+        top: px($start - $step + $offset);
     }
     @keyframes taped2 {
         0% {
@@ -655,7 +614,7 @@
         }
     }
     .taped3 {
-        top: 64.37%;
+        top: px($start - $step * 2 + $offset);
     }
     @keyframes taped3 {
         0% {
@@ -666,7 +625,7 @@
         }
     }
     .taped4 {
-        top: 63.92%;
+        top: px($start - $step * 3 + $offset);
     }
     @keyframes taped4 {
         0% {
@@ -677,7 +636,7 @@
         }
     }
     .taped5 {
-        top: 63.67%;
+        top: px($start - $step * 4 + $offset);
     }
     @keyframes taped5 {
         0% {
@@ -688,7 +647,7 @@
         }
     }
     .taped6 {
-        top: 66.82%;
+        top: px($start - $offset);
     }
     @keyframes taped6 {
         0% {
@@ -699,7 +658,7 @@
         }
     }
     .taped7 {
-        top: 66.37%;
+        top: px($start - $step - $offset);
     }
     @keyframes taped7 {
         0% {
@@ -722,17 +681,7 @@
         width: 208px;
     }
 
-    .record-btn {
-        top: 57.87%;
-        left: 50%;
-        transform: translateX(-50%);
-    }
 
-    .stop-btn {
-        top: 73.26%;
-        left: 50%;
-        transform: translateX(-50%);
-    }
 
     .save-btn {
         top: 75.26%;
@@ -757,15 +706,6 @@
         transform: translateX(-50%);
     }
 
-
-    .music-person-btn {
-        position: absolute;
-        top: 85.16%;
-        height: 7.78%;
-        width: 394px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
 
 
     .select-bar {
@@ -805,20 +745,14 @@
         left: 206px;
     }
 
-    .start-recording-bar {
-        position: absolute;
-        /*height: 7.2%;*/
-        /*width: 336px;*/
-        top: 59.52%;
-        left: 306px;
-    }
+
 
     .music-btn {
         /*z-index: 100;*/
         /*position: absolute;*/
         /*height: 7.8%;*/
         width: 96px;
-
+        height: 100%;
         /*background-size: 100% 100%;*/
         /*background-repeat: no-repeat;*/
         /*display: flex;*/
@@ -829,42 +763,140 @@
         /*font-size: 50px;*/
     }
 
-    .row1 {
-        top: 40.33%;
-        /*top: 39.46%;*/
+
+    /*.music-btn1 {*/
+        /*left: 160px;*/
+    /*}*/
+
+    /*.music-btn5 {*/
+        /*left: 216px;*/
+    /*}*/
+
+    /*.music-btn2 {*/
+        /*left: 270px;*/
+    /*}*/
+
+    /*.music-btn6 {*/
+        /*left: 324px;*/
+    /*}*/
+
+    /*.music-btn3 {*/
+        /*left: 380px;*/
+    /*}*/
+
+    /*.music-btn7 {*/
+        /*left: 436px;*/
+    /*}*/
+
+    /*.music-btn4, .music-btn8 {*/
+        /*left: 490px;*/
+    /*}*/
+
+
+    .page-wrap{
+        position: absolute;
+        left:50%;
+        top:50%;
+        transform: translate(-50% , -50%);
+
+        width: px(334-41);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: absolute;
+        /*border: 1px solid yellow;*/
+        .content-wrap{
+            @include posRel(41 , 64 , 334,567 , 0);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+
+            $top:64;
+            .title{
+                @include posRel(71,64,312,206);
+
+            }
+            .border{
+                position: absolute;
+                top:px(163-64);
+                @include getSize(71,163,334,567);
+                width: 100%;
+            }
+            .icon-title{
+                @include posRel(89,215,285,246,8);
+            }
+
+            .btn-wrap{
+                @include posRel(0,260,374,374,260-247);
+                width: 100%;
+
+                display: flex;
+                flex-direction: column;
+                >div{
+                    /*flex: 1;*/
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                }
+                &:first-child{
+                    margin-bottom: 8px;
+                }
+            }
+
+            .record-btn-wrap{
+                @include posRel(137,385,242,422,385-374);
+                .record-btn {
+                    width: 100%;
+                    height: 100%;
+                }
+
+                .start-recording-bar {
+                    position: absolute;
+                    /*height: 7.2%;*/
+                    /*width: 336px;*/
+                    top: 50%;
+                    transform: translateY(-50%);
+                    left: px(152-137);
+                }
+            }
+
+            .yp-wrap{
+                @include posRel(84,426,292,473,426-422);
+                /*border: 1px solid red;*/
+
+                display: flex;
+                flex-direction: row;
+                align-items: flex-start;
+                .yp{
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+
+            .stop-btn {
+                @include posRel(136,485,239,521,485-473);
+            }
+
+
+
+
+
+        }
+        .music-person-btn {
+            @include posRel(88,566,284,621,569-563);
+
+        }
     }
 
-    .row2 {
-        top: 48.87%;
-        /*top: 48%;*/
-    }
+    .footer{
+        @include posCenterLeft(50 , 636 , 327,658);
+        top:auto;
+        bottom: px(667-658);
 
-    .music-btn1 {
-        left: 160px;
-    }
-
-    .music-btn5 {
-        left: 216px;
-    }
-
-    .music-btn2 {
-        left: 270px;
-    }
-
-    .music-btn6 {
-        left: 324px;
-    }
-
-    .music-btn3 {
-        left: 380px;
-    }
-
-    .music-btn7 {
-        left: 436px;
-    }
-
-    .music-btn4, .music-btn8 {
-        left: 490px;
     }
 
 </style>

@@ -81,12 +81,3 @@ export async function login() {
 
 
 
-
-export default {
-    checkInvitationCode,
-    register,
-    getLink,
-    getUser,
-    getSignInfo,
-
-}

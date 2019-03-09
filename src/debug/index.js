@@ -1,9 +1,11 @@
+// import {getOS} from "../utils/common";
+// const [isAndroid , isiOS] = getOS()
 const development = process.env.NODE_ENV == 'development'
 console.log(process.env.NODE_ENV)
-// if (development) {
-//     console.log('import v console')
-//     import('./vconsole').then(vc=>vc)
-// }
+if (development) {
+    console.log('import v console')
+    import('./vconsole').then(vc=>vc)
+}
 
 console.log('import v console')
-import('./vconsole').then(vc=>vc)
+// import('./vconsole').then(vc=>vc)
