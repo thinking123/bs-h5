@@ -11,7 +11,7 @@ import App from './App.vue'
 import routes from './router'
 import store from './store'
 import VueResource from 'vue-resource'
-import MusicPlay from './utils/MusicPlay'
+// import MusicPlay from './utils/MusicPlay'
 import SoundPlay from './utils/SoundPlay'
 import './assets/css/index.css'
 import 'weui'
@@ -27,30 +27,30 @@ Vue.use(VueResource);
 // const soundlist = [
 //     {'do'}
 //     ]
-Vue.prototype.$sound = new SoundPlay()
+
 const router = new VueRouter({
     // mode: 'history',
     routes
 })
-
-window.onload = function () {
-    //alert($(window).height());
-    var u = navigator.userAgent;
-    if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {//安卓手机
-    } else if (u.indexOf('iPhone') > -1) {//苹果手机
-                                          //屏蔽ios下上下弹性
-        $(window).on('scroll.elasticity', function (e) {
-            console.log('scroll.elasticity')
-            e.preventDefault();
-        }).on('touchmove.elasticity', function (e) {
-            console.log('scroll.touchmoveelasticity')
-            e.preventDefault();
-        });
-    } else if (u.indexOf('Windows Phone') > -1) {//winphone手机
-    }
-    //预加载
-    // loading();
-}
+//
+// window.onload = function () {
+//     //alert($(window).height());
+//     var u = navigator.userAgent;
+//     if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {//安卓手机
+//     } else if (u.indexOf('iPhone') > -1) {//苹果手机
+//                                           //屏蔽ios下上下弹性
+//         $(window).on('scroll.elasticity', function (e) {
+//             console.log('scroll.elasticity')
+//             e.preventDefault();
+//         }).on('touchmove.elasticity', function (e) {
+//             console.log('scroll.touchmoveelasticity')
+//             e.preventDefault();
+//         });
+//     } else if (u.indexOf('Windows Phone') > -1) {//winphone手机
+//     }
+//     //预加载
+//     // loading();
+// }
 
 
 router.beforeEach((pageTo, pageFrom, next) => {

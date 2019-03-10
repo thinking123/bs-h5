@@ -27,8 +27,7 @@
             <img :src="bg" class="img"/>
             <div class="how-to-play" @click="handleShowPlay"/>
             <div class="start-my-music-journey"
-                 @touchstart="touchstart"
-                 @touchend="handlePushPage" />
+                 @click="handlePushPage" />
             <how-to-play-dialog :visible.sync="showHowtoplay"/>
 
         </div>
@@ -41,6 +40,7 @@
     import {CHANGE_LOADING_BAR} from "../store/mutations";
     import HowToPlayDialog from "../components/Dialog/HowToPlayDialog";
     import {getSignInfo , login} from "../utils/http";
+    import {getOS} from "../utils/common";
     import {mapGetters , mapMutations} from 'vuex'
     import music from '../utils/MusicPlay'
     const baseAudioUrl = `asserts/audio/video/video.mp4`
@@ -68,12 +68,22 @@
             const that = this
             document.addEventListener("WeixinJSBridgeReady", function (e) {
                 console.log('WeixinJSBridgeReady init')
-                that.$sound.load()
+
+
                 // that.init()
             }, false);
             document.addEventListener("WeixinJSBridgeReady", function (e) {
 
             })
+            // that.$sound.load()
+
+            // const [and , ios] = getOS()
+            // if(and){
+            //     that.$sound.load()
+            // }
+            // if(ios){
+            //     that.init()
+            // }
         },
         methods: {
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),
@@ -93,7 +103,7 @@
                 try {
                     console.log('headimgurl' , this.headimgurl)
                     this.CHANGE_LOADING_BAR(true)
-                    // await this.$music.init()
+                    await this.$music.init()
                 } catch (e) {
                     console.log('login error ', e)
                 }finally {
@@ -101,11 +111,12 @@
                 }
             },
             touchstart(){
-                createjs.HTMLAudioPlugin.playEmptySound();
+                // createjs.HTMLAudioPlugin.playEmptySound();
             },
             handlePushPage() {
-                createjs.WebAudioPlugin.playEmptySound();
-                this.$router.push({name: 'select'})
+
+                // createjs.WebAudioPlugin.playEmptySound();
+                this.$router.replace({name: 'select'})
             },
             handleShowPlay() {
                 this.showHowtoplay = true

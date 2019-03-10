@@ -17,12 +17,13 @@ function getSoundList() {
     return keys.map(k=>{
 
         return {
-            src:`${base}rhythm-select-${k}.mp3`,
+            // src:`${base}rhythm-select-${k}.mp3`,
+            src:`https://www.createjs.com/demos/_assets/audio/Game-Break.ogg`,
             id:k
         }
     })
 }
-
+let isSoundReady = false
 class SoundPlay {
     /**
      *
@@ -36,7 +37,7 @@ class SoundPlay {
 
         console.log(this.ids)
         this.queue = new createjs.LoadQueue()
-        createjs.Sound.registerPlugins([createjs.WebAudioPlugin, createjs.HTMLAudioPlugin]);
+        // createjs.Sound.registerPlugins([createjs.WebAudioPlugin, createjs.HTMLAudioPlugin]);
         createjs.Sound.alternateExtensions = ["mp3"];
         this.queue.installPlugin(createjs.Sound);
         this.queue.on('fileload' , this.handleFileLoad)
@@ -62,6 +63,10 @@ class SoundPlay {
     }
 
     play(id){
+        if (isSoundReady === false) {
+            createjs.WebAudioPlugin.playEmptySound();
+            isSoundReady = true;
+        }
         if(this.ids[id]){
             createjs.Sound.play(id)
         }else{

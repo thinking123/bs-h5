@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" @touchstart="prevWXMenu">
         <img :src="bg" class="img"/>
         <img :src="`${base}${page}footer.png`"
              class="footer"/>
@@ -121,11 +121,12 @@
 
 <script>
     import {mapGetters, mapMutations} from 'vuex'
+    import SoundPlay from '../utils/SoundPlay'
     import {Howl, Howler} from 'howler'
     import MusicBtn from "../components/MusicBtn";
     import StartRecordingBar from "../components/StartRecordingBar";
     import {getSignInfo} from "../utils/http";
-    import {showMsg} from "../utils/common";
+    import {showMsg , getOS} from "../utils/common";
     import {
         wx_config,
         wx_startRecord,
@@ -215,10 +216,15 @@
             }
         },
         mounted() {
+            this.$sound = new SoundPlay()
             this.$sound.load()
         },
         methods: {
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText', 'settimeline']),
+            prevWXMenu(e){
+              e.stopPropagation()
+                e.preventDefault()
+            },
             async handleRecord(e) {
                 if (this.isRecording) {
                     await this.stopRecord()
@@ -432,7 +438,20 @@
             async playMusic(key) {
                 this.isPressMusicBtn = true
                 //
+                // console.log('play by ios')
+                // this.$music.stop(key)
                 this.$sound.play(key)
+                return
+                const [and , ios] = getOS()
+                if(ios){
+                    console.log('play by ios')
+                    this.$music.play(key)
+                }
+
+                if(and){
+                    this.$sound.play(key)
+                }
+
                  return
 
                 // var audio = new Audio(this.do);
@@ -442,7 +461,7 @@
                 // var sound = new Howl({
                 //     src: this.do
                 // }).play();
-                // return
+
                 this.stopaudio()
 
                 const audio = this.$refs[key]
@@ -549,7 +568,7 @@
     }
 
 
-    $step:5;
+    $step:2;
     $start:441-426;
     .icon1 {
         top: px($start);

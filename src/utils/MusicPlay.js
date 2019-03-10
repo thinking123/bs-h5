@@ -17,11 +17,14 @@ class MusicPlay{
 
     loadMusic(src){
         return new Promise((resolve , reject) =>{
+            console.log('src' , src)
             const sound = new Howl({
-                src,
+                src:[src],
+                xhrWithCredentials:true,
+                usingWebAudio:false,
                 onload:res=>{
                     console.log('loaded ok' , res)
-                    resolve(sound)
+
                 },
                 onloaderror:err=>{
                     console.log('loaded music fail' , err)
@@ -29,16 +32,26 @@ class MusicPlay{
                 }
 
             })
+
+            resolve(sound)
         })
     }
-    allMusic(){
+    async allMusic(){
         const base = store.state.base
-        const mlist = keys.map(m=>{
-            const r = `${base}rhythm-select-${m}.mp3`
-            return this.loadMusic(r)
-        })
-
-        return Promise.all(mlist)
+        // const mlist = keys.map(m=>{
+        //     const r = `${base}rhythm-select-${m}.mp3`
+        //     return this.loadMusic(r)
+        // })
+        // const re = await this.loadMusic(r)
+        // res.push(re)
+        let res = []
+        for(let i = 0 ; i < keys.length ; i++){
+            const r = `${base}rhythm-select-${keys[i]}.mp3`
+            const re = await this.loadMusic(r)
+            res.push(re)
+        }
+        return res
+        // return Promise.all(mlist)
     }
     async init(){
         // const mus = await this.allMusic()
@@ -50,7 +63,8 @@ class MusicPlay{
         // })
 
 
-return
+// return
+        console.log('init allMusic ')
         const musObj = {}
         const base = store.state.base
         for(let i = 0 ; i< keys.length ; i++){
@@ -58,10 +72,13 @@ return
             musObj[keys[i]] = await this.loadMusic(r)
         }
 
+
         this.musObj = musObj
+        console.log('init' , musObj ,  this.musObj)
     }
 
     play(key){
+        console.log('ios play key' , key , 'obj' , this)
         const music = this.musObj[key]
         if(music){
             // music.playing && music.stop()
