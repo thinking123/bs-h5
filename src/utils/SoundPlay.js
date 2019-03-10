@@ -14,11 +14,12 @@ function getSoundList() {
     ]
 
     const base = store.state.base
+    // const base = '../music/'
     return keys.map(k=>{
 
         return {
-            // src:`${base}rhythm-select-${k}.mp3`,
-            src:`https://www.createjs.com/demos/_assets/audio/Game-Break.ogg`,
+            src:`${base}${k}.mp3`,
+            // src:`https://www.createjs.com/demos/_assets/audio/Game-Break.ogg`,
             id:k
         }
     })

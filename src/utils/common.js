@@ -234,3 +234,38 @@ function getQueryVariable(query) {
     }
     console.log('Query variable %s not found', variable);
 }
+
+export function isWeiXin() {
+    var ua = window.navigator.userAgent.toLowerCase();
+    console.log(ua);//mozilla/5.0 (iphone; cpu iphone os 9_1 like mac os x) applewebkit/601.1.46 (khtml, like gecko)version/9.0 mobile/13b143 safari/601.1
+    if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+export function px2Px(iphone6px) {
+    const rem_ip6_unit = 375 / 10
+    const rem_ip6 = iphone6px / rem_ip6_unit
+
+    const rem_cur = window.innerWidth / 10
+
+    const px_cur = rem_ip6 * rem_cur
+
+    console.log('current rem ' , rem_cur)
+    console.log('current px ' , px_cur)
+
+
+    return px_cur
+}
+
+export function ratioPx(iphone6px) {
+    const ratio_ip6 = iphone6px / 667
+    const px_cur = ratio_ip6 * window.innerHeight
+
+    console.log('current height ' , window.innerHeight)
+    console.log('current px ' , px_cur)
+
+    return px_cur
+}

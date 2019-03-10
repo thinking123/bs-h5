@@ -1,8 +1,9 @@
 <template>
     <div class="music-btn"
-         @touchstart="touchstart"
-         @touchend="touchend">
-        <img :src="`${base}${page}${key}.png`"/>
+    >
+        <img :src="`${base}${page}${key}.png`"
+             @touchstart="touchstart"
+             @touchend="touchend"/>
     </div>
 
 </template>
@@ -47,10 +48,10 @@
 
 
                 //禁止长按弹出菜单
-                e.preventDefault()
+                // e.preventDefault()
             },
             touchend(e) {
-                // console.log('touchend')
+                console.log('touchend')
                 this.$emit('touchingend', this.musicKey)
 
                 // this.setData({

@@ -10,7 +10,7 @@ export default [
     {
         path: '/', component: Layout,
         children: [
-            {path: '/', redirect: {name: 'test'}},
+            {path: '/', redirect: {name: 'home'}},
             {path: '/home', name: 'home', component: Home,  meta: { title: '我的音乐人格' }},
             {path: '/video', name: 'video', component: Video,  meta: { title: '我的音乐人格' }},
             {path: '/select', name: 'select', component: RhytemSelect,  meta: { title: '我的音乐人格' }},

@@ -21,7 +21,7 @@ import 'weui'
 Vue.config.productionTip = false
 Vue.use(VueRouter)
 Vue.use(VueResource);
-// Vue.prototype.$music = MusicPlay
+Vue.prototype.$sound = new SoundPlay()
 
 //
 // const soundlist = [

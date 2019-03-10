@@ -40,7 +40,7 @@
     import {CHANGE_LOADING_BAR} from "../store/mutations";
     import HowToPlayDialog from "../components/Dialog/HowToPlayDialog";
     import {getSignInfo , login} from "../utils/http";
-    import {getOS} from "../utils/common";
+    import {getOS , isWeiXin} from "../utils/common";
     import {mapGetters , mapMutations} from 'vuex'
     import music from '../utils/MusicPlay'
     const baseAudioUrl = `asserts/audio/video/video.mp4`
@@ -66,24 +66,14 @@
         mounted() {
 
             const that = this
-            document.addEventListener("WeixinJSBridgeReady", function (e) {
-                console.log('WeixinJSBridgeReady init')
-
-
-                // that.init()
-            }, false);
-            document.addEventListener("WeixinJSBridgeReady", function (e) {
-
-            })
-            // that.$sound.load()
-
-            // const [and , ios] = getOS()
-            // if(and){
-            //     that.$sound.load()
-            // }
-            // if(ios){
-            //     that.init()
-            // }
+            if(isWeiXin()){
+                document.addEventListener("WeixinJSBridgeReady", function (e) {
+                    console.log('WeixinJSBridgeReady init')
+                    that.$sound.load()
+                }, false);
+            }else{
+                that.$sound.load()
+            }
         },
         methods: {
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),

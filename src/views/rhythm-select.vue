@@ -1,120 +1,104 @@
 <template>
-    <div class="container" @touchstart="prevWXMenu">
+    <div class="container">
         <img :src="bg" class="img"/>
         <img :src="`${base}${page}footer.png`"
              class="footer"/>
-        <div class="page-wrap">
+        <div class="page-wrap" :class="[isSmall ? 'small' : '']" ref="wrap">
+            <div class="content-wrap">
+                <img :src="`${base}${page}title.png`"
+                     class="title"/>
+                <img :src="`${base}${page}border.png`"
+                     class="border"/>
 
-
-        <div class="content-wrap">
-
-            <img :src="`${base}${page}title.png`"
-                 class="title"/>
-            <img :src="`${base}${page}border.png`"
-                 class="border"/>
-
-            <img :src="`${base}${page}icon-title.png`"
-                 class="icon-title"/>
-
-
-
-
-
-
-            <div class="btn-wrap">
-                <div>
-                    <music-btn class="music-btn row1 music-btn1" text="Do"
-                               @touchingend="handleTouchingEnd"
-                               @touching="handleTouching" musicKey="do"/>
-                    <music-btn class="music-btn row1 music-btn2" text="Re"
-                               @touchingend="handleTouchingEnd"
-                               @touching="handleTouching" musicKey="re"/>
-                    <music-btn class="music-btn row1 music-btn3" text="Mi"
-                               @touchingend="handleTouchingEnd"
-                               @touching="handleTouching" musicKey="mi"/>
-                    <music-btn class="music-btn row1 music-btn4" text="Fa"
-                               @touchingend="handleTouchingEnd"
-                               @touching="handleTouching" musicKey="fa"/>
-                </div>
-                <div>
-                    <music-btn class="music-btn row2 music-btn5" text="Sol"
-                               @touchingend="handleTouchingEnd"
-                               @touching="handleTouching" musicKey="sol"/>
-                    <music-btn class="music-btn row2 music-btn6" text="La"
-                               @touchingend="handleTouchingEnd"
-                               @touching="handleTouching" musicKey="la"/>
-                    <music-btn class="music-btn row2 music-btn7" text="Xi"
-                               @touchingend="handleTouchingEnd"
-                               @touching="handleTouching" musicKey="xi"/>
+                <img :src="`${base}${page}icon-title.png`"
+                     class="icon-title"/>
+                <div class="btn-wrap">
+                    <div>
+                        <music-btn class="music-btn row1 music-btn1" text="Do"
+                                   @touchingend="handleTouchingEnd"
+                                   @touching="handleTouching" musicKey="do"/>
+                        <music-btn class="music-btn row1 music-btn2" text="Re"
+                                   @touchingend="handleTouchingEnd"
+                                   @touching="handleTouching" musicKey="re"/>
+                        <music-btn class="music-btn row1 music-btn3" text="Mi"
+                                   @touchingend="handleTouchingEnd"
+                                   @touching="handleTouching" musicKey="mi"/>
+                        <music-btn class="music-btn row1 music-btn4" text="Fa"
+                                   @touchingend="handleTouchingEnd"
+                                   @touching="handleTouching" musicKey="fa"/>
+                    </div>
+                    <div>
+                        <music-btn class="music-btn row2 music-btn5" text="Sol"
+                                   @touchingend="handleTouchingEnd"
+                                   @touching="handleTouching" musicKey="sol"/>
+                        <music-btn class="music-btn row2 music-btn6" text="La"
+                                   @touchingend="handleTouchingEnd"
+                                   @touching="handleTouching" musicKey="la"/>
+                        <music-btn class="music-btn row2 music-btn7" text="Xi"
+                                   @touchingend="handleTouchingEnd"
+                                   @touching="handleTouching" musicKey="xi"/>
+                    </div>
                 </div>
 
+                <div class="record-btn-wrap">
+
+                    <start-recording-bar class="start-recording-bar" v-if="isRecording"/>
+                    <img :src="startBtn"
+                         class="record-btn"
+                         @click="handleRecord"/>
+                </div>
+
+
+                <div class="yp-wrap">
+                    <img :src="yp"
+                         class="yp"/>
+                    <img :src="downIcon"
+                         :class="{ 'taped1':icon1Taped }"
+                         class="icon icon1 "/>
+                    <img :src="downIcon"
+                         :class="{ 'taped2':icon2Taped }"
+                         :style="{animationName: (icon2Taped ? 'taped2' : '')}"
+                         class="icon icon2 "/>
+                    <img :src="downIcon"
+                         :class="{ 'taped3':icon3Taped }"
+                         :style="{animationName:icon3Taped ? 'taped3' : ''}"
+                         class="icon icon3 "/>
+                    <img :src="downIcon"
+                         :class="{ 'taped4':icon4Taped }"
+                         :style="{animationName:icon4Taped ? 'taped4' : ''}"
+                         class="icon icon4 "/>
+                    <img :src="downIcon"
+                         :class="{ 'taped5':icon5Taped }"
+                         :style="{animationName:icon5Taped ? 'taped5' : ''}"
+                         class="icon icon5 "/>
+
+                    <img :src="upIcon"
+                         :class="{ 'taped6':icon6Taped }"
+                         :style="{animationName:icon6Taped ? 'taped6' : ''}"
+                         class="icon icon6 "/>
+                    <img :src="upIcon"
+                         :class="{ 'taped7':icon7Taped }"
+                         :style="{animationName:icon7Taped ? 'taped7' : ''}"
+                         class="icon icon7 "/>
+
+                </div>
+
+                <img :src="pauseBtn"
+                     class="stop-btn"
+                     v-if="isPlaying"
+                     @click="handlePlay"/>
+                <img :src="stopBtn"
+                     class="stop-btn"
+                     v-else
+                     @click="handlePlay"/>
+
 
             </div>
-
-            <div class="record-btn-wrap">
-
-                <start-recording-bar class="start-recording-bar" v-if="isRecording"/>
-                <img :src="startBtn"
-                     class="record-btn"
-                     @click="handleRecord"/>
-            </div>
-
-
-
-
-            <div class="yp-wrap">
-                <img :src="yp"
-                     class="yp"/>
-                <img :src="downIcon"
-                     :class="{ 'taped1':icon1Taped }"
-                     class="icon icon1 "/>
-                <img :src="downIcon"
-                     :class="{ 'taped2':icon2Taped }"
-                     :style="{animationName: (icon2Taped ? 'taped2' : '')}"
-                     class="icon icon2 "/>
-                <img :src="downIcon"
-                     :class="{ 'taped3':icon3Taped }"
-                     :style="{animationName:icon3Taped ? 'taped3' : ''}"
-                     class="icon icon3 "/>
-                <img :src="downIcon"
-                     :class="{ 'taped4':icon4Taped }"
-                     :style="{animationName:icon4Taped ? 'taped4' : ''}"
-                     class="icon icon4 "/>
-                <img :src="downIcon"
-                     :class="{ 'taped5':icon5Taped }"
-                     :style="{animationName:icon5Taped ? 'taped5' : ''}"
-                     class="icon icon5 "/>
-
-                <img :src="upIcon"
-                     :class="{ 'taped6':icon6Taped }"
-                     :style="{animationName:icon6Taped ? 'taped6' : ''}"
-                     class="icon icon6 "/>
-                <img :src="upIcon"
-                     :class="{ 'taped7':icon7Taped }"
-                     :style="{animationName:icon7Taped ? 'taped7' : ''}"
-                     class="icon icon7 "/>
-
-            </div>
-
-            <img :src="pauseBtn"
-                 class="stop-btn"
-                 v-if="isPlaying"
-                 @click="handlePlay"/>
-            <img :src="stopBtn"
-                 class="stop-btn"
-                 v-else
-                 @click="handlePlay"/>
-
-
-
-
-
-        </div>
 
             <img :src="shareBtn"
                  class="music-person-btn"
                  @click="handleMusicPerson"/>
-    </div>
+        </div>
     </div>
 
 </template>
@@ -126,7 +110,7 @@
     import MusicBtn from "../components/MusicBtn";
     import StartRecordingBar from "../components/StartRecordingBar";
     import {getSignInfo} from "../utils/http";
-    import {showMsg , getOS} from "../utils/common";
+    import {showMsg, getOS, isWeiXin , px2Px,ratioPx} from "../utils/common";
     import {
         wx_config,
         wx_startRecord,
@@ -157,6 +141,7 @@
                 'la',
                 'xi',
             ]),
+
             style1() {
                 return {animationName: this.icon1Taped ? 'taped1' : ''}
             },
@@ -212,18 +197,40 @@
 
                 timeline: [],
                 preKey: '',
-                page:page
+                page: page,
+
+                isSmall:false
             }
         },
         mounted() {
-            this.$sound = new SoundPlay()
-            this.$sound.load()
+            const that = this
+            if (isWeiXin()) {
+                document.addEventListener("WeixinJSBridgeReady", function (e) {
+                    console.log('WeixinJSBridgeReady init')
+                    that.$sound.load()
+                }, false);
+            } else {
+                that.$sound.load()
+            }
+
+            this.small()
+
         },
         methods: {
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText', 'settimeline']),
-            prevWXMenu(e){
-              e.stopPropagation()
-                e.preventDefault()
+            small(){
+                const r = this.$refs.wrap
+                const wH = px2Px(621-64)
+                const fH = ratioPx(667-627)
+                const {y} = r.getBoundingClientRect()
+                console.log('offset' , y)
+                const isSmall = (wH + fH + y) > window.innerHeight
+
+                this.isSmall = isSmall
+                // const pH = flexible.rem2px(r.clientHeight)
+            },
+            handleClick() {
+                this.playMusic('do')
             },
             async handleRecord(e) {
                 if (this.isRecording) {
@@ -234,7 +241,7 @@
                     this.startRecord()
                 }
             },
-            stopaudio(){
+            stopaudio() {
                 console.log('stopaudio')
                 this.$sound.stop()
             },
@@ -259,7 +266,7 @@
 
 
                 this.settimeline(this.timeline)
-                this.$router.push({
+                this.$router.replace({
                     name: 'share',
                     query: {
                         recordId: this.tempFilePath
@@ -299,6 +306,7 @@
             handleTouching(e, notPlay = false) {
                 const key = e
 
+
                 if (this.isRecording) {
                     this.timeline.push({
                         key: key,
@@ -312,47 +320,48 @@
                     case 'do':
                         this.icon1Taped = true
 
-                        this.isPlaying && setTimeout(()=>{
+                        this.isPlaying && setTimeout(() => {
                             this.icon1Taped = false
-                        } , timeout)
+                        }, timeout)
                         break
                     case 're':
                         this.icon2Taped = true
-                        this.isPlaying && setTimeout(()=>{
+                        this.isPlaying && setTimeout(() => {
                             this.icon2Taped = false
-                        } , timeout)
+                        }, timeout)
                         break
                     case 'mi':
                         this.icon3Taped = true
-                        this.isPlaying && setTimeout(()=>{
+                        this.isPlaying && setTimeout(() => {
                             this.icon3Taped = false
-                        } , timeout)
+                        }, timeout)
                         break
                     case 'fa':
                         this.icon4Taped = true
-                        this.isPlaying && setTimeout(()=>{
+                        this.isPlaying && setTimeout(() => {
                             this.icon4Taped = false
-                        } , timeout)
+                        }, timeout)
                         break
                     case 'sol':
                         this.icon5Taped = true
-                        this.isPlaying && setTimeout(()=>{
+                        this.isPlaying && setTimeout(() => {
                             this.icon5Taped = false
-                        } , timeout)
+                        }, timeout)
                         break
                     case 'la':
                         this.icon6Taped = true
-                        this.isPlaying && setTimeout(()=>{
+                        this.isPlaying && setTimeout(() => {
                             this.icon6Taped = false
-                        } , timeout)
+                        }, timeout)
                         break
                     case 'xi':
-                        this.isPlaying && setTimeout(()=>{
+                        this.isPlaying && setTimeout(() => {
                             this.icon7Taped = false
-                        } , timeout)
+                        }, timeout)
                         this.icon7Taped = true
                         break
                 }
+                this.isPressMusicBtn = true
                 this.playMusic(key)
 
             },
@@ -361,27 +370,40 @@
                 this.startTime = this.getTime()
                 this.cloneTimeline = [...this.timeline]
                 let endTime = this.cloneTimeline.pop()
+                console.log('timeline len :', this.cloneTimeline.length)
                 this.playRecordTime = setInterval(() => {
                     const offTime = this.getTime() - this.startTime
 
-                    if (offTime + 90 > endTime.time) {
+                    if (offTime + 50 > endTime.time) {
+                        if (this.playRecordTime) {
+                            clearInterval(this.playRecordTime)
+                            this.playRecordTime = null
+                        }
+                        console.log('timeline len endh offtime')
                         //end
                         this.isPlaying = false
                     }
-                    if(!this.isPlaying){
+                    if (!this.isPlaying) {
+                        if (this.playRecordTime) {
+                            clearInterval(this.playRecordTime)
+                            this.playRecordTime = null
+                        }
+                        console.log('stop play music in timeline')
                         return
                     }
                     if (this.cloneTimeline.length > 0) {
                         const cur = this.cloneTimeline[0]
                         // console.log('offTime', offTime, cur)
-                        if (cur.time > offTime - 50 && cur.time < offTime + 50) {
+                        if (cur.time > offTime - 30 && cur.time < offTime + 30) {
                             this.handleTouching(cur.key)
                             // this.preKey = cur.key
                             this.cloneTimeline.shift()
                             console.log('get key', cur.key)
                         }
+                    } else {
+                        console.log('timeline len end', this.cloneTimeline.length)
                     }
-                }, 90)
+                }, 20)
             },
             stopPlayRecord() {
                 this.isPlaying = false
@@ -436,45 +458,7 @@
                 this.isRecorded = this.isPressMusicBtn
             },
             async playMusic(key) {
-                this.isPressMusicBtn = true
-                //
-                // console.log('play by ios')
-                // this.$music.stop(key)
                 this.$sound.play(key)
-                return
-                const [and , ios] = getOS()
-                if(ios){
-                    console.log('play by ios')
-                    this.$music.play(key)
-                }
-
-                if(and){
-                    this.$sound.play(key)
-                }
-
-                 return
-
-                // var audio = new Audio(this.do);
-                // audio.play();
-
-
-                // var sound = new Howl({
-                //     src: this.do
-                // }).play();
-
-                this.stopaudio()
-
-                const audio = this.$refs[key]
-                if (audio) {
-                    this.curAudio = audio
-                    this.isPlayingAudio = true
-                    console.log('music playing' , key)
-                    audio.play().catch(err => {
-                        console.log('audio play error', err , audio)
-                    })
-                } else {
-                    console.error('music doesnot exist', key)
-                }
             },
             showModal(msg, title = '') {
                 showMsg(msg)
@@ -552,7 +536,6 @@
     }
 
 
-
     /*
     H :90 px
     iconH:56 px
@@ -568,14 +551,13 @@
     }
 
 
-    $step:2;
-    $start:441-426;
+    $step: 2;
+    $start: 441-426;
     .icon1 {
         top: px($start);
         margin-left: px(130-84);
 
     }
-
 
 
     .icon2 {
@@ -609,10 +591,11 @@
     }
 
 
-    $offset:10;
+    $offset: 10;
     .taped1 {
         top: px($start + $offset);
     }
+
     @keyframes taped1 {
         0% {
             top: px($start);
@@ -621,9 +604,11 @@
             top: px($start + $offset);
         }
     }
+
     .taped2 {
         top: px($start - $step + $offset);
     }
+
     @keyframes taped2 {
         0% {
             top: 65.82%;
@@ -632,9 +617,11 @@
             top: 64.82%;
         }
     }
+
     .taped3 {
         top: px($start - $step * 2 + $offset);
     }
+
     @keyframes taped3 {
         0% {
             top: 65.37%;
@@ -643,9 +630,11 @@
             top: 64.37%;
         }
     }
+
     .taped4 {
         top: px($start - $step * 3 + $offset);
     }
+
     @keyframes taped4 {
         0% {
             top: 64.92%;
@@ -654,9 +643,11 @@
             top: 63.92%;
         }
     }
+
     .taped5 {
         top: px($start - $step * 4 + $offset);
     }
+
     @keyframes taped5 {
         0% {
             top: 64.67%;
@@ -665,9 +656,11 @@
             top: 63.67%;
         }
     }
+
     .taped6 {
         top: px($start - $offset);
     }
+
     @keyframes taped6 {
         0% {
             top: 65.82%;
@@ -676,9 +669,11 @@
             top: 66.82%;
         }
     }
+
     .taped7 {
         top: px($start - $step - $offset);
     }
+
     @keyframes taped7 {
         0% {
             top: 65.37%;
@@ -699,7 +694,6 @@
         height: 5.1%;
         width: 208px;
     }
-
 
 
     .save-btn {
@@ -724,7 +718,6 @@
         left: 50%;
         transform: translateX(-50%);
     }
-
 
 
     .select-bar {
@@ -765,7 +758,6 @@
     }
 
 
-
     .music-btn {
         /*z-index: 100;*/
         /*position: absolute;*/
@@ -784,88 +776,99 @@
 
 
     /*.music-btn1 {*/
-        /*left: 160px;*/
+    /*left: 160px;*/
     /*}*/
 
     /*.music-btn5 {*/
-        /*left: 216px;*/
+    /*left: 216px;*/
     /*}*/
 
     /*.music-btn2 {*/
-        /*left: 270px;*/
+    /*left: 270px;*/
     /*}*/
 
     /*.music-btn6 {*/
-        /*left: 324px;*/
+    /*left: 324px;*/
     /*}*/
 
     /*.music-btn3 {*/
-        /*left: 380px;*/
+    /*left: 380px;*/
     /*}*/
 
     /*.music-btn7 {*/
-        /*left: 436px;*/
+    /*left: 436px;*/
     /*}*/
 
     /*.music-btn4, .music-btn8 {*/
-        /*left: 490px;*/
+    /*left: 490px;*/
     /*}*/
 
 
-    .page-wrap{
+    .page-wrap {
         position: absolute;
-        left:50%;
-        top:50%;
-        transform: translate(-50% , -50%);
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
 
         width: px(334-41);
         display: flex;
         flex-direction: column;
         align-items: center;
         position: absolute;
+
+        &.small{
+            top:0;
+            transform: translate(-50%, 0);
+        }
         /*border: 1px solid yellow;*/
-        .content-wrap{
-            @include posRel(41 , 64 , 334,567 , 0);
+        .content-wrap {
+            @include posRel(41, 64, 334, 567, 0);
             display: flex;
             flex-direction: column;
             align-items: center;
 
 
-            $top:64;
-            .title{
-                @include posRel(71,64,312,206);
+            $top: 64;
+
+            .title {
+                @include posRel(71, 64, 312, 206);
 
             }
-            .border{
+
+            .border {
                 position: absolute;
-                top:px(163-64);
-                @include getSize(71,163,334,567);
+                top: px(163-64);
+                @include getSize(71, 163, 334, 567);
                 width: 100%;
             }
-            .icon-title{
-                @include posRel(89,215,285,246,8);
+
+            .icon-title {
+                @include posRel(89, 215, 285, 246, 8);
             }
 
-            .btn-wrap{
-                @include posRel(0,260,374,374,260-247);
+            .btn-wrap {
+                @include posRel(0, 260, 374, 374, 260-247);
                 width: 100%;
 
                 display: flex;
                 flex-direction: column;
-                >div{
+
+                > div {
                     /*flex: 1;*/
                     display: flex;
                     flex-direction: row;
                     align-items: center;
                     justify-content: center;
                 }
-                &:first-child{
+
+                &:first-child {
                     margin-bottom: 8px;
                 }
             }
 
-            .record-btn-wrap{
-                @include posRel(137,385,242,422,385-374);
+            .record-btn-wrap {
+                @include posRel(137, 385, 242, 422, 385-374);
+
                 .record-btn {
                     width: 100%;
                     height: 100%;
@@ -881,14 +884,15 @@
                 }
             }
 
-            .yp-wrap{
-                @include posRel(84,426,292,473,426-422);
+            .yp-wrap {
+                @include posRel(84, 426, 292, 473, 426-422);
                 /*border: 1px solid red;*/
 
                 display: flex;
                 flex-direction: row;
                 align-items: flex-start;
-                .yp{
+
+                .yp {
                     position: absolute;
                     width: 100%;
                     height: 100%;
@@ -897,23 +901,21 @@
 
 
             .stop-btn {
-                @include posRel(136,485,239,521,485-473);
+                @include posRel(136, 485, 239, 521, 485-473);
             }
 
 
-
-
-
         }
+
         .music-person-btn {
-            @include posRel(88,566,284,621,569-563);
+            @include posRel(88, 566, 284, 621, 569-563);
 
         }
     }
 
-    .footer{
-        @include posCenterLeft(50 , 636 , 327,658);
-        top:auto;
+    .footer {
+        @include posCenterLeft(50, 636, 327, 658);
+        top: auto;
         bottom: px(667-658);
 
     }

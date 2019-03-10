@@ -58,11 +58,11 @@
 
 <script>
 
-    import {showMsg, getRandomInt} from "../utils/common";
+    import {showMsg, getRandomInt , isWeiXin} from "../utils/common";
     import {mapGetters, mapMutations} from 'vuex'
     import {CHANGE_LOADING_BAR} from "../store/mutations";
     import ShareMusicPlayingBar from "../components/ShareMusicPlayingBar";
-    import {getSignInfo , uploadRecord} from "../utils/http";
+    import {getSignInfo , uploadRecord } from "../utils/http";
     import {
         wx_config,
         wx_playRecord,
@@ -130,10 +130,14 @@
             }
         },
         mounted(option) {
-            try {
-                this.$sound.load()
-            }catch (e) {
-                console.log('load error ' , e)
+            const that = this
+            if(isWeiXin()){
+                document.addEventListener("WeixinJSBridgeReady", function (e) {
+                    console.log('WeixinJSBridgeReady init')
+                    that.$sound.load()
+                }, false);
+            }else{
+                that.$sound.load()
             }
 
             let {recordurl , rand , recordId } = this.$route.query
@@ -280,8 +284,6 @@
                 clearInterval(this.playRecordTime)
             },
             async playMusic(key) {
-                this.isPressMusicBtn = true
-
                 this.$sound.play(key)
             },
             startPlayRecord() {
@@ -289,28 +291,40 @@
                 this.startTime = this.getTime()
                 this.cloneTimeline = [...this.timeline]
                 let endTime = this.cloneTimeline.pop()
+                console.log('timeline len :' ,  this.cloneTimeline.length)
                 this.playRecordTime = setInterval(() => {
                     const offTime = this.getTime() - this.startTime
 
-                    if(offTime + 90 > endTime.time){
+                    if (offTime + 50 > endTime.time) {
+                        if(this.playRecordTime){
+                            clearInterval(this.playRecordTime)
+                            this.playRecordTime = null
+                        }
+                        console.log('timeline len endh offtime')
                         //end
                         this.isPlaying = false
                     }
-
                     if(!this.isPlaying){
+                        if(this.playRecordTime){
+                            clearInterval(this.playRecordTime)
+                            this.playRecordTime = null
+                        }
+                        console.log('stop play music in timeline')
                         return
                     }
-
                     if (this.cloneTimeline.length > 0) {
                         const cur = this.cloneTimeline[0]
                         // console.log('offTime', offTime, cur)
-                        if (cur.time > offTime - 50 && cur.time < offTime + 50) {
-                            this.playMusic(cur.key)
+                        if (cur.time > offTime - 30 && cur.time < offTime + 30) {
+                            this.handleTouching(cur.key)
+                            // this.preKey = cur.key
                             this.cloneTimeline.shift()
                             console.log('get key', cur.key)
                         }
+                    }else{
+                        console.log('timeline len end' ,  this.cloneTimeline.length)
                     }
-                }, 90)
+                }, 20)
             },
             stopaudio() {
                 if (this.isPlayingAudio && this.curAudio) {
