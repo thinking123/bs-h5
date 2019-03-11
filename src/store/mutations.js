@@ -46,4 +46,10 @@ export default {
     settimeline(state ,timeline){
         state.timeline = timeline
     },
+    setsignInfo(state ,signInfo){
+        state.signInfo = signInfo
+    },
+    setisConfigedShare(state ,isConfigedShare){
+        state.isConfigedShare = isConfigedShare
+    },
 }

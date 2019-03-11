@@ -9,6 +9,7 @@ export default {
     isStartRecording:false,
     //cdn base url
     base : 'https://cdnpepsi.ysmine.com/',
+    signInfo:null,
     appid:'',
     noncestr:'',
     signature:'',
@@ -18,5 +19,6 @@ export default {
     headimgurl:'',
     nickname:'',
     sex:'',
-    timeline:[]
+    timeline:[],
+    isConfigedShare:false
 }

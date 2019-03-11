@@ -63,18 +63,7 @@
     import {CHANGE_LOADING_BAR} from "../store/mutations";
     import ShareMusicPlayingBar from "../components/ShareMusicPlayingBar";
     import {getSignInfo , uploadRecord , getAvater} from "../utils/http";
-    import {
-        wx_config,
-        wx_playRecord,
-        wx_stopPlayRecord,
-        wx_timelineShare,
-        wx_appMessageShare,
-        wx_registerOnVoicePlayEnd,
-        onMenuShareAppMessage,
-        onMenuShareQQ,
-        onMenuShareQZone,
-        onMenuShareTimeline
-    } from "../utils/wx-config";
+    import {initShare} from "../utils/wx-config";
     import MoveArrow from "../components/MoveArrow";
     import Avatar from "../components/avatar";
     import Icon3 from "../components/Icon3";
@@ -235,42 +224,10 @@
                     link  = link.replace('#' , '?#')
                     link = `${link}?id=${id}&rand=${this.rand}`
 
-                    const {
-                        appid,
-                        noncestr,
-                        signature,
-                        timestamp
-                    } = await getSignInfo()
-
-                    const title = '我的音乐人格'
-                    const desc = '来测测你的音乐人格吧'
-
-                    console.log('share link', link)
                     const imgUrl = this.shareBg
-                    // const imgUrl = `${this.base}rank-list-search.png`
-                    const jsApiList = [
-                        'updateAppMessageShareData',
-                        'updateTimelineShareData',
-                        //下面这两个api，虽然已经废弃，但是android必须调用，否则不能分享
-                        'onMenuShareAppMessage',
-                        'onMenuShareTimeline',
-                        // 'onMenuShareQQ',
-                        // 'onMenuShareQZone',
-                    ]
-                    console.log('分享数据title, desc, link, imgUrl' , title, desc, link, imgUrl)
-                    await wx_config(appid, timestamp, noncestr, signature, jsApiList , imgUrl)
-                    console.log('分享结束1')
-                    await wx_appMessageShare(title, desc, link, imgUrl)
-                    console.log('分享结束2')
-                    await wx_timelineShare(title, link, imgUrl)
-                    console.log('分享结束3')
-                     onMenuShareTimeline(title, link, imgUrl)
-                    console.log('分享结束4')
-                     onMenuShareAppMessage(title, desc, link, imgUrl)
-                    // await onMenuShareQQ(title, desc, link, imgUrl)
-                    // await onMenuShareQZone(title, desc, link, imgUrl)
 
-                    console.log('分享结束5')
+                    await initShare(link , imgUrl)
+
                 } catch (e) {
                     console.log('error ', e)
                 } finally {
@@ -484,7 +441,8 @@
                 // if(!this.isFromShare){
                 //     this.$router.back()
                 // }
-                this.$router.replace({name:'video'})
+                window.location.href = 'http://bsxyzqy.ysmine.com/login/api/login/htmllogin'
+                // this.$router.replace({name:'video'})
                 // const r = window.location.origin
                 // // const r = window.location.href.replace(/#[/].*/ , '#/video')
                 // console.log('goto r' , r)

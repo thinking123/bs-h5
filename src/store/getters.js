@@ -12,6 +12,8 @@ export default {
     nickname: state => state.nickname,
     sex: state => state.sex,
     timeline: state => state.timeline,
+    signInfo: state => state.signInfo,
+    isConfigedShare: state => state.isConfigedShare,
     do:state=>{
         const url = `${state.base}rhythm-select-do.mp3`
 

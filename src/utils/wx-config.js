@@ -20,29 +20,43 @@ export function wx_config(appId , timestamp , nonceStr , signature , jsApiList ,
     })
 }
 
-export async function initShare() {
+export async function initShare(link , imgUrl) {
     try {
-        const {
-            appid,
-            noncestr,
-            signature,
-            timestamp
-        } = await getSignInfo()
-
         const title = '我的音乐人格'
         const desc = '来测测你的音乐人格吧'
-        const link = window.location.href.split('#')[0]
-        const imgUrl = `${store.state.base}music-journey-bg.png`
-        const jsApiList = [
-            'updateAppMessageShareData',
-            'updateTimelineShareData',
-            //下面这两个api，虽然已经废弃，但是android必须调用，否则不能分享
-            'onMenuShareAppMessage',
-            'onMenuShareTimeline'
-        ]
 
-        console.log('share :' , title, desc, link, imgUrl)
-        await wx_config(appid, timestamp, noncestr, signature, jsApiList)
+        if(!store.state.isConfigedShare){
+            let appid,
+                noncestr,
+                signature,
+                timestamp
+
+            if(store.state.signInfo){
+                appid = store.state.signInfo.appid
+                noncestr = store.state.signInfo.noncestr
+                signature = store.state.signInfo.signature
+                timestamp = store.state.signInfo.timestamp
+            }else{
+                const res = await getSignInfo()
+                store.commit('setsignInfo' , res)
+                appid = res.appid
+                noncestr = res.noncestr
+                signature = res.signature
+                timestamp = res.timestamp
+            }
+
+            const jsApiList = [
+                'updateAppMessageShareData',
+                'updateTimelineShareData',
+                //下面这两个api，虽然已经废弃，但是android必须调用，否则不能分享
+                'onMenuShareAppMessage',
+                'onMenuShareTimeline'
+            ]
+            await wx_config(appid, timestamp, noncestr, signature, jsApiList)
+            store.commit('setisConfigedShare' , true)
+        }
+
+        console.log('分享数据' , title, desc, link, imgUrl)
         console.log('分享结束1')
         await wx_appMessageShare(title, desc, link, imgUrl)
         console.log('分享结束2')
