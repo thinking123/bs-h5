@@ -182,7 +182,7 @@
                     this.isFromShare = !!rand
                     this.rand = this.isFromShare ? rand : getRandomInt(1, 6)
 
-                    this.rand = 1
+                    // this.rand = 1
 
                     this.bg = `${this.base}${page}bg${this.rand}.png`
                     this.shareBg = `${this.base}${page}bg${this.rand}.png`
