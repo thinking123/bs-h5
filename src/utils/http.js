@@ -21,11 +21,11 @@ userName (string, optional),
 userPhone (string, optional)
 * */
 export async function getAvater(id) {
-    const url = `/api/login/HFiveUser`
-    const params = {
-        id
-    }
-    return http.get(url, {params}).then(parseRespond)
+    const url = `/login/api/login/HFiveUser?id=${id}`
+    // const params = {
+    //     id
+    // }
+    return http.post(url, {}).then(parseRespond)
 }
 
 

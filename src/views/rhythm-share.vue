@@ -1,9 +1,9 @@
 <template>
     <div class="container" ref="rhythmShare" :class="{'con6':rand==6}">
 
-        <canvas id="canvas" class="canvas" ref="canvas" v-if="isSaveImage" ></canvas>
+        <canvas id="canvas" class="canvas" ref="canvas" v-show="isSaveImage" ></canvas>
 
-        <div v-else style="width: 100%;height: 100%">
+        <div style="width: 100%;height: 100%">
             <avatar class="avatar"/>
             <img :src="bg" class="img"
                  :class="{'img6':rand==6}">/>
@@ -40,14 +40,14 @@
                  @click="handleDownloadImage"
                  class="download-btn btm  img-btn"/>
             <img :src="`${baseUrl}try-play-btn.png`"
-                 v-if="recordurl"
+                 v-if="isFromShare"
                  @click="handleGoToHome"
                  class="try-play-btn btm"/>
             <img :src="`${baseUrl}qr-code.png`" class="qr-code btm"/>
         </div>
 
         <div id="preview" class="preview"
-             @click="handlePreview" v-if="showPreview">
+             @click="handlePreview" v-show="showPreview">
 
         </div>
 
@@ -185,7 +185,7 @@
                     this.imgStr = img
                 })
             },
-            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText' , 'settimeline' , 'setheadimgurl']),
+            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText' , 'settimeline' , 'setheadimgurl','setnickname']),
             async init() {
                 try {
                     let {id , rand } = this.$route.query
@@ -201,13 +201,33 @@
 
                     if (this.isFromShare) {
                         //从分享进来，从服务器拿分享的录音视频链接
-                        const {musicUrl ,userHead } = await getAvater(id)
-                        this.settimeline(JSON.parse(musicUrl))
-                        this.setheadimgurl(userHead)
+                        let {musicUrl ,userHead,userName } = await getAvater(id)
+
+                        console.log('origin : ' , musicUrl ,userHead)
+                        const base64 = 'data:image/jpg;base64,'
+                        let head = base64 + userHead
+                        // musicUrl = musicUrl.substring(1, musicUrl.length-1)
+                        console.log('head' , head)
+                        this.setheadimgurl(head)
+                        this.setnickname(userName)
+                        const t = JSON.parse(musicUrl)
+
+
+                        console.log('json' , t)
+
+                        this.settimeline(t)
+
 
                     }else{
                         const timeline = JSON.stringify(this.timeline)
-                        id = await uploadRecord(this.openid , timeline)
+                        const res = await uploadRecord(this.openid , timeline)
+                        console.log('return upload' , res)
+                        id = res.id
+
+                        const base64 = 'data:image/jpg;base64,'
+                        let head = res.userHead
+                        head = base64 + res.userHead
+                        this.setheadimgurl(head)
                     }
 
                     let link = window.location.href.split('?')[0]
@@ -300,7 +320,7 @@
                         const cur = this.cloneTimeline[0]
                         // console.log('offTime', offTime, cur)
                         if (cur.time > offTime - 30 && cur.time < offTime + 30) {
-                            this.handleTouching(cur.key)
+                            this.playMusic(cur.key)
                             // this.preKey = cur.key
                             this.cloneTimeline.shift()
                             console.log('get key', cur.key)
@@ -332,6 +352,16 @@
                 }
             },
 
+            async getOrignImage(src){
+                return new Promise((res , rej)=>{
+                    const img = new Image()
+                    img.onload = ()=>{
+                        res(img)
+                    }
+                    img.src = src
+                })
+
+            },
             async getImage(url){
                 return new Promise((res , rej)=>{
                     loadImage(url , img=>{
@@ -396,7 +426,7 @@
                         Math.PI * 2, true);
                     ctx.closePath();
                     ctx.clip();
-                    const head = await this.getImage(this.headimgurl)
+                    const head = await this.getOrignImage(this.headimgurl)
 
                     ctx.drawImage(head ,
                         rem(43),
@@ -424,13 +454,13 @@
                         rem(62))
 
                     const res = canvas.toDataURL('image/png')
-                    this.isSaveImage = false
+
                     this.showPreview = true
                     this.$nextTick(()=>{
                         console.log('preview')
                         const img = new Image()
                         img.src = canvas.toDataURL('image/png')
-
+                        this.isSaveImage = false
                         // img.width = window.innerWidth
                         // img.height = window.innerHeight
                         img.style.height = '100%';
@@ -454,12 +484,12 @@
                 // if(!this.isFromShare){
                 //     this.$router.back()
                 // }
-                // this.$router.replace({name:'video'})
-                const r = window.location.origin
-                // const r = window.location.href.replace(/#[/].*/ , '#/video')
-                console.log('goto r' , r)
-                // alert(r)
-                window.location.href = r
+                this.$router.replace({name:'video'})
+                // const r = window.location.origin
+                // // const r = window.location.href.replace(/#[/].*/ , '#/video')
+                // console.log('goto r' , r)
+                // // alert(r)
+                // window.location.href = r
             }
         },
         beforeRouteEnter(to, from, next) {

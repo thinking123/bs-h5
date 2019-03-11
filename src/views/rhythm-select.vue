@@ -214,14 +214,20 @@
         methods: {
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText', 'settimeline']),
             small(){
-                const r = this.$refs.wrap
-                const wH = px2Px(621-64)
-                const fH = ratioPx(667-627)
-                const {y} = r.getBoundingClientRect()
-                console.log('offset' , y)
-                const isSmall = (wH + fH + y) > window.innerHeight
+                this.$nextTick(()=>{
+                    const r = this.$refs.wrap
+                    const wH = px2Px(621-64)
+                    const fH = ratioPx(667-600)
+                    const {top} = r.getBoundingClientRect()
+                    let y = top
+                    console.log('offset' , y)
+                    const isSmall = (wH + fH + y) > window.innerHeight
 
-                this.isSmall = isSmall
+                    console.log('isSmall' , isSmall)
+                    console.log('small' , wH + fH + y , window.innerHeight)
+                    this.isSmall = isSmall
+                })
+
                 // const pH = flexible.rem2px(r.clientHeight)
             },
             handleClick() {
@@ -269,7 +275,7 @@
                 })
             },
             handleTouchingEnd(e) {
-                console.log('handleTouchingEnd')
+                console.log('handleTouchingEnd' , e)
                 const key = e
                 switch (key) {
                     case 'do':
@@ -296,6 +302,8 @@
                         break
                 }
 
+
+
                 // this.stopaudio()
             },
             handleTouching(e, notPlay = false) {
@@ -311,12 +319,14 @@
                     console.log('lenght', this.timeline.length)
                 }
                 const timeout = 250
+                console.log('handleTouching' , e)
                 switch (key) {
                     case 'do':
                         this.icon1Taped = true
 
                         this.isPlaying && setTimeout(() => {
                             this.icon1Taped = false
+
                         }, timeout)
                         break
                     case 're':

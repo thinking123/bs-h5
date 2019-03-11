@@ -94,11 +94,12 @@ router.beforeEach((pageTo, pageFrom, next) => {
         // }
         if(openid){
             store.commit('setopenid' , openid)
-            store.commit('setheadimgurl' , headimgurl)
+            //不用返回的headurl，使用base64
+            // store.commit('setheadimgurl' , headimgurl)
             store.commit('setnickname' , nickname)
             store.commit('setsex' , sex)
             console.log('从微信授权返回' , pageTo.query)
-            next({name:'home'})
+            next({name:'home' , replace: true})
 
             return
         }

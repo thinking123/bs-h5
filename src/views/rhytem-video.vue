@@ -156,6 +156,7 @@
 
             console.log('isAndroid' , isAndroid)
             console.log('isIOS' , isIOS)
+            alert('start video')
             if (isIOS) {
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
                     console.log('start play')
@@ -168,8 +169,10 @@
                 // video.play();
             }
             if(isAndroid){
+
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
                     // console.log('start play')
+                    alert('start android')
                     const video = document.getElementById('video')
                     // video.play();
                     video.addEventListener("x5videoenterfullscreen", function(){
