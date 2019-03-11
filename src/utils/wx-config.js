@@ -1,3 +1,7 @@
+import store from '../store'
+import {getSignInfo} from "./http";
+import {showMsg} from "./common";
+
 export function wx_config(appId , timestamp , nonceStr , signature , jsApiList , imgUrl) {
     return new Promise((resolve, reject) => {
         wx.config({
@@ -9,86 +13,48 @@ export function wx_config(appId , timestamp , nonceStr , signature , jsApiList ,
             jsApiList
         })
 
-        // jsApiList: [
-        //     'updateTimelineShareData',
-        //     'updateAppMessageShareData',
-        // ]
         wx.ready(function () {
-
             resolve()
-            // return
-            //
-            //
-            // const title = '测试分享数据'
-            // const desc = '测试分享数据描述'
-            // const shareId = 'testhserid'
-            // let link = window.location.href.split('?')[0]
-            // link = link.replace(/[/]$/, '')
-            // link = `${link}?recordurl=${shareId}&rand=${2}`
-            // // const imgUrl = ''
-            // console.log('ready 测试分享数据' , link)
-            //
-            // // imgUrl = ''
-            // wx.updateTimelineShareData({
-            //     title,
-            //     link,
-            //     imgUrl,
-            //     success:res=>{
-            //         console.log('定义分享到朋友圈内容 success')
-            //         console.log('imgUrl' , imgUrl)
-            //         // resolve(res)
-            //     },
-            //     fail:err=>{
-            //         console.log('定义分享到朋友圈内容 fail')
-            //         reject(err)
-            //     },
-            //     cancel:res=>reject(new Error('用户取消分享')),
-            // })
-            //
-            // wx.updateAppMessageShareData({
-            //     title,
-            //     desc,
-            //     link,
-            //     imgUrl,
-            //     success:res=>{
-            //         console.log('分享给朋友 success')
-            //         // resolve(res)
-            //     },
-            //     fail:err=>{
-            //         console.log('分享给朋友 fail')
-            //         reject(err)
-            //     },
-            //     cancel:res=>reject(new Error('用户取消分享')),
-            // })
-            //
-            //
-            // const shareData = {
-            //     title,
-            //     desc,
-            //     link,
-            //     imgUrl,
-            //     success:res=>{
-            //         console.log('分享给朋友 onMenuShareAppMessage success')
-            //         // resolve(res)
-            //     },
-            //     fail:err=>{
-            //         console.log('分享给朋友 onMenuShareAppMessage fail')
-            //         reject(err)
-            //     },
-            //     cancel:res=>reject(new Error('用户取消分享')),
-            // }
-            //
-            //
-            // wx.onMenuShareAppMessage(shareData);
-            // wx.onMenuShareTimeline(shareData);
-            //
-            // setTimeout(()=>{
-            //     resolve()
-            // } , 5000)
-
         })
         wx.error(reject)
     })
+}
+
+export async function initShare() {
+    try {
+        const {
+            appid,
+            noncestr,
+            signature,
+            timestamp
+        } = await getSignInfo()
+
+        const title = '我的音乐人格'
+        const desc = '来测测你的音乐人格吧'
+        const link = window.location.href.split('#')[0]
+        const imgUrl = `${store.state.base}music-journey-bg.png`
+        const jsApiList = [
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            //下面这两个api，虽然已经废弃，但是android必须调用，否则不能分享
+            'onMenuShareAppMessage',
+            'onMenuShareTimeline'
+        ]
+
+        console.log('share :' , title, desc, link, imgUrl)
+        await wx_config(appid, timestamp, noncestr, signature, jsApiList)
+        console.log('分享结束1')
+        await wx_appMessageShare(title, desc, link, imgUrl)
+        console.log('分享结束2')
+        await wx_timelineShare(title, link, imgUrl)
+        console.log('分享结束3')
+        onMenuShareTimeline(title, link, imgUrl)
+        console.log('分享结束4')
+        onMenuShareAppMessage(title, desc, link, imgUrl)
+
+    }catch (e) {
+        showMsg(e)
+    }
 }
 //获取“分享到朋友圈”按钮点击状态及自定义分享内容接口（即将废弃）
 export function onMenuShareTimeline(title, link, imgUrl) {

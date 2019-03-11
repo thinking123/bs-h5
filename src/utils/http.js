@@ -41,7 +41,7 @@ export async function uploadRecord(openid , mediaId) {
     })
 }
 
-export async function getSignInfo(link) {
+export async function getSignInfo() {
 
 
     var u = navigator.userAgent;

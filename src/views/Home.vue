@@ -41,6 +41,7 @@
     import HowToPlayDialog from "../components/Dialog/HowToPlayDialog";
     import {getSignInfo , login} from "../utils/http";
     import {getOS , isWeiXin} from "../utils/common";
+    import {initShare} from "../utils/wx-config";
     import {mapGetters , mapMutations} from 'vuex'
     import music from '../utils/MusicPlay'
     const baseAudioUrl = `asserts/audio/video/video.mp4`
@@ -65,10 +66,12 @@
 
         mounted() {
 
+
             const that = this
             if(isWeiXin()){
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
                     console.log('WeixinJSBridgeReady init')
+                    initShare()
                     that.$sound.load()
                 }, false);
             }else{

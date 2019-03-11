@@ -62,7 +62,7 @@
     import {mapGetters, mapMutations} from 'vuex'
     import {CHANGE_LOADING_BAR} from "../store/mutations";
     import ShareMusicPlayingBar from "../components/ShareMusicPlayingBar";
-    import {getSignInfo , uploadRecord } from "../utils/http";
+    import {getSignInfo , uploadRecord , getAvater} from "../utils/http";
     import {
         wx_config,
         wx_playRecord,
@@ -140,18 +140,7 @@
                 that.$sound.load()
             }
 
-            let {recordurl , rand , recordId } = this.$route.query
 
-            console.log('recordurl , rand , recordId' , recordurl , rand , recordId)
-            //是否从分享页面进来
-
-            rand = rand ? rand : getRandomInt(1, 6)
-            this.rand = rand
-            this.bg = `${this.base}${page}bg${rand}.png`
-            this.shareBg = `${this.base}${page}bg${rand}.png`
-
-            this.recordId = recordId
-            this.recordurl = recordurl
             this.init()
         },
         methods: {
@@ -196,48 +185,43 @@
                     this.imgStr = img
                 })
             },
-            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),
+            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText' , 'settimeline' , 'setheadimgurl']),
             async init() {
                 try {
+                    let {id , rand } = this.$route.query
+
+                    this.isFromShare = !!rand
+                    this.rand = this.isFromShare ? rand : getRandomInt(1, 6)
+                    this.bg = `${this.base}${page}bg${this.rand}.png`
+                    this.shareBg = `${this.base}${page}bg${this.rand}.png`
+
+
                     this.CHANGE_LOADING_BAR(true)
                     this.setLoadingText('设置分享...')
 
-                    let shareId = ''
-                    if (this.recordurl) {
-                        //从分享也进来，从服务器拿分享的录音视频链接
-                        shareId = this.recordurl
-                        // this.recordId = ''
-                        console.log('从分享也进来' , this.recordurl , this.rand , this.$route.query)
+                    if (this.isFromShare) {
+                        //从分享进来，从服务器拿分享的录音视频链接
+                        const {musicUrl ,userHead } = await getAvater(id)
+                        this.settimeline(JSON.parse(musicUrl))
+                        this.setheadimgurl(userHead)
+
                     }else{
                         const timeline = JSON.stringify(this.timeline)
-                        console.log('timelinme' , timeline)
-                        await uploadRecord(this.openid , timeline)
-                        shareId = this.openid
-                        // shareId =  'testshareid'
-                        console.log('上传录音' , this.openid , this.recordId , 'share url' , shareId)
+                        id = await uploadRecord(this.openid , timeline)
                     }
 
-
-                    console.log('this.$route', this.$route)
                     let link = window.location.href.split('?')[0]
-                    // let link = window.location.href.split('#')[0]
-                    // link = link.replace(/[/]$/, '')
-
                     //分享link强制?#模式，否则android会截断?后的query
                     link  = link.replace('#' , '?#')
-                    link = `${link}?recordurl=${shareId}&rand=${this.rand}`
+                    link = `${link}?id=${id}&rand=${this.rand}`
 
                     const {
                         appid,
                         noncestr,
                         signature,
                         timestamp
-                    } = await getSignInfo(link)
+                    } = await getSignInfo()
 
-                    console.log('noncestr' ,   appid,
-                        noncestr,
-                        signature,
-                        timestamp)
                     const title = '我的音乐人格'
                     const desc = '来测测你的音乐人格吧'
 

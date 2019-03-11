@@ -111,14 +111,7 @@
     import StartRecordingBar from "../components/StartRecordingBar";
     import {getSignInfo} from "../utils/http";
     import {showMsg, getOS, isWeiXin , px2Px,ratioPx} from "../utils/common";
-    import {
-        wx_config,
-        wx_startRecord,
-        wx_stopRecord,
-        wx_playRecord,
-        wx_stopPlayRecord,
-        wx_registerOnVoicePlayEnd
-    } from "../utils/wx-config";
+    import {initShare} from "../utils/wx-config";
     import {CHANGE_LOADING_BAR} from "../store/mutations";
 
     const page = 'rhythm-select-'
@@ -203,10 +196,12 @@
             }
         },
         mounted() {
+
             const that = this
             if (isWeiXin()) {
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
                     console.log('WeixinJSBridgeReady init')
+                    initShare()
                     that.$sound.load()
                 }, false);
             } else {
