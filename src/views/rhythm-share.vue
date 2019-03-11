@@ -19,11 +19,11 @@
                  :class="[`text${rand}-icon2`]"/>
 
             <img :src="textIcon1"
-                 v-if="showIcon1 && rand != 6"
+                 v-if="showIcon1 && rand != 6 && rand != 1 "
                  ref="icon3"
                  :class="[`text${rand}-icon3`]"/>
             <img :src="textIcon2"
-                 v-if="showIcon2 && rand != 6"
+                 v-if="showIcon2 && rand != 6 && rand != 1"
                  ref="icon4"
                  :class="[`text${rand}-icon4`]"/>
             <!--<share-music-playing-bar class="share-music-playing-bar" v-if="isPlaying"/>-->
@@ -98,7 +98,7 @@
             },
             showIcon2() {
 
-                return this.rand == 4 || this.rand == 5 || this.rand == 6
+                return this.rand == 1 || this.rand == 4 || this.rand == 5 || this.rand == 6
             }
         },
         data() {
@@ -181,10 +181,13 @@
 
                     this.isFromShare = !!rand
                     this.rand = this.isFromShare ? rand : getRandomInt(1, 6)
+
+                    this.rand = 1
+
                     this.bg = `${this.base}${page}bg${this.rand}.png`
                     this.shareBg = `${this.base}${page}bg${this.rand}.png`
 
-
+return
                     this.CHANGE_LOADING_BAR(true)
                     this.setLoadingText('设置分享...')
 
@@ -601,6 +604,25 @@
         height: 15.74%;
         width: 256*2px;
         left: 40*2px;
+    }
+
+    .text1-icon2 {
+        position: absolute;
+        z-index: 100;
+        top: 16.64%;
+        height: 15.74%;
+        width: 256*2px;
+        left: 46*2px;
+        animation: text1-icon2 $speed linear infinite alternate;
+    }
+
+    @keyframes text1-icon2 {
+        0% {
+            left: 34*2px;
+        }
+        100% {
+            left: 46*2px;
+        }
     }
 
     .text2-icon1 {
