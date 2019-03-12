@@ -187,7 +187,7 @@
                     this.bg = `${this.base}${page}bg${this.rand}.png`
                     this.shareBg = `${this.base}${page}bg${this.rand}.png`
 
-return
+// return
                     this.CHANGE_LOADING_BAR(true)
                     this.setLoadingText('设置分享...')
 
