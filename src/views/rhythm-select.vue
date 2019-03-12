@@ -199,7 +199,7 @@
             const link = window.location.href.split('#')[0]
             const imgUrl = `${this.base}music-journey-bg.png`
 
-            initShare(link , imgUrl)
+            initShare(link , imgUrl , true)
             const that = this
             if (isWeiXin()) {
                 document.addEventListener("WeixinJSBridgeReady", function (e) {

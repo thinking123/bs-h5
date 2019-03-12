@@ -20,8 +20,11 @@ export function wx_config(appId , timestamp , nonceStr , signature , jsApiList ,
     })
 }
 
-export async function initShare(link , imgUrl) {
+export async function initShare(link , imgUrl , isNotSharePage = false) {
     try {
+        if(isNotSharePage){
+            return
+        }
         const title = '我的音乐人格'
         const desc = '来测测你的音乐人格吧'
 
