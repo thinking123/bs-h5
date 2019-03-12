@@ -32,7 +32,7 @@
 
 <style scoped lang="scss">
 .icon3{
-    $speed:3s;
+    $speed:2s;
 
     &>div{
         /*animation-direction: alternate;*/
@@ -40,7 +40,7 @@
         animation-timing-function: linear;
         animation-duration: $speed * 7;
         opacity: 0;
-        margin-bottom: 10*2px;
+        margin-bottom: 6*2px;
         color: white;
         font-size: 18*2px;
         line-height: 100%;

@@ -4,9 +4,17 @@
         <canvas id="canvas" class="canvas" ref="canvas" v-show="isSaveImage" ></canvas>
 
         <div style="width: 100%;height: 100%">
-            <avatar class="avatar"/>
-            <img :src="bg" class="img"
-                 :class="{'img6':rand==6}">/>
+            <avatar class="avatar" v-if="!isFromShare"/>
+            <img :src="bg" class="img"/>
+
+
+            <img :src="`${base}rhythm-share6-content.png`"
+                 v-if="rand == 6"
+                 class="img6-content"/>
+            <img :src="`${base}rhythm-share6-text.png`"
+                 v-if="rand == 6"
+                 class="img6-text"/>
+
             <move-arrow class="arrow"/>
 
             <img :src="textIcon1"
@@ -39,6 +47,7 @@
                  :class="{'btm6':rand == 6 }"
                  class="pause-btn btm  img-btn" v-else/>
             <img :src="`${baseUrl}download-btn.png`"
+                 v-if="!isFromShare"
                  @click="handleDownloadImage"
                  :class="{'btm6':rand == 6 }"
                  class="download-btn btm  img-btn"/>
@@ -48,9 +57,10 @@
                  @click="handleGoToHome"
                  class="try-play-btn btm"/>
             <img :src="`${baseUrl}qr-code.png`"
-                 :class="{'btm6':rand == 6 }"
+                 :class="{'qr-btm6':rand == 6 }"
                  class="qr-code btm"/>
         </div>
+
 
         <div id="preview" class="preview"
              @click="handlePreview" v-show="showPreview">
@@ -120,7 +130,7 @@
                 isSaveImage:false,
                 showPreview:false,
                 recordurl:'',
-
+                // page:page
 
             }
         },
@@ -188,10 +198,12 @@
                     this.isFromShare = !!rand
                     this.rand = this.isFromShare ? rand : getRandomInt(1, 6)
 
-                    // this.rand = 1
+                    // this.rand = 6
 
                     this.bg = `${this.base}${page}bg${this.rand}.png`
                     this.shareBg = `${this.base}${page}bg${this.rand}.png`
+
+                    this.drawImage = `${this.base}${page}draw${this.rand}.png`
 
 // return
                     this.CHANGE_LOADING_BAR(true)
@@ -225,6 +237,8 @@
                         const base64 = 'data:image/jpg;base64,'
                         let head = res.userHead
                         head = base64 + res.userHead
+
+                        this.setnickname(res.userName)
                         this.setheadimgurl(head)
                     }
 
@@ -377,7 +391,7 @@
                     canvas.height = window.innerHeight;
                     console.log(window.innerWidth , window.innerHeight)
                     const ctx = canvas.getContext('2d')
-                    const bg = await this.getImage(this.shareBg)
+                    const bg = await this.getImage(this.drawImage)
 
                     ctx.drawImage(bg , 0 , 0 , window.innerWidth , window.innerHeight)
 
@@ -409,15 +423,15 @@
                     ctx.fillText(this.nickname , rem(72) , rem(45))
                     ctx.restore();
 
-                    let qr = `${this.baseUrl}qr-code.png`
-                    qr = await this.getImage(qr)
-
-                    const top = 556/667 * window.innerHeight
-                    ctx.drawImage(qr ,
-                        rem(278),
-                        top ,
-                        rem(62) ,
-                        rem(62))
+                    // let qr = `${this.baseUrl}qr-code.png`
+                    // qr = await this.getImage(qr)
+                    //
+                    // const top = 556/667 * window.innerHeight
+                    // ctx.drawImage(qr ,
+                    //     rem(278),
+                    //     top ,
+                    //     rem(62) ,
+                    //     rem(62))
 
                     const res = canvas.toDataURL('image/png')
 
@@ -593,6 +607,12 @@
         right: 33*2px;
         width: 62*2px;
         height: 62*2px;
+    }
+
+    .qr-code.qr-btm6{
+        position: absolute;
+        bottom: 0 !important;
+        z-index: 100;
     }
 
     .arrow {
@@ -907,4 +927,22 @@
         height: px(667);
     }
 
+
+
+    .img6-content{
+        height: px(539-88);
+        width: 100%;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top:13.19%;
+    }
+
+    .img6-text{
+        position: absolute;
+        bottom: 0;
+        height: 142px;
+        left: px(255);
+        width: px(272-255);
+    }
 </style>
