@@ -251,7 +251,7 @@
             },
             handlePlay(e) {
                 if (!this.hadRecord()) {
-                    this.showModal('您还没有录音')
+                    this.showModal('请先去录制')
                     return
                 }
 
@@ -264,7 +264,7 @@
             },
             handleMusicPerson(e) {
                 if (!this.hadRecord()) {
-                    this.showModal('您还没有录音')
+                    this.showModal('请先去录制')
                     return
                 }
 

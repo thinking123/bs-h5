@@ -32,15 +32,19 @@
 
             <img :src="`${baseUrl}pause-btn.png`"
                  @click="handlePlay"
+                 :class="{'btm6':rand == 6 }"
                  class="pause-btn btm img-btn" v-if="isPlaying"/>
             <img :src="`${baseUrl}play-btn.png`"
                  @click="handlePlay"
+                 :class="{'btm6':rand == 6 }"
                  class="pause-btn btm  img-btn" v-else/>
             <img :src="`${baseUrl}download-btn.png`"
                  @click="handleDownloadImage"
+                 :class="{'btm6':rand == 6 }"
                  class="download-btn btm  img-btn"/>
             <img :src="`${baseUrl}try-play-btn.png`"
                  v-if="isFromShare"
+                 :class="{'btm6':rand == 6 }"
                  @click="handleGoToHome"
                  class="try-play-btn btm"/>
             <img :src="`${baseUrl}qr-code.png`" class="qr-code btm"/>
@@ -553,7 +557,11 @@
         bottom: 6.6%;
         z-index: 100;
     }
-
+    .btm6{
+        position: absolute;
+        bottom: 2% !important;
+        z-index: 100;
+    }
     .img-btn {
 
         width: 36*2px;

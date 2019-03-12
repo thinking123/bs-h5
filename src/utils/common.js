@@ -1,3 +1,4 @@
+import { Toast } from 'mint-ui';
 export const sites =  [
     {value: '海陵区', key: '0'},
     {value: '高港区', key: '1'},
@@ -185,7 +186,7 @@ export function showMsg(title, showIcon = false) {
 
     console.log(title)
     // alert(title)
-    return
+    // return
 
     if (!title) {
         return
@@ -210,9 +211,16 @@ export function showMsg(title, showIcon = false) {
     }
 
     options = Object.assign(options, {icon: showIcon ? icon : 'none'})
-    wx.showToast(options)
 
-    console.log(title, icon, isError)
+
+    Toast({
+        message: title,
+        position: 'middle',
+        duration: 2000
+    });
+    // wx.showToast(options)
+
+    console.log(title, icon, isError , Toast)
 }
 
 export function getRandomInt(min, max) {

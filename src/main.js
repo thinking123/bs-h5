@@ -11,6 +11,8 @@ import App from './App.vue'
 import routes from './router'
 import store from './store'
 import VueResource from 'vue-resource'
+import MintUI from 'mint-ui'
+import 'mint-ui/lib/style.css'
 // import MusicPlay from './utils/MusicPlay'
 import SoundPlay from './utils/SoundPlay'
 import './assets/css/index.css'
@@ -22,7 +24,7 @@ Vue.config.productionTip = false
 Vue.use(VueRouter)
 Vue.use(VueResource);
 Vue.prototype.$sound = new SoundPlay()
-
+Vue.use(MintUI)
 //
 // const soundlist = [
 //     {'do'}
