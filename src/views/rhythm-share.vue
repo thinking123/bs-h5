@@ -47,7 +47,9 @@
                  :class="{'btm6':rand == 6 }"
                  @click="handleGoToHome"
                  class="try-play-btn btm"/>
-            <img :src="`${baseUrl}qr-code.png`" class="qr-code btm"/>
+            <img :src="`${baseUrl}qr-code.png`"
+                 :class="{'btm6':rand == 6 }"
+                 class="qr-code btm"/>
         </div>
 
         <div id="preview" class="preview"
