@@ -1,7 +1,7 @@
 <template>
     <div class="container" ref="rhythmShare" :class="{'con6':rand==6}">
 
-        <canvas id="canvas" class="canvas" ref="canvas" v-show="isSaveImage"></canvas>
+        <!--<canvas id="canvas" class="canvas" ref="canvas" v-show="isSaveImage"></canvas>-->
 
         <div style="width: 100%;height: 100%">
             <avatar class="avatar" v-if="!isFromShare"/>
@@ -383,11 +383,11 @@
             handleDownloadImage() {
                 console.log('screenShot')
                 try {
-                    this.isSaveImage = true
-                    this.$nextTick(() => {
-                        this.screenShot()
-                    })
-
+                    // this.isSaveImage = true
+                    // this.$nextTick(() => {
+                    //     this.screenShot()
+                    // })
+                    this.screenShot()
                 } catch (e) {
                     console.log('screenShot', e)
                 } finally {
@@ -395,22 +395,28 @@
                 }
 
             },
-            setupCanvas(canvas) {
-                // Get the device pixel ratio, falling back to 1.
-                var dpr = window.devicePixelRatio || 1;
-                // Get the size of the canvas in CSS pixels.
-                var rect = canvas.getBoundingClientRect();
-                // Give the canvas pixel dimensions of their CSS
-                // size * the device pixel ratio.
-                canvas.width = rect.width * dpr;
-                canvas.height = rect.height * dpr;
-                var ctx = canvas.getContext('2d');
-                // Scale all drawing operations by the dpr, so you
-                // don't have to worry about the difference.
+            setupCanvas(w, h) {
+                const PIXEL_RATIO = (function () {
+                    const ctx = document.createElement("canvas").getContext("2d"),
+                        dpr = window.devicePixelRatio || 1,
+                        bsr = ctx.webkitBackingStorePixelRatio ||
+                            ctx.mozBackingStorePixelRatio ||
+                            ctx.msBackingStorePixelRatio ||
+                            ctx.oBackingStorePixelRatio ||
+                            ctx.backingStorePixelRatio || 1;
 
-                console.log('current dpr' , dpr)
-                ctx.scale(dpr, dpr);
-                return ctx;
+                    return dpr / bsr;
+                })();
+
+                const ratio = PIXEL_RATIO;
+                var can = document.createElement("canvas");
+                can.width = w * ratio;
+                can.height = h * ratio;
+                can.style.width = w + "px";
+                can.style.height = h + "px";
+                can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
+                return can;
+
             },
             async screenShot() {
 
@@ -422,13 +428,13 @@
 
                 try {
 
-                    const canvas = document.getElementById('canvas')
-                    console.log('toDataURL', canvas)
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-                    console.log(window.innerWidth, window.innerHeight)
+                    const canvas = this.setupCanvas(window.innerWidth, window.innerHeight)
+                    // console.log('toDataURL', canvas)
+                    // canvas.width = window.innerWidth;
+                    // canvas.height = window.innerHeight;
+                    // console.log(window.innerWidth, window.innerHeight)
 
-                    this.setupCanvas(canvas)
+                    // this.setupCanvas(canvas)
                     const ctx = canvas.getContext('2d')
                     const bg = await this.getImage(this.drawImage)
 
@@ -475,7 +481,7 @@
 
                     this.showPreview = true
                     this.$nextTick(() => {
-                        console.log('preview')
+
                         const img = new Image()
                         img.src = canvas.toDataURL('image/png')
                         this.isSaveImage = false
@@ -484,6 +490,7 @@
                         img.style.height = '100%';
                         img.style.width = '100%';
                         const preview = document.getElementById('preview')
+                        console.log('preview' , preview)
                         preview.append(img)
                     })
 
