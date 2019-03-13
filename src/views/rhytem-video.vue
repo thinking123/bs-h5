@@ -89,7 +89,8 @@
         },
         methods: {
             gotoSignInURL() {
-                window.location.href = 'http://bsxyzqy.ysmine.com/login/api/login/htmllogin'
+                window.location.replace('http://bsxyzqy.ysmine.com/login/api/login/htmllogin')
+                // window.location.href = 'http://bsxyzqy.ysmine.com/login/api/login/htmllogin'
             },
             handleEnd() {
                 console.log('handleEnd')

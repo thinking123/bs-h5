@@ -506,7 +506,7 @@
                 // if(!this.isFromShare){
                 //     this.$router.back()
                 // }
-                window.location.replace('http://bsxyzqy.ysmine.com/login/api/login/htmllogin')
+                window.location.replace(window.location.origin)
                 // window.location.href = 'http://bsxyzqy.ysmine.com/login/api/login/htmllogin'
                 // this.$router.replace({name:'video'})
                 // const r = window.location.origin

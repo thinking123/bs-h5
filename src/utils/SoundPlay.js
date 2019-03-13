@@ -48,7 +48,7 @@ class SoundPlay {
 
     load(){
         console.log('start load music')
-        store.commit('CHANGE_LOADING_BAR', true)
+        // store.commit('CHANGE_LOADING_BAR', true)
         this.queue.loadManifest(this.lists)
     }
     handleFileLoad(e){
@@ -56,10 +56,10 @@ class SoundPlay {
     }
 
     handleComplete(e){
-        store.commit('CHANGE_LOADING_BAR', false)
-        if(isIphone()){
-            // createjs.WebAudioPlugin.playEmptySound();
-        }
+        // store.commit('CHANGE_LOADING_BAR', false)
+        // if(isIphone()){
+        //     // createjs.WebAudioPlugin.playEmptySound();
+        // }
         console.log('handleComplete' , e)
     }
 

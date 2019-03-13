@@ -75,6 +75,8 @@
             const that = this
             if(isWeiXin()){
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
+                    WeixinJSBridge.call('hideToolbar');
+                    WeixinJSBridge.call('hideOptionMenu');
                     console.log('WeixinJSBridgeReady init')
 
                     that.$sound.load()
@@ -100,12 +102,12 @@
             async init() {
                 try {
                     console.log('headimgurl' , this.headimgurl)
-                    this.CHANGE_LOADING_BAR(true)
+                    // this.CHANGE_LOADING_BAR(true)
                     await this.$music.init()
                 } catch (e) {
                     console.log('login error ', e)
                 }finally {
-                    this.CHANGE_LOADING_BAR(false)
+                    // this.CHANGE_LOADING_BAR(false)
                 }
             },
             touchstart(){
