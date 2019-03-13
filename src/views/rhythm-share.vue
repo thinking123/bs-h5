@@ -65,6 +65,7 @@
         <div id="preview" class="preview"
              @click="handlePreview" v-show="showPreview">
 
+
         </div>
 
 
@@ -190,7 +191,7 @@
                     this.imgStr = img
                 })
             },
-            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText' , 'settimeline' , 'setheadimgurl','setnickname']),
+            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText' , 'settimeline' , 'setheadimgurl','setnickname' , 'setopenid']),
             async init() {
                 try {
                     let {id , rand } = this.$route.query
@@ -205,6 +206,27 @@
 
                     this.drawImage = `${this.base}${page}draw${this.rand}.png`
 
+                    if(!this.isFromShare && (!this.timeline || this.timeline.length == 0)){
+                        try{
+                            console.log('从缓存拿数据')
+                            const t = JSON.parse(localStorage.getItem('timeline'))
+                            console.log(t)
+                            this.settimeline(t)
+                            const name = localStorage.getItem('name')
+                            console.log(name)
+                            this.setnickname(name)
+                            const head = localStorage.getItem('head')
+                            console.log(head)
+                            this.setnickname(head)
+
+                            const openid = localStorage.getItem('openid')
+                            console.log(openid)
+                            this.setopenid(openid)
+                        }catch (e) {
+                            console.error('获取缓存失败' , e)
+                        }
+
+                    }
 // return
                     this.CHANGE_LOADING_BAR(true)
                     this.setLoadingText('设置分享...')

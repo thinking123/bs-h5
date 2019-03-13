@@ -270,6 +270,20 @@
 
 
                 this.settimeline(this.timeline)
+
+
+                try{
+                    const t = JSON.stringify(this.timeline)
+                    localStorage.setItem('timeline' , t)
+                    localStorage.setItem('name' , this.nickname)
+                    localStorage.setItem('head' , this.headimgurl)
+                    localStorage.setItem('openid' , this.openid)
+                }catch (e) {
+                    console.error('保存缓存失败' , e)
+                }
+
+
+
                 this.$router.replace({
                     name: 'share',
                     query: {
