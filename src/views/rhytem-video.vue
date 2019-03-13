@@ -31,7 +31,8 @@
                    x5-video-orientation="portrait"
                    x5-video-player-type="h5"
 
-
+                   width="100"
+                   height="100"
                    @play="handlePlay"
                    @ended="handleEnd"></video>
         </div>
@@ -146,7 +147,48 @@
                 console.log('handleStart')
             }
         },
+        created(){
+            const u = navigator.userAgent;
+            const isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //g
+            const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+
+            this.isAndroid = isAndroid
+            this.isIOS = isIOS
+
+            console.log('isAndroid' , isAndroid)
+            console.log('isIOS' , isIOS)
+
+            if (isIOS) {
+                document.addEventListener("WeixinJSBridgeReady", function (e) {
+                    console.log('start play')
+                    const video = document.getElementById('video')
+                    video.play();
+                }, false);
+            }
+            if(isAndroid){
+                document.addEventListener("WeixinJSBridgeReady", function (e) {
+                    const video = document.getElementById('video')
+                    video.addEventListener("x5videoenterfullscreen", function(){
+                        console.log('player enterfullscreen')
+                    })
+
+                    video.addEventListener("x5videoexitfullscreen", function(){
+                        console.log('player x5videoexitfullscreen')
+                        this.gotoSignInURL()
+                    })
+
+                    window.onresize = function(){
+                        const video = document.getElementById('video')
+                        video.style.width = window.innerWidth +  "px";
+                        video.style.height = window.innerHeight + "px";
+                    }
+
+                }, false);
+            }
+
+        },
         mounted() {
+            return
             var u = navigator.userAgent;
             var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //g
             var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
@@ -180,11 +222,11 @@
                         console.log('player enterfullscreen')
                         // alert("player enterfullscreen");
 
-                        const video = this
-
-                        video.style.width = window.innerWidth + "px";
-
-                        video.style.height = window.innerHeight + "px";
+                        // const video = this
+                        //
+                        // video.style.width = window.innerWidth + "px";
+                        //
+                        // video.style.height = window.innerHeight + "px";
                         // v.width = window.innerWidth;
                         // v.height = window.innerHeight*2;
 
@@ -204,12 +246,18 @@
 
                     window.onresize = function(){
                         const video = document.getElementById('video')
-                        if(!video.paused && !video.paused){
-                            // $('.control-wrap').fadeOut("slow");
-                            video.style.width = window.innerWidth +  "px";
 
-                            video.style.height = window.innerHeight + "px";
-                        }
+                        // if(!video.paused && !video.paused){
+                        //     // $('.control-wrap').fadeOut("slow");
+                        //     video.style.width = window.innerWidth +  "px";
+                        //
+                        //     video.style.height = window.innerHeight + "px";
+                        // }
+
+                        alert('full')
+                        video.style.width = window.innerWidth +  "px";
+
+                        video.style.height = window.innerHeight + "px";
                     }
 
 //                     video.addEventListener('timeupdate', function (e) {
@@ -320,14 +368,14 @@
         width: 128rpx;
         height: 128rpx;
     }
-    .video {
-        position: absolute;
-        left: 0;
-        top: 0;
-        opacity: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        border: 10px solid yellow;
-    }
+    /*.video {*/
+        /*position: absolute;*/
+        /*left: 0;*/
+        /*top: 0;*/
+        /*opacity: 0;*/
+        /*width: 100%;*/
+        /*height: 100%;*/
+        /*object-fit: contain;*/
+        /*border: 10px solid yellow;*/
+    /*}*/
 </style>

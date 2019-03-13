@@ -1,7 +1,7 @@
 <template>
     <div class="container" ref="rhythmShare" :class="{'con6':rand==6}">
 
-        <canvas id="canvas" class="canvas" ref="canvas" v-show="isSaveImage" ></canvas>
+        <canvas id="canvas" class="canvas" ref="canvas" v-show="isSaveImage"></canvas>
 
         <div style="width: 100%;height: 100%">
             <avatar class="avatar" v-if="!isFromShare"/>
@@ -69,17 +69,16 @@
         </div>
 
 
-
     </div>
 </template>
 
 <script>
 
-    import {showMsg, getRandomInt , isWeiXin} from "../utils/common";
+    import {showMsg, getRandomInt, isWeiXin} from "../utils/common";
     import {mapGetters, mapMutations} from 'vuex'
     import {CHANGE_LOADING_BAR} from "../store/mutations";
     import ShareMusicPlayingBar from "../components/ShareMusicPlayingBar";
-    import {getSignInfo , uploadRecord , getAvater} from "../utils/http";
+    import {getSignInfo, uploadRecord, getAvater} from "../utils/http";
     import {initShare} from "../utils/wx-config";
     import MoveArrow from "../components/MoveArrow";
     import Avatar from "../components/avatar";
@@ -90,7 +89,7 @@
         name: "rhythm-share",
         components: {Icon3, Avatar, MoveArrow, ShareMusicPlayingBar},
         computed: {
-            ...mapGetters(['base' , 'headimgurl' , 'nickname' , 'openid' , 'timeline']),
+            ...mapGetters(['base', 'headimgurl', 'nickname', 'openid', 'timeline']),
             baseUrl() {
                 console.log('url', `${this.base}${page}`)
                 return `${this.base}${page}`
@@ -126,23 +125,23 @@
                 bg: '',
                 rand: 1,
                 isFromShare: false,
-                recordId:'',
-                imgStr:'',
-                isSaveImage:false,
-                showPreview:false,
-                recordurl:'',
+                recordId: '',
+                imgStr: '',
+                isSaveImage: false,
+                showPreview: false,
+                recordurl: '',
                 // page:page
 
             }
         },
         mounted(option) {
             const that = this
-            if(isWeiXin()){
+            if (isWeiXin()) {
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
                     console.log('WeixinJSBridgeReady init')
                     that.$sound.load()
                 }, false);
-            }else{
+            } else {
                 that.$sound.load()
             }
 
@@ -150,9 +149,9 @@
             this.init()
         },
         methods: {
-            async getWeChatUserHeadImg (picurl) {
+            async getWeChatUserHeadImg(picurl) {
 
-                return new Promise((res , rej)=>{
+                return new Promise((res, rej) => {
                     try {
                         let img = new Image()
                         let canvas = document.createElement('CANVAS')
@@ -164,37 +163,37 @@
                             canvas.width = img.width
                             ctx.drawImage(img, 0, 0)
                             var dataURL = canvas.toDataURL('image/png')
-                            console.log('dataURL' , dataURL)
+                            console.log('dataURL', dataURL)
                             canvas = null
 
                             const resImg = new Image()
-                            resImg.src= dataURL
+                            resImg.src = dataURL
 
                             res(resImg)
                         }
                         img.src = picurl
-                    }catch (e) {
+                    } catch (e) {
                         rej(e)
                     }
 
                 })
 
             },
-            handlePreview(){
+            handlePreview() {
                 console.log('handlePreview')
                 this.showPreview = false
             },
-            downLoadImage(){
+            downLoadImage() {
                 console.log('downLoadImage')
-                loadImage(this.headimgurl , img =>  {
-                    console.log('downLoadImage img' , img)
+                loadImage(this.headimgurl, img => {
+                    console.log('downLoadImage img', img)
                     this.imgStr = img
                 })
             },
-            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText' , 'settimeline' , 'setheadimgurl','setnickname' , 'setopenid']),
+            ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText', 'settimeline', 'setheadimgurl', 'setnickname', 'setopenid']),
             async init() {
                 try {
-                    let {id , rand } = this.$route.query
+                    let {id, rand} = this.$route.query
 
                     this.isFromShare = !!rand
                     this.rand = this.isFromShare ? rand : getRandomInt(1, 6)
@@ -206,8 +205,8 @@
 
                     this.drawImage = `${this.base}${page}draw${this.rand}.png`
 
-                    if(!this.isFromShare && (!this.timeline || this.timeline.length == 0)){
-                        try{
+                    if (!this.isFromShare && (!this.timeline || this.timeline.length == 0)) {
+                        try {
                             console.log('从缓存拿数据')
                             const t = JSON.parse(localStorage.getItem('timeline'))
                             console.log(t)
@@ -222,8 +221,8 @@
                             const openid = localStorage.getItem('openid')
                             console.log(openid)
                             this.setopenid(openid)
-                        }catch (e) {
-                            console.error('获取缓存失败' , e)
+                        } catch (e) {
+                            console.error('获取缓存失败', e)
                         }
 
                     }
@@ -233,27 +232,27 @@
 
                     if (this.isFromShare) {
                         //从分享进来，从服务器拿分享的录音视频链接
-                        let {musicUrl ,userHead,userName } = await getAvater(id)
+                        let {musicUrl, userHead, userName} = await getAvater(id)
 
-                        console.log('origin : ' , musicUrl ,userHead)
+                        console.log('origin : ', musicUrl, userHead)
                         const base64 = 'data:image/jpg;base64,'
                         let head = base64 + userHead
                         // musicUrl = musicUrl.substring(1, musicUrl.length-1)
-                        console.log('head' , head)
+                        console.log('head', head)
                         this.setheadimgurl(head)
                         this.setnickname(userName)
                         const t = JSON.parse(musicUrl)
 
 
-                        console.log('json' , t)
+                        console.log('json', t)
 
                         this.settimeline(t)
 
 
-                    }else{
+                    } else {
                         const timeline = JSON.stringify(this.timeline)
-                        const res = await uploadRecord(this.openid , timeline)
-                        console.log('return upload' , res)
+                        const res = await uploadRecord(this.openid, timeline)
+                        console.log('return upload', res)
                         id = res.id
 
                         const base64 = 'data:image/jpg;base64,'
@@ -266,12 +265,12 @@
 
                     let link = window.location.href.split('?')[0]
                     //分享link强制?#模式，否则android会截断?后的query
-                    link  = link.replace('#' , '?#')
+                    link = link.replace('#', '?#')
                     link = `${link}?id=${id}&rand=${this.rand}`
 
                     const imgUrl = this.shareBg
 
-                    await initShare(link , imgUrl)
+                    await initShare(link, imgUrl)
 
                 } catch (e) {
                     console.log('error ', e)
@@ -297,12 +296,12 @@
                 this.startTime = this.getTime()
                 this.cloneTimeline = [...this.timeline]
                 let endTime = this.cloneTimeline.pop()
-                console.log('timeline len :' ,  this.cloneTimeline.length)
+                console.log('timeline len :', this.cloneTimeline.length)
                 this.playRecordTime = setInterval(() => {
                     const offTime = this.getTime() - this.startTime
 
                     if (offTime + 50 > endTime.time) {
-                        if(this.playRecordTime){
+                        if (this.playRecordTime) {
                             clearInterval(this.playRecordTime)
                             this.playRecordTime = null
                         }
@@ -310,8 +309,8 @@
                         //end
                         this.isPlaying = false
                     }
-                    if(!this.isPlaying){
-                        if(this.playRecordTime){
+                    if (!this.isPlaying) {
+                        if (this.playRecordTime) {
                             clearInterval(this.playRecordTime)
                             this.playRecordTime = null
                         }
@@ -327,8 +326,8 @@
                             this.cloneTimeline.shift()
                             console.log('get key', cur.key)
                         }
-                    }else{
-                        console.log('timeline len end' ,  this.cloneTimeline.length)
+                    } else {
+                        console.log('timeline len end', this.cloneTimeline.length)
                     }
                 }, 20)
             },
@@ -354,86 +353,103 @@
                 }
             },
 
-            async getOrignImage(src){
-                return new Promise((res , rej)=>{
+            async getOrignImage(src) {
+                return new Promise((res, rej) => {
                     const img = new Image()
-                    img.onload = ()=>{
+                    img.onload = () => {
                         res(img)
                     }
                     img.src = src
                 })
 
             },
-            async getImage(url){
-                return new Promise((res , rej)=>{
-                    loadImage(url , img=>{
-                        if(img.type === 'error'){
-                            console.log('error img loadImage' , url)
+            async getImage(url) {
+                return new Promise((res, rej) => {
+                    loadImage(url, img => {
+                        if (img.type === 'error') {
+                            console.log('error img loadImage', url)
                             rej('error img')
-                        }else{
+                        } else {
                             res(img)
                         }
-                    } , {
-                        crossOrigin:"Anonymous"
+                    }, {
+                        crossOrigin: "Anonymous"
                     })
 
                 })
 
 
-
-
             },
-             handleDownloadImage() {
+            handleDownloadImage() {
                 console.log('screenShot')
                 try {
                     this.isSaveImage = true
-                    this.$nextTick(()=>{
+                    this.$nextTick(() => {
                         this.screenShot()
                     })
 
-                }catch (e) {
-                    console.log('screenShot' , e)
-                }finally {
+                } catch (e) {
+                    console.log('screenShot', e)
+                } finally {
                     // this.isSaveImage = false
                 }
 
             },
-            async screenShot(){
+            setupCanvas(canvas) {
+                // Get the device pixel ratio, falling back to 1.
+                var dpr = window.devicePixelRatio || 1;
+                // Get the size of the canvas in CSS pixels.
+                var rect = canvas.getBoundingClientRect();
+                // Give the canvas pixel dimensions of their CSS
+                // size * the device pixel ratio.
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                var ctx = canvas.getContext('2d');
+                // Scale all drawing operations by the dpr, so you
+                // don't have to worry about the difference.
+
+                console.log('current dpr' , dpr)
+                ctx.scale(dpr, dpr);
+                return ctx;
+            },
+            async screenShot() {
 
                 function rem(p) {
-                    const pxTorem = window.innerWidth/10
+                    const pxTorem = window.innerWidth / 10
                     const px = 37.5
                     return pxTorem * p / px
                 }
+
                 try {
-                  
+
                     const canvas = document.getElementById('canvas')
-                    console.log('toDataURL',canvas)
+                    console.log('toDataURL', canvas)
                     canvas.width = window.innerWidth;
                     canvas.height = window.innerHeight;
-                    console.log(window.innerWidth , window.innerHeight)
+                    console.log(window.innerWidth, window.innerHeight)
+
+                    this.setupCanvas(canvas)
                     const ctx = canvas.getContext('2d')
                     const bg = await this.getImage(this.drawImage)
 
-                    ctx.drawImage(bg , 0 , 0 , window.innerWidth , window.innerHeight)
-
+                    ctx.drawImage(bg, 0, 0, window.innerWidth, window.innerHeight)
 
 
                     console.log('drawImage beginPath')
                     ctx.save()
                     ctx.beginPath();
-                    ctx.arc(rem(43) + rem(25)/2,
-                        rem(30) + rem(25)/2,
-                        rem(25)/2, 0,
+                    ctx.arc(rem(43) + rem(25) / 2,
+                        rem(30) + rem(25) / 2,
+                        rem(25) / 2, 0,
                         Math.PI * 2, true);
                     ctx.closePath();
                     ctx.clip();
                     const head = await this.getOrignImage(this.headimgurl)
 
-                    ctx.drawImage(head ,
+                    ctx.drawImage(head,
                         rem(43),
-                        rem(30) ,
-                        rem(25) ,
+                        rem(30),
+                        rem(25),
                         rem(25))
 
                     ctx.restore();
@@ -442,7 +458,7 @@
                     ctx.fillStyle = 'white'
                     ctx.textBaseline = 'middle'
                     ctx.font = `${rem(18)}px -apple-system-font, Helvetica Neue, sans-serif`;
-                    ctx.fillText(this.nickname , rem(72) , rem(45))
+                    ctx.fillText(this.nickname, rem(72), rem(45))
                     ctx.restore();
 
                     // let qr = `${this.baseUrl}qr-code.png`
@@ -458,7 +474,7 @@
                     const res = canvas.toDataURL('image/png')
 
                     this.showPreview = true
-                    this.$nextTick(()=>{
+                    this.$nextTick(() => {
                         console.log('preview')
                         const img = new Image()
                         img.src = canvas.toDataURL('image/png')
@@ -472,12 +488,9 @@
                     })
 
 
-
-
-
-                }catch (e) {
+                } catch (e) {
                     console.error(e)
-                }finally {
+                } finally {
                     this.isSaveImage = false
                 }
 
@@ -486,7 +499,8 @@
                 // if(!this.isFromShare){
                 //     this.$router.back()
                 // }
-                window.location.href = 'http://bsxyzqy.ysmine.com/login/api/login/htmllogin'
+                window.location.replace('http://bsxyzqy.ysmine.com/login/api/login/htmllogin')
+                // window.location.href = 'http://bsxyzqy.ysmine.com/login/api/login/htmllogin'
                 // this.$router.replace({name:'video'})
                 // const r = window.location.origin
                 // // const r = window.location.href.replace(/#[/].*/ , '#/video')
@@ -508,9 +522,9 @@
                 clearInterval(this.playRecordTime)
                 this.playRecordTime = null
 
-            }catch (e) {
-                console.error('beforeRouteLeave' , e)
-            }finally {
+            } catch (e) {
+                console.error('beforeRouteLeave', e)
+            } finally {
                 next()
             }
 
@@ -521,23 +535,24 @@
 
 <style scoped lang="scss">
 
-    .preview{
+    .preview {
         position: absolute;
         width: 100%;
         height: 100%;
-        left:0;
+        left: 0;
         right: 0;
-        top:0;
+        top: 0;
         bottom: 0;
         z-index: 100;
     }
-    .avatar{
+
+    .avatar {
         position: absolute;
-        top:30*2px;
+        top: 30*2px;
         left: 43*2px;
     }
 
-    .canvas{
+    .canvas {
         display: none;
     }
 
@@ -549,8 +564,8 @@
         padding: 0;
 
         /*>div{*/
-            /*height: 100%;*/
-            /*width: 100%;*/
+        /*height: 100%;*/
+        /*width: 100%;*/
         /*}*/
     }
 
@@ -595,11 +610,13 @@
         bottom: 6.6%;
         z-index: 100;
     }
-    .btm6{
+
+    .btm6 {
         position: absolute;
         bottom: 2% !important;
         z-index: 100;
     }
+
     .img-btn {
 
         width: 36*2px;
@@ -631,7 +648,7 @@
         height: 62*2px;
     }
 
-    .qr-code.qr-btm6{
+    .qr-code.qr-btm6 {
         position: absolute;
         bottom: 0 !important;
         z-index: 100;
@@ -648,7 +665,7 @@
     $speed6: $speed * 2;
     $speed4: 12s;
     $delay4: 0s;
-    $speed3:3s;
+    $speed3: 3s;
     .text1-icon1 {
         position: absolute;
         z-index: 100;
@@ -696,12 +713,13 @@
         }
     }
 
-    .icon3-com{
+    .icon3-com {
         position: absolute;
         z-index: 100;
         top: 31.03%;
         left: 132*2px;
     }
+
     .text4-icon1 {
         position: absolute;
         z-index: 100;
@@ -719,7 +737,7 @@
         22.5% {
             right: 315*2px;
         }
-        90%{
+        90% {
             opacity: 1;
             right: 315*2px;
         }
@@ -749,7 +767,7 @@
         45% {
             right: 285*2px;
         }
-        90%{
+        90% {
             opacity: 1;
             right: 285*2px;
         }
@@ -781,7 +799,7 @@
         67.5% {
             right: 255*2px;
         }
-        90%{
+        90% {
             opacity: 1;
             right: 255*2px;
         }
@@ -811,7 +829,7 @@
         67.5% {
             right: 100*2px;
         }
-        90%{
+        90% {
             opacity: 1;
             right: 225*2px;
         }
@@ -941,26 +959,25 @@
         }
     }
 
-    .con6{
+    .con6 {
         background-color: #0072BE;
     }
 
-    .img6{
+    .img6 {
         height: px(667);
     }
 
 
-
-    .img6-content{
+    .img6-content {
         height: px(539-88);
         width: 100%;
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
-        top:13.19%;
+        top: 13.19%;
     }
 
-    .img6-text{
+    .img6-text {
         position: absolute;
         bottom: 0;
         height: 142px;
