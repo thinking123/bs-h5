@@ -107,6 +107,9 @@
 
                 if( this.isAndroid){
                     console.log('handlePlay isAndroid')
+                    const video = document.getElementById('video')
+                    video.style.width = window.innerWidth +  "px";
+                    video.style.height = window.innerHeight + "px";
                     this.isPlaying = true
                     return
                 }else{
@@ -157,7 +160,11 @@
 
             console.log('isAndroid' , isAndroid)
             console.log('isIOS' , isIOS)
-
+            // if(isAndroid)
+            // alert('isAndroid')
+            //
+            // if(isIOS)
+            //     alert('isIOS')
             if (isIOS) {
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
                     console.log('start play')
@@ -166,9 +173,13 @@
                 }, false);
             }
             if(isAndroid){
+
+
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
+                    // alert('WeixinJSBridgeReady')
                     const video = document.getElementById('video')
                     video.addEventListener("x5videoenterfullscreen", function(){
+                        // alert('enterfullscreen')
                         console.log('player enterfullscreen')
                     })
 
@@ -178,6 +189,7 @@
                     })
 
                     window.onresize = function(){
+                        // alert('resize')
                         const video = document.getElementById('video')
                         video.style.width = window.innerWidth +  "px";
                         video.style.height = window.innerHeight + "px";
@@ -185,92 +197,6 @@
 
                 }, false);
             }
-
-        },
-        mounted() {
-            return
-            var u = navigator.userAgent;
-            var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //g
-            var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
-
-            this.isAndroid = isAndroid
-            this.isIOS = isIOS
-
-            console.log('isAndroid' , isAndroid)
-            console.log('isIOS' , isIOS)
-            // alert('start video')
-            if (isIOS) {
-                document.addEventListener("WeixinJSBridgeReady", function (e) {
-                    console.log('start play')
-                    const video = document.getElementById('video')
-                    video.play();
-                }, false);
-
-                // console.log('start play')
-                // const video = document.getElementById('video')
-                // video.play();
-            }
-            if(isAndroid){
-
-                document.addEventListener("WeixinJSBridgeReady", function (e) {
-                    // console.log('start play')
-                    // alert('start android')
-                    const video = document.getElementById('video')
-                    // video.play();
-                    video.addEventListener("x5videoenterfullscreen", function(){
-
-                        console.log('player enterfullscreen')
-                        // alert("player enterfullscreen");
-
-                        // const video = this
-                        //
-                        // video.style.width = window.innerWidth + "px";
-                        //
-                        // video.style.height = window.innerHeight + "px";
-                        // v.width = window.innerWidth;
-                        // v.height = window.innerHeight*2;
-
-                        // const vd = $(v)
-                        // vd.hide()
-                        // jquery(video).hide()
-                        // v.width =
-                    })
-
-                    video.addEventListener("x5videoexitfullscreen", function(){
-
-                        // alert("player x5videoexitfullscreen");
-                        console.log('player x5videoexitfullscreen')
-                        this.gotoSignInURL()
-
-                    })
-
-                    window.onresize = function(){
-                        const video = document.getElementById('video')
-
-                        // if(!video.paused && !video.paused){
-                        //     // $('.control-wrap').fadeOut("slow");
-                        //     video.style.width = window.innerWidth +  "px";
-                        //
-                        //     video.style.height = window.innerHeight + "px";
-                        // }
-
-                        alert('full')
-                        video.style.width = window.innerWidth +  "px";
-
-                        video.style.height = window.innerHeight + "px";
-                    }
-
-//                     video.addEventListener('timeupdate', function (e) {
-//                         console.log(video.currentTime) // 当前播放的进度
-//                     })
-//
-//                     video.addEventListener('ended', function (e) {
-// // 播放结束时触发
-//                     })
-
-                }, false);
-            }
-
 
         }
     }
