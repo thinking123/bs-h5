@@ -130,11 +130,15 @@
                 isSaveImage: false,
                 showPreview: false,
                 recordurl: '',
+                isIOS:false
                 // page:page
 
             }
         },
         mounted(option) {
+            const u = navigator.userAgent;
+            const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+            this.isIOS = isIOS
             const that = this
             if (isWeiXin()) {
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
@@ -410,6 +414,11 @@
 
                 const ratio = PIXEL_RATIO;
                 var can = document.createElement("canvas");
+                if(this.isIOS){
+                    can.width = window.innerWidth;
+                    can.height = window.innerHeight;
+                    return can
+                }
                 can.width = w * ratio;
                 can.height = h * ratio;
                 can.style.width = w + "px";
@@ -429,6 +438,8 @@
                 try {
 
                     const canvas = this.setupCanvas(window.innerWidth, window.innerHeight)
+                    let can = canvas
+                    console.log('canvsdsf' , can.width ,   can.height ,  can.style.width ,  can.style.height )
                     // console.log('toDataURL', canvas)
                     // canvas.width = window.innerWidth;
                     // canvas.height = window.innerHeight;
@@ -437,6 +448,13 @@
                     // this.setupCanvas(canvas)
                     const ctx = canvas.getContext('2d')
                     const bg = await this.getImage(this.drawImage)
+                    can = bg
+                    // can.width = window.innerWidth
+                    // can.height = window.innerHeight
+                    // can.style.width = window.innerWidth + 'px'
+                    // can.style.height = window.innerHeight + 'px'
+
+                    console.log('canvsdsf' , can.width ,   can.height ,  can.style.width ,  can.style.height )
 
                     ctx.drawImage(bg, 0, 0, window.innerWidth, window.innerHeight)
 
@@ -482,14 +500,16 @@
                     this.showPreview = true
                     this.$nextTick(() => {
 
+                        console.log('res' , res)
                         const img = new Image()
-                        img.src = canvas.toDataURL('image/png')
+                        img.src = res
                         this.isSaveImage = false
                         // img.width = window.innerWidth
                         // img.height = window.innerHeight
                         img.style.height = '100%';
                         img.style.width = '100%';
                         const preview = document.getElementById('preview')
+
                         console.log('preview' , preview)
                         preview.append(img)
                     })
@@ -529,10 +549,15 @@
                 clearInterval(this.playRecordTime)
                 this.playRecordTime = null
 
+
             } catch (e) {
                 console.error('beforeRouteLeave', e)
             } finally {
-                next()
+                if(to.fullPath && to.fullPath.indexOf('video') > -1){
+                    next({name:'select' , redirect:true})
+                }else{
+                    next()
+                }
             }
 
 

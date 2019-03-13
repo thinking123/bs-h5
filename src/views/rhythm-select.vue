@@ -529,6 +529,11 @@
                     // this.$sound.removeAllSounds()
                 }
 
+                console.log('to page' , to)
+                if(to.fullPath && to.fullPath.indexOf('video') > -1){
+                    next({name:'home' , redirect:true})
+                }
+
             } catch (e) {
                 console.error('beforeRouteLeave', e)
             } finally {

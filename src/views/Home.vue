@@ -125,6 +125,20 @@
             handleChange() {
                 console.log('handleChange')
             }
+        },
+        beforeRouteEnter(to, from, next) {
+            next()
+        },
+        beforeRouteUpdate(to, from, next) {
+            next()
+        },
+        async beforeRouteLeave(to, from, next) {
+
+            if(to.fullPath && to.fullPath.indexOf('video') > -1){
+                next(false)
+            }else{
+                next()
+            }
         }
     }
 </script>
