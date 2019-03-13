@@ -1,103 +1,106 @@
 <template>
-    <div class="container">
-        <img :src="bg" class="img"/>
-        <img :src="`${base}${page}footer.png`"
-             class="footer"/>
-        <div class="page-wrap" :class="[isSmall ? 'small' : '']" ref="wrap">
-            <div class="content-wrap">
-                <img :src="`${base}${page}title.png`"
-                     class="title"/>
-                <img :src="`${base}${page}border.png`"
-                     class="border"/>
+    <div class="container"   :class="{'is-ios':isIOS}">
+        <div class="wrap">
+            <img :src="bg" class="img"/>
+            <img :src="`${base}${page}footer.png`"
+                 class="footer"/>
+            <div class="page-wrap" :class="[isSmall ? 'small' : '']" ref="wrap">
+                <div class="content-wrap">
+                    <img :src="`${base}${page}title.png`"
+                         class="title"/>
+                    <img :src="`${base}${page}border.png`"
+                         class="border"/>
 
-                <img :src="`${base}${page}icon-title.png`"
-                     class="icon-title"/>
-                <div class="btn-wrap">
-                    <div>
-                        <music-btn class="music-btn row1 music-btn1" text="Do"
-                                   @touchingend="handleTouchingEnd"
-                                   @touching="handleTouching" musicKey="do"/>
-                        <music-btn class="music-btn row1 music-btn2" text="Re"
-                                   @touchingend="handleTouchingEnd"
-                                   @touching="handleTouching" musicKey="re"/>
-                        <music-btn class="music-btn row1 music-btn3" text="Mi"
-                                   @touchingend="handleTouchingEnd"
-                                   @touching="handleTouching" musicKey="mi"/>
-                        <music-btn class="music-btn row1 music-btn4" text="Fa"
-                                   @touchingend="handleTouchingEnd"
-                                   @touching="handleTouching" musicKey="fa"/>
+                    <img :src="`${base}${page}icon-title.png`"
+                         class="icon-title"/>
+                    <div class="btn-wrap">
+                        <div>
+                            <music-btn class="music-btn row1 music-btn1" text="Do"
+                                       @touchingend="handleTouchingEnd"
+                                       @touching="handleTouching" musicKey="do"/>
+                            <music-btn class="music-btn row1 music-btn2" text="Re"
+                                       @touchingend="handleTouchingEnd"
+                                       @touching="handleTouching" musicKey="re"/>
+                            <music-btn class="music-btn row1 music-btn3" text="Mi"
+                                       @touchingend="handleTouchingEnd"
+                                       @touching="handleTouching" musicKey="mi"/>
+                            <music-btn class="music-btn row1 music-btn4" text="Fa"
+                                       @touchingend="handleTouchingEnd"
+                                       @touching="handleTouching" musicKey="fa"/>
+                        </div>
+                        <div>
+                            <music-btn class="music-btn row2 music-btn5" text="Sol"
+                                       @touchingend="handleTouchingEnd"
+                                       @touching="handleTouching" musicKey="sol"/>
+                            <music-btn class="music-btn row2 music-btn6" text="La"
+                                       @touchingend="handleTouchingEnd"
+                                       @touching="handleTouching" musicKey="la"/>
+                            <music-btn class="music-btn row2 music-btn7" text="Xi"
+                                       @touchingend="handleTouchingEnd"
+                                       @touching="handleTouching" musicKey="xi"/>
+                        </div>
                     </div>
-                    <div>
-                        <music-btn class="music-btn row2 music-btn5" text="Sol"
-                                   @touchingend="handleTouchingEnd"
-                                   @touching="handleTouching" musicKey="sol"/>
-                        <music-btn class="music-btn row2 music-btn6" text="La"
-                                   @touchingend="handleTouchingEnd"
-                                   @touching="handleTouching" musicKey="la"/>
-                        <music-btn class="music-btn row2 music-btn7" text="Xi"
-                                   @touchingend="handleTouchingEnd"
-                                   @touching="handleTouching" musicKey="xi"/>
+
+                    <div class="record-btn-wrap">
+
+                        <start-recording-bar class="start-recording-bar" v-if="isRecording"/>
+                        <img :src="startBtn"
+                             class="record-btn"
+                             @click="handleRecord"/>
                     </div>
+
+
+                    <div class="yp-wrap">
+                        <img :src="yp"
+                             class="yp"/>
+                        <img :src="downIcon"
+                             :class="{ 'taped1':icon1Taped }"
+                             class="icon icon1 "/>
+                        <img :src="downIcon"
+                             :class="{ 'taped2':icon2Taped }"
+                             :style="{animationName: (icon2Taped ? 'taped2' : '')}"
+                             class="icon icon2 "/>
+                        <img :src="downIcon"
+                             :class="{ 'taped3':icon3Taped }"
+                             :style="{animationName:icon3Taped ? 'taped3' : ''}"
+                             class="icon icon3 "/>
+                        <img :src="downIcon"
+                             :class="{ 'taped4':icon4Taped }"
+                             :style="{animationName:icon4Taped ? 'taped4' : ''}"
+                             class="icon icon4 "/>
+                        <img :src="downIcon"
+                             :class="{ 'taped5':icon5Taped }"
+                             :style="{animationName:icon5Taped ? 'taped5' : ''}"
+                             class="icon icon5 "/>
+
+                        <img :src="upIcon"
+                             :class="{ 'taped6':icon6Taped }"
+                             :style="{animationName:icon6Taped ? 'taped6' : ''}"
+                             class="icon icon6 "/>
+                        <img :src="upIcon"
+                             :class="{ 'taped7':icon7Taped }"
+                             :style="{animationName:icon7Taped ? 'taped7' : ''}"
+                             class="icon icon7 "/>
+
+                    </div>
+
+                    <img :src="pauseBtn"
+                         class="stop-btn"
+                         v-if="isPlaying"
+                         @click="handlePlay"/>
+                    <img :src="stopBtn"
+                         class="stop-btn"
+                         v-else
+                         @click="handlePlay"/>
+
+
                 </div>
 
-                <div class="record-btn-wrap">
+                <img :src="shareBtn"
+                     class="music-person-btn"
+                     @click="handleMusicPerson"/>
+        </div>
 
-                    <start-recording-bar class="start-recording-bar" v-if="isRecording"/>
-                    <img :src="startBtn"
-                         class="record-btn"
-                         @click="handleRecord"/>
-                </div>
-
-
-                <div class="yp-wrap">
-                    <img :src="yp"
-                         class="yp"/>
-                    <img :src="downIcon"
-                         :class="{ 'taped1':icon1Taped }"
-                         class="icon icon1 "/>
-                    <img :src="downIcon"
-                         :class="{ 'taped2':icon2Taped }"
-                         :style="{animationName: (icon2Taped ? 'taped2' : '')}"
-                         class="icon icon2 "/>
-                    <img :src="downIcon"
-                         :class="{ 'taped3':icon3Taped }"
-                         :style="{animationName:icon3Taped ? 'taped3' : ''}"
-                         class="icon icon3 "/>
-                    <img :src="downIcon"
-                         :class="{ 'taped4':icon4Taped }"
-                         :style="{animationName:icon4Taped ? 'taped4' : ''}"
-                         class="icon icon4 "/>
-                    <img :src="downIcon"
-                         :class="{ 'taped5':icon5Taped }"
-                         :style="{animationName:icon5Taped ? 'taped5' : ''}"
-                         class="icon icon5 "/>
-
-                    <img :src="upIcon"
-                         :class="{ 'taped6':icon6Taped }"
-                         :style="{animationName:icon6Taped ? 'taped6' : ''}"
-                         class="icon icon6 "/>
-                    <img :src="upIcon"
-                         :class="{ 'taped7':icon7Taped }"
-                         :style="{animationName:icon7Taped ? 'taped7' : ''}"
-                         class="icon icon7 "/>
-
-                </div>
-
-                <img :src="pauseBtn"
-                     class="stop-btn"
-                     v-if="isPlaying"
-                     @click="handlePlay"/>
-                <img :src="stopBtn"
-                     class="stop-btn"
-                     v-else
-                     @click="handlePlay"/>
-
-
-            </div>
-
-            <img :src="shareBtn"
-                 class="music-person-btn"
-                 @click="handleMusicPerson"/>
         </div>
     </div>
 
@@ -192,12 +195,14 @@
                 preKey: '',
                 page: page,
 
-                isSmall:false
+                isSmall:false,
+                isIOS:false
             }
         },
         mounted() {
             const link = window.location.href.split('#')[0]
             const imgUrl = `${this.base}music-journey-bg.png`
+
 
             initShare(link , imgUrl , true)
             const that = this
@@ -229,6 +234,19 @@
                     console.log('isSmall' , isSmall)
                     console.log('small' , wH + fH + y , window.innerHeight)
                     this.isSmall = isSmall
+
+
+                    const u = navigator.userAgent;
+                    const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+                    if(isIOS){
+                        const bottomHeight = ratioPx(667-621)
+                        const contentHeight = bottomHeight + px2Px(621-64)
+                        if(contentHeight > window.innerHeight){
+                            this.isIOS = isIOS
+                        }
+                    }
+
+
                 })
 
                 // const pH = flexible.rem2px(r.clientHeight)
@@ -547,8 +565,35 @@
         margin: 0;
         padding: 0;
 
-    }
 
+    }
+    .container.wrap{
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        left:0;
+        top:0;
+    }
+    .container.is-ios{
+        overflow-y: auto;
+
+        height: 100%;
+        width: 100%;
+        position: relative;
+        margin: 0;
+        padding: 0;
+    }
+    .container.is-ios > .wrap{
+        height: px(667);
+        width: 100%;
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        left:0;
+        top:0;
+    }
     /*.container > view {*/
     /*background-color: yellow;*/
     /*}*/
@@ -939,6 +984,10 @@
         @include posCenterLeft(50, 636, 327, 658);
         top: auto;
         bottom: px(667-658);
+
+    }
+
+    .is-ios  .footer{
 
     }
 
