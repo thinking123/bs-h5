@@ -31,8 +31,7 @@
                    x5-video-orientation="portrait"
                    x5-video-player-type="h5"
 
-                   width="100"
-                   height="100"
+
                    @play="handlePlay"
                    @ended="handleEnd"></video>
         </div>
@@ -40,6 +39,7 @@
 
 
         <!--<video id="video"-->
+
                <!--class="video"-->
                <!--:src="video"-->
                <!--autoplay-->
@@ -182,9 +182,9 @@
 
                         const video = this
 
-                        // video.style.width = window.innerWidth + "px";
-                        //
-                        // video.style.height = window.innerHeight + "px";
+                        video.style.width = window.innerWidth + "px";
+
+                        video.style.height = window.innerHeight + "px";
                         // v.width = window.innerWidth;
                         // v.height = window.innerHeight*2;
 
@@ -320,14 +320,14 @@
         width: 128rpx;
         height: 128rpx;
     }
-    /*.video {*/
-        /*position: absolute;*/
-        /*left: 0;*/
-        /*top: 0;*/
-        /*opacity: 0;*/
-        /*width: 100%;*/
-        /*height: 100%;*/
-        /*object-fit: contain;*/
-        /*border: 10px solid yellow;*/
-    /*}*/
+    .video {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border: 10px solid yellow;
+    }
 </style>
