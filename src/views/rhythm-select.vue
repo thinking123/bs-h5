@@ -210,7 +210,7 @@
             const imgUrl = `${this.base}music-journey-bg.png`
 
 
-            initShare(link , imgUrl)
+            // initShare(link , imgUrl)
             const that = this
             if (isWeiXin()) {
                 document.addEventListener("WeixinJSBridgeReady", function (e) {

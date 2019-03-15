@@ -145,9 +145,9 @@
                 this.showScroll = true
             }
 
-            // const u = navigator.userAgent;
-            // const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-            // this.isIOS = isIOS
+            const u = navigator.userAgent;
+            const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+            this.isIOS = isIOS
             const that = this
             if (isWeiXin()) {
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
@@ -387,6 +387,7 @@
                             rej('error img')
                         } else {
                             res(img)
+
                         }
                     }, {
                         crossOrigin: "Anonymous"
@@ -412,6 +413,15 @@
 
             },
             setupCanvas(w, h) {
+                if(this.isIOS){
+                    const  can = document.createElement("canvas");
+                    can.width = w;
+                    can.height = h;
+
+                    // can.style.width = w + "px";
+                    // can.style.height = h + "px";
+                    return can
+                }
                 const PIXEL_RATIO = (function () {
                     const ctx = document.createElement("canvas").getContext("2d"),
                         dpr = window.devicePixelRatio || 1,
@@ -425,12 +435,14 @@
                 })();
 
                 const ratio = PIXEL_RATIO;
-                var can = document.createElement("canvas");
-                if(this.isIOS){
-                    can.width = w;
-                    can.height = h;
-                    return can
-                }
+                const can = document.createElement("canvas");
+                // if(this.isIOS){
+                //     can.width = w;
+                //     can.height = h;
+                //     // can.style.width = w + "px";
+                //     // can.style.height = h + "px";
+                //     return can
+                // }
                 can.width = w * ratio;
                 can.height = h * ratio;
                 can.style.width = w + "px";
@@ -441,7 +453,11 @@
             },
             async screenShot() {
 
+                const that = this
                 function rem(p) {
+                    // if(that.isIOS){
+                    //     return p
+                    // }
                     const pxTorem = window.innerWidth / 10
                     const px = 37.5
                     return pxTorem * p / px
@@ -449,11 +465,19 @@
 
                 try {
 
-                    const w = rem(375) , h = rem(667)
+                    let w , h
+                     w = rem(375) , h = rem(667)
+
+                    // if(this.isIOS){
+                    //     w = window.innerWidth
+                    //     h = window.innerHeight
+                    // }
+                    console.log('w ' , w , ' h ' , h)
                     const canvas = this.setupCanvas(w, h)
                     const ctx = canvas.getContext('2d')
 
                     const bg = await this.getImage(this.drawImage)
+                    console.log(this.drawImage , 'bg' , bg)
                     ctx.drawImage(bg, 0, 0, w, h)
 
 
@@ -467,7 +491,10 @@
                     ctx.closePath();
                     ctx.clip();
                     const head = await this.getOrignImage(this.headimgurl)
-
+                    if(!this.headimgurl){
+                        console.log('not head img')
+                    }
+                    console.log('head' , head)
                     ctx.drawImage(head,
                         rem(43),
                         rem(30),
@@ -493,13 +520,18 @@
                     //     rem(62) ,
                     //     rem(62))
 
-                    const res = canvas.toDataURL('image/png')
+
 
                     this.showPreview = true
+                    // setTimeout(()=>{
+                    //
+                    // } , 200)
                     this.$nextTick(() => {
 
+                        const res = canvas.toDataURL('image/png')
                         console.log('res' , res)
                         const img = new Image()
+
                         img.src = res
                         this.isSaveImage = false
                         // img.width = window.innerWidth

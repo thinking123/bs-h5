@@ -51,13 +51,11 @@
             const link = window.location.href.split('#')[0]
             const imgUrl = `${this.base}music-journey-bg.png`
 
-            initShare(link , imgUrl)
+            // initShare(link , imgUrl)
 
             const that = this
             if(isWeiXin()){
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
-                    WeixinJSBridge.call('hideToolbar');
-                    WeixinJSBridge.call('hideOptionMenu');
                     console.log('WeixinJSBridgeReady init')
 
                     that.$sound.load()
