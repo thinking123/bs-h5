@@ -307,13 +307,14 @@
                 }
 
 
+                const r = window.location.href.split('#')[0] + '#/share'
 
-                this.$router.replace({
-                    name: 'share',
-                    query: {
-                        recordId: this.tempFilePath
-                    }
-                })
+                console.log('replace index' , r)
+                window.location.replace(r)
+
+                // this.$router.replace({
+                //     name: 'share'
+                // })
             },
             handleTouchingEnd(e) {
                 console.log('handleTouchingEnd' , e)

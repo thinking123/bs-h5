@@ -159,6 +159,7 @@
             this.isAndroid = isAndroid
             this.isIOS = isIOS
 
+            const that = this
             console.log('isAndroid' , isAndroid)
             console.log('isIOS' , isIOS)
             // if(isAndroid)
@@ -186,7 +187,7 @@
 
                     video.addEventListener("x5videoexitfullscreen", function(){
                         console.log('player x5videoexitfullscreen')
-                        this.gotoSignInURL()
+                        that.gotoSignInURL()
                     })
 
                     window.onresize = function(){

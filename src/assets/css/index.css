@@ -40,6 +40,11 @@ table {
 fieldset, img {
     border: 0;
 }
+/*去除底部白边*/
+img{
+    vertical-align: bottom;
+    display: block;
+}
 
 /* 去掉 firefox 下此元素的边框 */
 abbr, acronym {

@@ -3,7 +3,7 @@
 
         <!--<canvas id="canvas" class="canvas" ref="canvas" v-show="isSaveImage"></canvas>-->
 
-        <div class="wrap">
+        <div class="wrap" v-show="!showPreview">
             <avatar class="avatar" v-if="!isFromShare"/>
             <img :src="bg" class="img"/>
 
@@ -19,19 +19,23 @@
 
             <img :src="textIcon1"
                  ref="icon1"
+                 class="icon-tip"
                  v-if="showIcon1"
                  :class="[`text${rand}-icon1`]"/>
             <img :src="textIcon2"
-                 v-if="showIcon2"
+                 v-if="showIcon2 && rand != 2"
+                 class="icon-tip"
                  ref="icon2"
                  :class="[`text${rand}-icon2`]"/>
 
             <img :src="textIcon1"
-                 v-if="showIcon1 && rand != 6 && rand != 1 "
+                 class="icon-tip"
+                 v-if="showIcon1 && rand != 6 && rand != 1  && rand != 2"
                  ref="icon3"
                  :class="[`text${rand}-icon3`]"/>
             <img :src="textIcon2"
-                 v-if="showIcon2 && rand != 6 && rand != 1"
+                 class="icon-tip"
+                 v-if="showIcon2 && rand != 6 && rand != 1 && rand != 2 && rand != 5"
                  ref="icon4"
                  :class="[`text${rand}-icon4`]"/>
             <!--<share-music-playing-bar class="share-music-playing-bar" v-if="isPlaying"/>-->
@@ -41,24 +45,23 @@
             <img :src="`${baseUrl}pause-btn.png`"
                  @click="handlePlay"
                  :class="{'btm6':rand == 6 }"
-                 class="pause-btn btm img-btn" v-if="isPlaying"/>
+                 class="pause-btn btm img-btn btm6" v-if="isPlaying"/>
             <img :src="`${baseUrl}play-btn.png`"
                  @click="handlePlay"
                  :class="{'btm6':rand == 6 }"
-                 class="pause-btn btm  img-btn" v-else/>
+                 class="pause-btn btm  img-btn btm6" v-else/>
             <img :src="`${baseUrl}download-btn.png`"
                  v-if="!isFromShare"
                  @click="handleDownloadImage"
                  :class="{'btm6':rand == 6 }"
-                 class="download-btn btm  img-btn"/>
+                 class="download-btn btm  img-btn btm6"/>
             <img :src="`${baseUrl}try-play-btn.png`"
                  v-if="isFromShare"
                  :class="{'btm6':rand == 6 }"
                  @click="handleGoToHome"
-                 class="try-play-btn btm"/>
-            <img :src="`${baseUrl}qr-code.png`"
-                 :class="{'qr-btm6':rand == 6 }"
-                 class="qr-code btm"/>
+                 class="try-play-btn btm btm6"/>
+            <img :src="`${baseUrl}qr-code.jpg`"
+                 class="qr-code btm btm6"/>
         </div>
 
 
@@ -142,18 +145,18 @@
                 this.showScroll = true
             }
 
-            const u = navigator.userAgent;
-            const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-            this.isIOS = isIOS
-            const that = this
-            if (isWeiXin()) {
-                document.addEventListener("WeixinJSBridgeReady", function (e) {
-                    console.log('WeixinJSBridgeReady init')
-                    that.$sound.load()
-                }, false);
-            } else {
-                that.$sound.load()
-            }
+            // const u = navigator.userAgent;
+            // const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+            // this.isIOS = isIOS
+            // const that = this
+            // if (isWeiXin()) {
+            //     document.addEventListener("WeixinJSBridgeReady", function (e) {
+            //         console.log('WeixinJSBridgeReady init')
+            //         that.$sound.load()
+            //     }, false);
+            // } else {
+            //     that.$sound.load()
+            // }
 
 
             this.init()
@@ -226,7 +229,7 @@
                             this.setnickname(name)
                             const head = localStorage.getItem('head')
                             console.log(head)
-                            this.setnickname(head)
+                            this.setheadimgurl(head)
 
                             const openid = localStorage.getItem('openid')
                             console.log(openid)
@@ -286,6 +289,11 @@
                     console.log('error ', e)
                 } finally {
                     this.CHANGE_LOADING_BAR(false)
+
+                    setTimeout(()=>{
+                        this.$sound.load()
+                    } , 500)
+
                 }
             },
             getTime() {
@@ -421,8 +429,8 @@
                 const ratio = PIXEL_RATIO;
                 var can = document.createElement("canvas");
                 if(this.isIOS){
-                    can.width = window.innerWidth;
-                    can.height = window.innerHeight;
+                    can.width = w;
+                    can.height = h;
                     return can
                 }
                 can.width = w * ratio;
@@ -443,26 +451,12 @@
 
                 try {
 
-                    const canvas = this.setupCanvas(window.innerWidth, window.innerHeight)
-                    let can = canvas
-                    console.log('canvsdsf' , can.width ,   can.height ,  can.style.width ,  can.style.height )
-                    // console.log('toDataURL', canvas)
-                    // canvas.width = window.innerWidth;
-                    // canvas.height = window.innerHeight;
-                    // console.log(window.innerWidth, window.innerHeight)
-
-                    // this.setupCanvas(canvas)
+                    const w = rem(375) , h = rem(667)
+                    const canvas = this.setupCanvas(w, h)
                     const ctx = canvas.getContext('2d')
+
                     const bg = await this.getImage(this.drawImage)
-                    can = bg
-                    // can.width = window.innerWidth
-                    // can.height = window.innerHeight
-                    // can.style.width = window.innerWidth + 'px'
-                    // can.style.height = window.innerHeight + 'px'
-
-                    console.log('canvsdsf' , can.width ,   can.height ,  can.style.width ,  can.style.height )
-
-                    ctx.drawImage(bg, 0, 0, window.innerWidth, window.innerHeight)
+                    ctx.drawImage(bg, 0, 0, w, h)
 
 
                     console.log('drawImage beginPath')
@@ -611,7 +605,7 @@
         position: relative;
         margin: 0;
         padding: 0;
-
+        overflow-x: hidden;
         &.show-scroll{
             overflow-y: auto;
         }
@@ -625,6 +619,7 @@
         height: 100%;
         width: 100%;
         position: relative;
+        overflow: hidden;
     }
     .show-scroll > .wrap{
         height: 667*2px;
@@ -673,7 +668,7 @@
     }
 
     .btm6 {
-        position: absolute;
+        position: fixed;
         bottom: 2% !important;
         z-index: 100;
     }
@@ -993,10 +988,9 @@
     @keyframes text6-icon1 {
         from {
             left: 0;
-            transform: translateX(-200%);
         }
         to {
-            left: 100%;
+            left: 150%;
         }
     }
 
@@ -1013,10 +1007,9 @@
     @keyframes text6-icon2 {
         from {
             right: 0;
-            transform: translateX(200%);
         }
         to {
-            right: 100%;
+            right: 150%;
         }
     }
 
@@ -1044,5 +1037,10 @@
         height: 142px;
         left: px(255);
         width: px(272-255);
+    }
+
+
+    .icon-tip{
+        position: absolute;
     }
 </style>
