@@ -1,9 +1,9 @@
 <template>
-    <div class="container" ref="rhythmShare" :class="{'con6':rand==6}">
+    <div class="container" ref="rhythmShare"  :class="{'show-scroll':showScroll}">
 
         <!--<canvas id="canvas" class="canvas" ref="canvas" v-show="isSaveImage"></canvas>-->
 
-        <div style="width: 100%;height: 100%">
+        <div class="wrap">
             <avatar class="avatar" v-if="!isFromShare"/>
             <img :src="bg" class="img"/>
 
@@ -74,7 +74,7 @@
 
 <script>
 
-    import {showMsg, getRandomInt, isWeiXin} from "../utils/common";
+    import {showMsg, getRandomInt, isWeiXin,px2Px } from "../utils/common";
     import {mapGetters, mapMutations} from 'vuex'
     import {CHANGE_LOADING_BAR} from "../store/mutations";
     import ShareMusicPlayingBar from "../components/ShareMusicPlayingBar";
@@ -130,12 +130,18 @@
                 isSaveImage: false,
                 showPreview: false,
                 recordurl: '',
-                isIOS:false
+                isIOS:false,
+                showScroll:false
                 // page:page
 
             }
         },
         mounted(option) {
+
+            if(window.innerHeight < px2Px(667)){
+                this.showScroll = true
+            }
+
             const u = navigator.userAgent;
             const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
             this.isIOS = isIOS
@@ -567,6 +573,17 @@
 
 <style scoped lang="scss">
 
+
+    .show-scroll > .preview{
+        position: absolute;
+        width: 100%;
+        height: 667*2px;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 100;
+    }
     .preview {
         position: absolute;
         width: 100%;
@@ -595,13 +612,25 @@
         margin: 0;
         padding: 0;
 
+        &.show-scroll{
+            overflow-y: auto;
+        }
         /*>div{*/
         /*height: 100%;*/
         /*width: 100%;*/
         /*}*/
     }
 
-
+    .wrap{
+        height: 100%;
+        width: 100%;
+        position: relative;
+    }
+    .show-scroll > .wrap{
+        height: 667*2px;
+        width: 100%;
+        position: relative;
+    }
     .img {
         height: 100%;
         width: 100%;

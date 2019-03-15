@@ -1,10 +1,10 @@
 <template>
-    <div class="container"   :class="{'is-ios':isIOS}">
+    <div class="container"    :class="{'show-scroll':showScroll}">
         <div class="wrap">
             <img :src="bg" class="img"/>
             <img :src="`${base}${page}footer.png`"
                  class="footer"/>
-            <div class="page-wrap" :class="[isSmall ? 'small' : '']" ref="wrap">
+            <div class="page-wrap"  ref="wrap">
                 <div class="content-wrap">
                     <img :src="`${base}${page}title.png`"
                          class="title"/>
@@ -196,10 +196,16 @@
                 page: page,
 
                 isSmall:false,
-                isIOS:false
+                isIOS:false,
+                showScroll:false
             }
         },
         mounted() {
+
+            if(window.innerHeight < px2Px(667)){
+                this.showScroll = true
+            }
+
             const link = window.location.href.split('#')[0]
             const imgUrl = `${this.base}music-journey-bg.png`
 
@@ -570,9 +576,12 @@
         margin: 0;
         padding: 0;
 
+        &.show-scroll{
+            overflow-y: auto;
+        }
 
     }
-    .container.wrap{
+    .wrap{
         height: 100%;
         width: 100%;
         position: absolute;
@@ -581,6 +590,13 @@
         left:0;
         top:0;
     }
+
+    .show-scroll > .wrap{
+        height: 667*2px;
+        width: 100%;
+        position: relative;
+    }
+
     .container.is-ios{
         overflow-y: auto;
 

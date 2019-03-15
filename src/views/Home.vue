@@ -1,29 +1,7 @@
 <template>
-    <div class="container">
-        <audio ref="do" >
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-do.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="re" >
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-re.mp3" type="audio/mpeg"/>
-        </audio>
-
-        <audio ref="mi" >
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-mi.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="fa" >
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-fa.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="sol" >
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-sol.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="la" >
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-la.mp3" type="audio/mpeg"/>
-        </audio>
-        <audio ref="xi" >
-            <source src="https://cdnpepsi.ysmine.com/rhythm-select-xi.mp3" type="audio/mpeg"/>
-        </audio>
+    <div class="container"  :class="{'show-scroll':showScroll}">
         
-        <div class="content" >
+        <div class="content">
             <img :src="bg" class="img"/>
             <div class="how-to-play" @click="handleShowPlay"/>
             <div class="start-my-music-journey"
@@ -40,7 +18,7 @@
     import {CHANGE_LOADING_BAR} from "../store/mutations";
     import HowToPlayDialog from "../components/Dialog/HowToPlayDialog";
     import {getSignInfo , login} from "../utils/http";
-    import {getOS , isWeiXin} from "../utils/common";
+    import {getOS , isWeiXin ,px2Px} from "../utils/common";
     import {initShare} from "../utils/wx-config";
     import {mapGetters , mapMutations} from 'vuex'
     import music from '../utils/MusicPlay'
@@ -60,13 +38,16 @@
         },
         data() {
             return {
-                showHowtoplay: false
+                showHowtoplay: false,
+                showScroll:false
             }
         },
 
         mounted() {
 
-
+            if(window.innerHeight < px2Px(667)){
+                this.showScroll = true
+            }
             const link = window.location.href.split('#')[0]
             const imgUrl = `${this.base}music-journey-bg.png`
 
@@ -87,18 +68,6 @@
         },
         methods: {
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),
-            initVideo(){
-                
-                const v = this.$refs.video
-                
-                video.attr('x5-video-player-type', 'h5');
-                video.attr('x-webkit-airplay', true);
-                video.attr('x5-video-player-fullscreen', true);
-                video.attr('x5-video-ignore-metadata', true);
-                video.attr('object-fit', 'fill');
-                video.attr('object-position', 'center center');
-            },
-            ...mapMutations(['setShowVideo']),
             async init() {
                 try {
                     console.log('headimgurl' , this.headimgurl)
@@ -175,6 +144,10 @@
         margin: 0;
         padding: 0;
         overflow: hidden;
+
+        &.show-scroll{
+            overflow-y: auto;
+        }
     }
 
     .content{
@@ -182,6 +155,12 @@
         width: 100%;
         position: relative;
     }
+    .show-scroll > .content{
+        height: 667*2px;
+        width: 100%;
+        position: relative;
+    }
+
     .img {
         height: 100%;
         width: 100%;
