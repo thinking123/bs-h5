@@ -314,7 +314,7 @@
                 //     name:'share'
                 // })
 
-                this.$router.replace({
+                this.$router.push({
                     name: 'share'
                 })
             },

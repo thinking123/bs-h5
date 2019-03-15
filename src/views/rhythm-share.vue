@@ -540,6 +540,10 @@
                         img.style.width = '100%';
                         const preview = document.getElementById('preview')
 
+                        while (preview.firstChild) {
+                            preview.removeChild(preview.firstChild);
+                        }
+
                         console.log('preview' , preview)
                         preview.append(img)
                     })
