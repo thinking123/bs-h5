@@ -2,8 +2,9 @@
     <div class="container" ref="rhythmShare"  :class="{'show-scroll':showScroll}">
 
         <!--<canvas id="canvas" class="canvas" ref="canvas" v-show="isSaveImage"></canvas>-->
-
+        <more-arrow class="more-arrow"  v-show="!showPreview" v-if="showScroll"/>
         <div class="wrap" v-show="!showPreview">
+
             <avatar class="avatar" v-if="!isFromShare"/>
             <img :src="bg" class="img"/>
 
@@ -86,11 +87,12 @@
     import MoveArrow from "../components/MoveArrow";
     import Avatar from "../components/avatar";
     import Icon3 from "../components/Icon3";
+    import MoreArrow from "../components/MoreArrow";
 
     const page = 'rhythm-share-'
     export default {
         name: "rhythm-share",
-        components: {Icon3, Avatar, MoveArrow, ShareMusicPlayingBar},
+        components: {MoreArrow, Icon3, Avatar, MoveArrow, ShareMusicPlayingBar},
         computed: {
             ...mapGetters(['base', 'headimgurl', 'nickname', 'openid', 'timeline']),
             baseUrl() {
@@ -601,6 +603,35 @@
 </script>
 
 <style scoped lang="scss">
+
+
+    .more-arrow{
+        position: absolute;
+        bottom: 0;
+        left:50%;
+        transform: translateX(-50%);
+        animation: more-arrow 3s linear infinite;
+        opacity: 0;
+        z-index: 1000;
+    }
+
+    @keyframes  more-arrow{
+        0%{
+            bottom: 0;
+            opacity: 0;
+        }
+        10%{
+            bottom: 0;
+            opacity: 1;
+        }
+        90%{
+            bottom: 30*2px;
+        }
+        100%{
+            bottom: 30*2px;
+            opacity: 0;
+        }
+    }
 
 
     .show-scroll > .preview{
