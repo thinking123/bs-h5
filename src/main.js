@@ -101,7 +101,7 @@ router.beforeEach((pageTo, pageFrom, next) => {
             store.commit('setnickname' , nickname)
             store.commit('setsex' , sex)
             console.log('从微信授权返回' , pageTo.query)
-            next({name:'home' , replace: true})
+            next({name:'home'})
 
             return
         }

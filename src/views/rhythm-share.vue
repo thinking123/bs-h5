@@ -148,15 +148,15 @@
             // const u = navigator.userAgent;
             // const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
             // this.isIOS = isIOS
-            // const that = this
-            // if (isWeiXin()) {
-            //     document.addEventListener("WeixinJSBridgeReady", function (e) {
-            //         console.log('WeixinJSBridgeReady init')
-            //         that.$sound.load()
-            //     }, false);
-            // } else {
-            //     that.$sound.load()
-            // }
+            const that = this
+            if (isWeiXin()) {
+                document.addEventListener("WeixinJSBridgeReady", function (e) {
+                    console.log('WeixinJSBridgeReady init')
+                    that.$sound.load()
+                }, false);
+            } else {
+                // that.$sound.load()
+            }
 
 
             this.init()
@@ -290,9 +290,7 @@
                 } finally {
                     this.CHANGE_LOADING_BAR(false)
 
-                    setTimeout(()=>{
-                        this.$sound.load()
-                    } , 500)
+
 
                 }
             },
@@ -545,7 +543,8 @@
         async beforeRouteLeave(to, from, next) {
 
             try {
-
+                // createjs.Sound.removeAllSounds();
+                console.log('cleanr sounds')
                 clearInterval(this.playRecordTime)
                 this.playRecordTime = null
 

@@ -20,11 +20,11 @@ export function wx_config(appId , timestamp , nonceStr , signature , jsApiList ,
     })
 }
 
-export async function initShare(link , imgUrl , isNotSharePage = false) {
+export async function initShare(link , imgUrl) {
     try {
-        if(isNotSharePage){
-            return
-        }
+        // if(isNotSharePage){
+        //     return
+        // }
         const title = '我的音乐人格'
         const desc = '来测测你的音乐人格吧'
 
@@ -34,7 +34,8 @@ export async function initShare(link , imgUrl , isNotSharePage = false) {
             timestamp
 
         const res = await getSignInfo()
-        store.commit('setsignInfo' , res)
+        console.log('getSignInfo' , res)
+        // store.commit('setsignInfo' , res)
         appid = res.appid
         noncestr = res.noncestr
         signature = res.signature
@@ -44,21 +45,21 @@ export async function initShare(link , imgUrl , isNotSharePage = false) {
             'updateAppMessageShareData',
             'updateTimelineShareData',
             //下面这两个api，虽然已经废弃，但是android必须调用，否则不能分享
-            'onMenuShareAppMessage',
-            'onMenuShareTimeline'
+            // 'onMenuShareAppMessage',
+            // 'onMenuShareTimeline'
         ]
         await wx_config(appid, timestamp, noncestr, signature, jsApiList)
-        store.commit('setisConfigedShare' , true)
+        // store.commit('setisConfigedShare' , true)
 
         console.log('分享数据' , title, desc, link, imgUrl)
         console.log('分享结束1')
         await wx_appMessageShare(title, desc, link, imgUrl)
         console.log('分享结束2')
         await wx_timelineShare(title, link, imgUrl)
-        console.log('分享结束3')
-        onMenuShareTimeline(title, link, imgUrl)
-        console.log('分享结束4')
-        onMenuShareAppMessage(title, desc, link, imgUrl)
+        // console.log('分享结束3')
+        // onMenuShareTimeline(title, link, imgUrl)
+        // console.log('分享结束4')
+        // onMenuShareAppMessage(title, desc, link, imgUrl)
 
     }catch (e) {
         showMsg(e)

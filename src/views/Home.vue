@@ -51,7 +51,7 @@
             const link = window.location.href.split('#')[0]
             const imgUrl = `${this.base}music-journey-bg.png`
 
-            initShare(link , imgUrl , true)
+            initShare(link , imgUrl)
 
             const that = this
             if(isWeiXin()){
@@ -85,7 +85,7 @@
             handlePushPage() {
 
                 // createjs.WebAudioPlugin.playEmptySound();
-                this.$router.replace({name: 'select'})
+                this.$router.push({name: 'select'})
             },
             handleShowPlay() {
                 this.showHowtoplay = true

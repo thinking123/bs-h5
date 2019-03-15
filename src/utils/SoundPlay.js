@@ -32,6 +32,7 @@ class SoundPlay {
      * */
     constructor(){
         console.log('init sound')
+        alert('init sound')
         this.lists = getSoundList()
         this.ids = {}
         this.lists.forEach(l=>this.ids[l.id] = l.id)

@@ -210,7 +210,7 @@
             const imgUrl = `${this.base}music-journey-bg.png`
 
 
-            initShare(link , imgUrl , true)
+            initShare(link , imgUrl)
             const that = this
             if (isWeiXin()) {
                 document.addEventListener("WeixinJSBridgeReady", function (e) {
@@ -307,14 +307,16 @@
                 }
 
 
-                const r = window.location.href.split('#')[0] + '#/share'
-
-                console.log('replace index' , r)
-                window.location.replace(r)
-
-                // this.$router.replace({
-                //     name: 'share'
+                // const r = window.location.href.split('#')[0] + '#/share'
+                //
+                // console.log('replace index' , r)
+                // window.location.push({
+                //     name:'share'
                 // })
+
+                this.$router.replace({
+                    name: 'share'
+                })
             },
             handleTouchingEnd(e) {
                 console.log('handleTouchingEnd' , e)
@@ -521,6 +523,8 @@
 
             try {
 
+                // createjs.Sound.removeAllSounds();
+                console.log('cleanr sounds')
                 console.log('beforeRouteLeave clear')
                 clearInterval(this.playRecordTime)
                 this.playRecordTime = null
