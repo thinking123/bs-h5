@@ -8,7 +8,8 @@ const postcss = px2rem({
 
 module.exports = {
     devServer: {
-        proxy: 'http://47.101.187.1:9080'
+        proxy: 'http://47.101.187.1:9080',
+        port:8082
     },
     css: {
         loaderOptions: {

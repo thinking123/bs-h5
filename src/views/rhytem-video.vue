@@ -4,9 +4,9 @@
         <!--<div class="tap" @click="handleTap">-->
 
         <!--</div>-->
-        <canvas id="canvas" class="canvas" v-if="isIOS">
+        <!--<canvas id="canvas" class="canvas" v-if="isIOS">-->
 
-        </canvas>
+        <!--</canvas>-->
         <button @click="handleStop" class="button">
             跳过
         </button>
@@ -22,7 +22,7 @@
             <video id="video"
                     class="video"
                    :class="{'hidden-video':isIOS}"
-                   src="https://cdnpepsi.ysmine.com/video.mp4"
+                   src="https://cdnpepsi.ysmine.com/video-video2.mp4"
                    webkit-playsinline="true"
                    playsinline
                    x-webkit-airplay="allow"
@@ -62,6 +62,7 @@
 </template>
 
 <script>
+    import {px2Px} from "../utils/common";
     import {mapGetters, mapMutations} from 'vuex'
     // import $ from 'jquery'
     // import videojs from 'video.js'
@@ -114,6 +115,8 @@
                     this.isPlaying = true
                     return
                 }else{
+
+                    return
                     var video = document.getElementById('video');
                     var canvas = document.getElementById('canvas');
                     var ctx = canvas.getContext('2d');
@@ -132,7 +135,15 @@
                         // console.log('loop')
                         console.log(x, y)
                         if (!$this.paused && !$this.ended) {
-                            ctx.drawImage($this, 0, 0, x, y);
+
+                            console.log('$this.style.objectFit' , $this.style.objectFit)
+                            $this.style.objectFit = 'cover'
+                            $this.width = '100%'
+                            $this.height = '100%'
+                            // const w =  px2Px(375)
+                            // const h =  px2Px(667)
+                            // const imgX = canvas.width / 2 - image.width / 2
+                            ctx.drawImage($this, 0, 0);
                             setTimeout(loop, 1000 / 30); // drawing at 30fps
                         }
                     })();
@@ -258,13 +269,17 @@
     .control-wrap > img{
         width: 100%;
         height: 100%;
+        object-fit: cover;
     }
     .video{
-        /*object-fit: fill;*/
+        object-fit: cover;
     }
 
     .hidden-video{
-        display: none;
+        /*display: none;*/
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
     .video-wrap{
         /*border: 5px solid red;*/
