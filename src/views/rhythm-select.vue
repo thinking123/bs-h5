@@ -1,5 +1,6 @@
 <template>
     <div class="container"    :class="{'show-scroll':showScroll}">
+        <more-arrow  class="more-arrow" v-if="showScroll"/>
         <div class="wrap">
             <img :src="bg" class="img"/>
             <img :src="`${base}${page}footer.png`"
@@ -116,6 +117,7 @@
     import {showMsg, getOS, isWeiXin , px2Px,ratioPx} from "../utils/common";
     import {initShare} from "../utils/wx-config";
     import {CHANGE_LOADING_BAR} from "../store/mutations";
+    import MoreArrow from "../components/MoreArrow";
 
     const page = 'rhythm-select-'
 
@@ -123,7 +125,7 @@
 
     export default {
         name: "rhythm-select",
-        components: {StartRecordingBar, MusicBtn},
+        components: {MoreArrow, StartRecordingBar, MusicBtn},
         computed: {
             ...mapGetters(['base',
                 'headimgurl',
@@ -1015,6 +1017,33 @@
 
     .is-ios  .footer{
 
+    }
+
+    .more-arrow{
+        position: absolute;
+        bottom: 0;
+        left:50%;
+        transform: translateX(-50%);
+        animation: more-arrow 3s linear infinite;
+        opacity: 0;
+        z-index: 1000;
+    }
+    @keyframes  more-arrow{
+        0%{
+            bottom: 0;
+            opacity: 0;
+        }
+        10%{
+            bottom: 0;
+            opacity: 1;
+        }
+        90%{
+            bottom: 30*2px;
+        }
+        100%{
+            bottom: 30*2px;
+            opacity: 0;
+        }
     }
 
 </style>
