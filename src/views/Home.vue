@@ -53,16 +53,16 @@
 
             // initShare(link , imgUrl)
 
-            const that = this
-            if(isWeiXin()){
-                document.addEventListener("WeixinJSBridgeReady", function (e) {
-                    console.log('WeixinJSBridgeReady init')
-
-                    that.$sound.load()
-                }, false);
-            }else{
-                that.$sound.load()
-            }
+            // const that = this
+            // if(isWeiXin()){
+            //     document.addEventListener("WeixinJSBridgeReady", function (e) {
+            //         console.log('WeixinJSBridgeReady init')
+            //
+            //         that.$sound.load()
+            //     }, false);
+            // }else{
+            //     that.$sound.load()
+            // }
         },
         methods: {
             ...mapMutations([CHANGE_LOADING_BAR, 'setLoadingText']),
@@ -83,7 +83,7 @@
             handlePushPage() {
 
                 // createjs.WebAudioPlugin.playEmptySound();
-                this.$router.push({name: 'select'})
+                this.$router.replace({name: 'select'})
             },
             handleShowPlay() {
                 this.showHowtoplay = true

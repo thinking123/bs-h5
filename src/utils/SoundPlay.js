@@ -65,10 +65,10 @@ class SoundPlay {
     }
 
     play(id){
-        if (isSoundReady === false) {
-            createjs.WebAudioPlugin.playEmptySound();
-            isSoundReady = true;
-        }
+        // if (isSoundReady === false) {
+        //     createjs.WebAudioPlugin.playEmptySound();
+        //     isSoundReady = true;
+        // }
         if(this.ids[id]){
             createjs.Sound.play(id)
         }else{

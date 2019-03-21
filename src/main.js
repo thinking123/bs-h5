@@ -2,7 +2,7 @@ import "@babel/polyfill"
 // import "./lib/jweixin"
 import './compatibility/flexible'
 // import './compatibility/faskclick'
-import './debug'
+// import './debug'
 import 'weui/dist/style/weui.min.css'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
